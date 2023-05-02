@@ -9,9 +9,9 @@ socket programming reference links
 
 
 
-https://www.rfc-editor.org/rfc/rfc1459 - Internet Relay Chat Protocol
-https://modern.ircdocs.horse/
-https://www.ibm.com/docs/ja/i/7.3?topic=ssw_ibm_i_73/apis/poll.html
-https://www.ibm.com/docs/en/i/7.2?topic=clients-example-ipv4-ipv6-client
-https://irssi.org/documentation/
-https://github.com/irssi/irssi
+* https://www.rfc-editor.org/rfc/rfc1459 - Internet Relay Chat Protocol
+* https://modern.ircdocs.horse/
+* https://www.ibm.com/docs/ja/i/7.3?topic=ssw_ibm_i_73/apis/poll.html
+* https://www.ibm.com/docs/en/i/7.2?topic=clients-example-ipv4-ipv6-client
+* https://irssi.org/documentation/
+* https://github.com/irssi/irssi
