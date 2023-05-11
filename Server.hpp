@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/09 15:05:22 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/11 12:12:12 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,14 @@
 #include <exception>
 #include <cstring> //c_str()
 #include <iostream>
+#include <unistd.h> //close
+#include <stdlib.h> //malloc
+#include <poll.h> 
+#include <fcntl.h>
+#include <arpa/inet.h> //inet_ntop
+
+#define BACKLOG 10 //no.of connections in incoming queue that waits till accept()
+#define CLIENTS 5
 
 class Server
 {
@@ -40,8 +48,12 @@ class Server
     private:
         void CreateSocket(void);
         void LoadAddrinfo(void);
+        void BindListen(void);
+        void ConnectClients(void);
+        void AcceptConnections(struct pollfd *pfds, int *fd_count, int *maxfds);
+        void ThrowException(std::string err_msg);
+        void print_ip_addr(struct sockaddr *sa, int clientfd);
     
-    public:
         class AddrInfoError: public std::exception //custom exception
         {
             private:
@@ -50,12 +62,11 @@ class Server
                 const char *what() const throw();
                 AddrInfoError(int status); //constructor
         };
-        class SocketError: public std::exception //custom exception
+        class CustomException: public std::exception //custom exception
         {
             public :
                 const char *what() const throw();
-        };
-      
+        };      
     
 
         
