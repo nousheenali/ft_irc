@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/11 15:21:13 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/12 09:19:13 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void Server::AcceptConnections(struct pollfd *pfds, int *fd_count, int *maxfds)
         if (fd_count == maxfds) //if number of clients exceeds max value
         {
             *maxfds *= 2; //doubling the capacity
-            if ((pfds = (struct pollfd *)malloc(*maxfds * sizeof(struct pollfd))) == NULL)
+            if ((pfds = (struct pollfd *)realloc(pfds, *maxfds * sizeof(struct pollfd))) == NULL)
                 ThrowException("Malloc Error: ");
         }
         pfds[*fd_count].fd = clientfd;
@@ -139,11 +139,14 @@ void Server::ConnectClients(void)
     }
     while(1)
     {
-        if ((poll(pfds, fd_count, -1)) == -1)
+        std::cout << "looping\n";
+        int val = poll(&pfds[0], fd_count, 5000);
+        if (val == -1)
         {
             std::cout << "Poll Error: ";
             throw CustomException();
         }
+        std::cout << "fd_count is" << fd_count <<std::endl;
         for (int i = 0; i < fd_count; i++) //going through each socket to check for incoming requests
         {
             if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
