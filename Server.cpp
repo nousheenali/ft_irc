@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/15 23:35:57 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/16 12:20:08 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void Server::CreateSocket(void)
             ThrowException("SetSockOpt Error: ");
         }
         
+        fcntl(this->listener, F_SETFL, O_NONBLOCK);
         if (bind(this->listener, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
         {
             close(this->listener);
@@ -95,36 +96,37 @@ void Server::PrintIP(struct sockaddr *sa, int clientfd)
     std::cout << "Server got connection from " << s << " on socket " << clientfd <<std::endl;
 }
 
-void Server::VerifyPwd(int clientfd)
-{
-    char input[256];
-    std::string str;
+// void Server::VerifyPwd(int clientfd)
+// {
+//     char input[256];
+//     std::string str, substr;
+//     size_t pos;
     
+//     send(clientfd, "Connecting to ft_irc server......\n",34,0);
+//     do
+//     {
+//         memset(&input, 0, sizeof(input));
+//         send(clientfd, "Please enter password : ",24,0);
+//         recv(clientfd, &input, 10, 0);
+//         // if (recv(clientfd, &input, 10, 0) == -1)
+//         //     std::cout <<"error 0000000000000000\n";
+//         pos = strcspn(input, "\n"); //find position of newline
+//         str = std::string(input);
     
-    send(clientfd, "Connecting to ft_irc server......\n",34,0);
-    send(clientfd, "Please enter password : ",24,0);
-    if (recv(clientfd, &input, 256,0) == -1)
-        std::cout <<"error\n";
-    
-    std::string::size_type pos = input.find('\n');
-    if (pos != std::string::npos)
-    {
-        return s.substr(0, pos);
-    }
-    else
-    {
-        return s;
-    }
-    
-    std::cout <<"-----"<<input << "-----" <<std::endl;
-    // return str;
-    // send(clientfd, "                       Welcome To ft_irc server",48,0);
-    // send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
-    // send(clientfd,"\n",1,0);
-    // send(clientfd, "                       Welcome To ft_irc server",48,0);
-    // send(clientfd,"\n",1,0);
-    // send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
-}
+//         substr = str.substr(0, pos);
+//         if (substr == this->password)
+//             break;
+//         send(clientfd, "Incorrect Password. Try Again!\n",31,0);
+//     }while( substr != this->password);
+      
+//     send(clientfd, "Password verfication Successful.\n",33,0);
+//     send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
+//     send(clientfd,"\n",1,0);
+//     send(clientfd, "                       Welcome To ft_irc server",48,0);
+//     send(clientfd,"\n",1,0);
+//     send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
+//     send(clientfd,"\n",1,0);
+// }
 
 void Server::AcceptConnections()
 {
@@ -140,18 +142,12 @@ void Server::AcceptConnections()
         ThrowException("Accept Error: ");
     else
     {
-        VerifyPwd(clientfd);
-        // if (str == this->password)
-        // {
-            send(clientfd, "Password verfication Successful\n",32,0);
-            pfdStruct.fd = clientfd;
-            pfdStruct.events = POLLIN;
-            this->pfds.push_back(pfdStruct);
-            this->pfd_count += 1;
-            PrintIP((struct sockaddr *)&client_addr, clientfd);
-        // }
-        // else
-        //     send(clientfd, "failure\n",24,0);
+        send(clientfd, "Connection established...\n",26,0);
+        pfdStruct.fd = clientfd;
+        pfdStruct.events = POLLIN;
+        this->pfds.push_back(pfdStruct);
+        this->pfd_count += 1;
+        PrintIP((struct sockaddr *)&client_addr, clientfd);
     }
 }
 
@@ -179,15 +175,15 @@ void Server::ReceiveMessage(int i)
     {
         buf[nbytes] = '\0';
         std::cout << buf;
-        for (int j = 0; j < this->pfd_count; j++)
-        {
-            int dest_id = pfds[j].fd;
-            if (dest_id != this->listener && dest_id != sender_fd)
-            {
-                if (send(dest_id, buf, nbytes, 0)  == -1)
-                    ThrowException("send Error: ");
-            }
-        }
+        // for (int j = 0; j < this->pfd_count; j++)
+        // {
+        //     int dest_id = pfds[j].fd;
+        //     if (dest_id != this->listener && dest_id != sender_fd)
+        //     {
+        //         if (send(dest_id, buf, nbytes, 0)  == -1)
+        //             ThrowException("send Error: ");
+        //     }
+        // }
     }
 }
 
@@ -203,6 +199,7 @@ void Server::ConnectClients(void)
     this->pfds.push_back(pfdStruct);
     while(1)
     {
+        std::cout << "looping\n";
         int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
         if (val < 0)
             ThrowException("Poll Error: ");
@@ -229,10 +226,10 @@ void Server::LoadAddrinfo(void)
     memset(&hints, 0 , sizeof(hints));
     hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
-    // hints.ai_flags = AI_PASSIVE; // fills my ip address
+    hints.ai_flags = AI_PASSIVE; // fills my ip address
         
     std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
-    if ((status = getaddrinfo("127.0.0.1", port_str.c_str(), &hints, &this->servinfo)) != 0) 
+    if ((status = getaddrinfo(NULL, port_str.c_str(), &hints, &this->servinfo)) != 0) 
     { 
        throw AddrInfoError(status);
     }

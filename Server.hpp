@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/15 23:11:55 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/16 11:39:32 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Server
         void AcceptConnections();
         void ThrowException(std::string err_msg);
         void PrintIP(struct sockaddr *sa, int clientfd);
-        void VerifyPwd(int clientfd);
+        // void VerifyPwd(int clientfd);
         void ReceiveMessage(int i);
     
         class AddrInfoError: public std::exception //custom exception
