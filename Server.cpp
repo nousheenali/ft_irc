@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/12 09:19:13 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/15 23:35:57 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,17 @@ Server::Server(int port, std::string pwd)
 {
     this->port = port;
     this->password = pwd;
+    this->pfd_count = 0;
     this->CreateSocket();
-    this->BindListen();
+    this->Listen();
     this->ConnectClients();
 }
 
 Server &Server::operator=(Server const &other)
 {
-    *this = other;
+    this->port = other.port;
+    this->password = other.password;
+    this->password = other.pfd_count;
     return (*this);
 }
 
@@ -43,151 +46,180 @@ void Server::CreateSocket(void)
     struct addrinfo *p;
     int optval = 1;
     LoadAddrinfo();
-    if ((this->sockfd = socket(this->servinfo->ai_family, this->servinfo->ai_socktype, this->servinfo->ai_protocol)) == -1)
-    {            
-        freeaddrinfo(this->servinfo);
-        ThrowException("Socket Error: ");
-    } 
-    fcntl(this->sockfd, F_SETFL, O_NONBLOCK);
-    // to make the port available for reuse ref:comment #1
-    if (setsockopt(this->sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
+    for (p = this->servinfo; p != NULL; p = p->ai_next) 
     {
-        freeaddrinfo(this->servinfo);
-        ThrowException("SetSockOpt Error: ");
+        if ((this->listener = socket(this->servinfo->ai_family, this->servinfo->ai_socktype, this->servinfo->ai_protocol)) == -1)
+        {            
+            perror("Socket Error: ");
+            continue; //skip to next entry on addrinfo struct
+        } 
+        
+        // to make the port available for reuse ref:comment #1
+        if (setsockopt(this->listener, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
+        {
+            freeaddrinfo(this->servinfo);
+            ThrowException("SetSockOpt Error: ");
+        }
+        
+        if (bind(this->listener, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
+        {
+            close(this->listener);
+            perror("Socket Bind Error: ");
+            continue; //skip to next entry on addrinfo struct
+        }
+        
+        break; //break out of the loop if valid socket found
     }
+    
+    freeaddrinfo(this->servinfo);
+    if (p  == NULL)
+        ThrowException("Socket Bind Error: ");
 }
 
-void Server::BindListen(void)
+void Server::Listen(void)
 {
-    if (bind(this->sockfd, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
+    if (listen(this->listener, BACKLOG) == -1)
     {
-        close(this->sockfd);
-        freeaddrinfo(this->servinfo);
-        ThrowException("Socket Bind Error: ");
-    }
-    if (listen(sockfd, BACKLOG) == -1)
-    {
-        // close(this->sockfd);
-        freeaddrinfo(this->servinfo);
+        close(this->listener);
         ThrowException("Socket Listen Error: ");
     }
-    freeaddrinfo(this->servinfo);
 }
 
-void Server::print_ip_addr(struct sockaddr *sa, int clientfd)
+void Server::PrintIP(struct sockaddr *sa, int clientfd)
 {
     char s[INET6_ADDRSTRLEN];
     struct sockaddr_in *ptr;
-    struct sockaddr_in6 *ptr1;
     
-    if (sa->sa_family == AF_INET)
-    {
-        ptr = (struct sockaddr_in *)&sa;
-        inet_ntop(AF_INET, (struct sockaddr*)&ptr->sin_addr, s, sizeof s);
-        std::cout << "Server got connection from " << s << " on socket " << clientfd <<std::endl;
-    }
-    else if (sa->sa_family == AF_INET6)
-    {
-        ptr1 = (struct sockaddr_in6 *)&sa;
-        inet_ntop(AF_INET, (struct sockaddr*)&ptr1->sin6_addr, s, sizeof s);
-        std::cout << "Server got connection from " << s << " on socket " << clientfd <<std::endl;
-    }
-    else
-        std::cout << "Address family is neither AF_INET or AF_INET6";
+    ptr = (struct sockaddr_in *)&sa;
+    inet_ntop(AF_INET, (struct sockaddr*)&ptr->sin_addr, s, sizeof s);
+    std::cout << "Server got connection from " << s << " on socket " << clientfd <<std::endl;
 }
 
-void Server::AcceptConnections(struct pollfd *pfds, int *fd_count, int *maxfds)
+void Server::VerifyPwd(int clientfd)
 {
+    char input[256];
+    std::string str;
+    
+    
+    send(clientfd, "Connecting to ft_irc server......\n",34,0);
+    send(clientfd, "Please enter password : ",24,0);
+    if (recv(clientfd, &input, 256,0) == -1)
+        std::cout <<"error\n";
+    
+    std::string::size_type pos = input.find('\n');
+    if (pos != std::string::npos)
+    {
+        return s.substr(0, pos);
+    }
+    else
+    {
+        return s;
+    }
+    
+    std::cout <<"-----"<<input << "-----" <<std::endl;
+    // return str;
+    // send(clientfd, "                       Welcome To ft_irc server",48,0);
+    // send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
+    // send(clientfd,"\n",1,0);
+    // send(clientfd, "                       Welcome To ft_irc server",48,0);
+    // send(clientfd,"\n",1,0);
+    // send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
+}
+
+void Server::AcceptConnections()
+{
+    pollfd pfdStruct;
+    std::string str;
     int clientfd;
     socklen_t addr_len;
-    struct sockaddr_storage client_addr; // to storage clients details
+    struct sockaddr_storage client_addr; // to store clients details
     
     addr_len = sizeof(struct sockaddr_storage);
-    clientfd = accept(this->sockfd, (struct sockaddr *)&client_addr, &addr_len);
+    clientfd = accept(this->listener, (struct sockaddr *)&client_addr, &addr_len);
     if (clientfd == -1)
         ThrowException("Accept Error: ");
     else
     {
-        if (fd_count == maxfds) //if number of clients exceeds max value
+        VerifyPwd(clientfd);
+        // if (str == this->password)
+        // {
+            send(clientfd, "Password verfication Successful\n",32,0);
+            pfdStruct.fd = clientfd;
+            pfdStruct.events = POLLIN;
+            this->pfds.push_back(pfdStruct);
+            this->pfd_count += 1;
+            PrintIP((struct sockaddr *)&client_addr, clientfd);
+        // }
+        // else
+        //     send(clientfd, "failure\n",24,0);
+    }
+}
+
+void Server::ReceiveMessage(int i)
+{
+    char buf[256];
+    int nbytes, sender_fd;
+    
+    memset(&buf, 0, sizeof(buf));
+    nbytes = recv(this->pfds[i].fd, buf, sizeof(buf), 0);
+    sender_fd = pfds[i].fd;
+    
+    if (nbytes == 0)
+    {
+        std::cout << " *** Connection Closed by Client *** \n";
+        if (close(sender_fd) == -1)
+            ThrowException("Close Error: ");
+        pfds[i].fd = -1; //make the socket fd negative so it is ignored in future
+    }
+    
+    else if (nbytes < 0)
+        ThrowException("recv Error: ");
+        
+    else
+    {
+        buf[nbytes] = '\0';
+        std::cout << buf;
+        for (int j = 0; j < this->pfd_count; j++)
         {
-            *maxfds *= 2; //doubling the capacity
-            if ((pfds = (struct pollfd *)realloc(pfds, *maxfds * sizeof(struct pollfd))) == NULL)
-                ThrowException("Malloc Error: ");
+            int dest_id = pfds[j].fd;
+            if (dest_id != this->listener && dest_id != sender_fd)
+            {
+                if (send(dest_id, buf, nbytes, 0)  == -1)
+                    ThrowException("send Error: ");
+            }
         }
-        pfds[*fd_count].fd = clientfd;
-        pfds[*fd_count].events = POLLIN;
-        *fd_count += 1;
-        print_ip_addr((struct sockaddr *)&client_addr, clientfd);
     }
 }
 
 void Server::ConnectClients(void)
 {
-    struct pollfd *pfds; // to store socket information
-    int maxfds = CLIENTS;
-    int fd_count = 0;
-    char buf[256];
+    pollfd pfdStruct; // to store socket information
+    this->pfd_count = 0;
 
-    if ((pfds  = (struct pollfd *)malloc(CLIENTS * sizeof(struct pollfd))) == NULL)
-        ThrowException("Malloc Error: ");
-    //adding listener socket
-    if (CLIENTS > 0)
-    {
-        pfds[0].fd = this->sockfd; 
-        pfds[0].events = POLLIN; //for input operations are possible on this fd
-        fd_count++;
-    }
+    //adding listener socket to list of poll fds
+    pfdStruct.fd = this->listener; 
+    pfdStruct.events = POLLIN; //for input operations are possible on this fd
+    this->pfd_count += 1;
+    this->pfds.push_back(pfdStruct);
     while(1)
     {
-        std::cout << "looping\n";
-        int val = poll(&pfds[0], fd_count, 5000);
-        if (val == -1)
+        int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
+        if (val < 0)
+            ThrowException("Poll Error: ");
+        for (int i = 0; i < this->pfd_count; i++) //going through each socket to check for incoming requests
         {
-            std::cout << "Poll Error: ";
-            throw CustomException();
-        }
-        std::cout << "fd_count is" << fd_count <<std::endl;
-        for (int i = 0; i < fd_count; i++) //going through each socket to check for incoming requests
-        {
+            std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
             if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
             {
-                if (pfds[i].fd == this->sockfd)
-                    AcceptConnections(pfds, &fd_count, &maxfds);
+                if (pfds[i].fd == this->listener)
+                    AcceptConnections();
                 else
-                {
-                    int nbytes = recv(pfds[i].fd, buf, sizeof(buf), 0);
-                    int sender_fd = pfds[i].fd;
-                    if (nbytes == 0)
-                    {
-                        std::cout << "Connection Closed by client\n";
-                        if (close(sender_fd) == -1)
-                            ThrowException("Close Error: ");
-                        pfds[i].fd = -1; //make the socket fd negative so it is ignored in future
-                    }
-                    else if (nbytes < 0)
-                        ThrowException("recv Error: ");
-                    else
-                    {
-                        buf[nbytes] = '\0';
-                        std::cout << "-----" << buf << "----" <<std::endl;;
-                        // for (int j = 0; j < fd_count; j++)
-                        // {
-                            // int dest_id = pfds[j].fd;
-                            // if (dest_id != this->sockfd && dest_id != sender_fd)
-                            // {
-                            //     if (send(dest_id, buf, nbytes, 0)  == -1)
-                            //         ThrowException("send Error: ");
-                            // }
-                        // }
-                        std::cout << "testing\n";
-                    }   
-                }
-                
+                    ReceiveMessage(i);
             }
         }
     }
-    
 }
+    
 
 void Server::LoadAddrinfo(void)
 {
@@ -197,10 +229,10 @@ void Server::LoadAddrinfo(void)
     memset(&hints, 0 , sizeof(hints));
     hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
-    hints.ai_flags = AI_PASSIVE; // fills my ip address
+    // hints.ai_flags = AI_PASSIVE; // fills my ip address
         
     std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
-    if ((status = getaddrinfo(NULL, port_str.c_str(), &hints, &this->servinfo)) != 0) 
+    if ((status = getaddrinfo("127.0.0.1", port_str.c_str(), &hints, &this->servinfo)) != 0) 
     { 
        throw AddrInfoError(status);
     }

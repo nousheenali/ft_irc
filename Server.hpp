@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/12 08:48:44 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/15 23:11:55 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,20 @@
 #include <poll.h> 
 #include <fcntl.h>
 #include <arpa/inet.h> //inet_ntop
-// #include <cstdlib>
+#include <vector>
 
 #define BACKLOG 10 //no.of connections in incoming queue that waits till accept()
-#define CLIENTS 5
 
 class Server
 {
     private:
         int port;
-        int sockfd;
+        int listener;
         std::string password;
         std::string server_ip;
         struct addrinfo *servinfo;
+        std::vector<pollfd> pfds; //vector to store poll fds
+        int pfd_count;
         
     public:
         Server();
@@ -49,11 +50,13 @@ class Server
     private:
         void CreateSocket(void);
         void LoadAddrinfo(void);
-        void BindListen(void);
+        void Listen(void);
         void ConnectClients(void);
-        void AcceptConnections(struct pollfd *pfds, int *fd_count, int *maxfds);
+        void AcceptConnections();
         void ThrowException(std::string err_msg);
-        void print_ip_addr(struct sockaddr *sa, int clientfd);
+        void PrintIP(struct sockaddr *sa, int clientfd);
+        void VerifyPwd(int clientfd);
+        void ReceiveMessage(int i);
     
         class AddrInfoError: public std::exception //custom exception
         {
