@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
+/*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/16 11:39:32 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/16 14:55:50 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <arpa/inet.h> //inet_ntop
 #include <vector>
+#include "Client.hpp"
 
 #define BACKLOG 10 //no.of connections in incoming queue that waits till accept()
 
@@ -39,6 +40,7 @@ class Server
         struct addrinfo *servinfo;
         std::vector<pollfd> pfds; //vector to store poll fds
         int pfd_count;
+        std::vector<Client *> client_array;
         
     public:
         Server();

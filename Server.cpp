@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/16 12:20:08 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/16 19:08:14 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,16 +86,6 @@ void Server::Listen(void)
     }
 }
 
-void Server::PrintIP(struct sockaddr *sa, int clientfd)
-{
-    char s[INET6_ADDRSTRLEN];
-    struct sockaddr_in *ptr;
-    
-    ptr = (struct sockaddr_in *)&sa;
-    inet_ntop(AF_INET, (struct sockaddr*)&ptr->sin_addr, s, sizeof s);
-    std::cout << "Server got connection from " << s << " on socket " << clientfd <<std::endl;
-}
-
 // void Server::VerifyPwd(int clientfd)
 // {
 //     char input[256];
@@ -135,6 +125,8 @@ void Server::AcceptConnections()
     int clientfd;
     socklen_t addr_len;
     struct sockaddr_storage client_addr; // to store clients details
+    Client *c;
+
     
     addr_len = sizeof(struct sockaddr_storage);
     clientfd = accept(this->listener, (struct sockaddr *)&client_addr, &addr_len);
@@ -145,21 +137,22 @@ void Server::AcceptConnections()
         send(clientfd, "Connection established...\n",26,0);
         pfdStruct.fd = clientfd;
         pfdStruct.events = POLLIN;
+        c = new Client(clientfd);
+        client_array.push_back(c);
         this->pfds.push_back(pfdStruct);
         this->pfd_count += 1;
-        PrintIP((struct sockaddr *)&client_addr, clientfd);
+        std::cout << "Server got connection from " << c->get_ip_addr() << " on socket " << c->get_socket() <<std::endl;
     }
 }
 
-void Server::ReceiveMessage(int i)
+std::string Server::ReceiveMessage(int i, std::string str)
 {
-    char buf[256];
+    char buf[1];
     int nbytes, sender_fd;
     
     memset(&buf, 0, sizeof(buf));
     nbytes = recv(this->pfds[i].fd, buf, sizeof(buf), 0);
     sender_fd = pfds[i].fd;
-    
     if (nbytes == 0)
     {
         std::cout << " *** Connection Closed by Client *** \n";
@@ -173,8 +166,10 @@ void Server::ReceiveMessage(int i)
         
     else
     {
-        buf[nbytes] = '\0';
-        std::cout << buf;
+        // std::cout << "buf is " << buf <<"\n";
+        if(*buf != '\n')
+        str.push_back(*buf);
+        // std::cout << "str is " << str <<"\n";
         // for (int j = 0; j < this->pfd_count; j++)
         // {
         //     int dest_id = pfds[j].fd;
@@ -184,6 +179,7 @@ void Server::ReceiveMessage(int i)
         //             ThrowException("send Error: ");
         //     }
         // }
+        return (str);
     }
 }
 
@@ -191,6 +187,7 @@ void Server::ConnectClients(void)
 {
     pollfd pfdStruct; // to store socket information
     this->pfd_count = 0;
+    std::string str;
 
     //adding listener socket to list of poll fds
     pfdStruct.fd = this->listener; 
@@ -199,19 +196,19 @@ void Server::ConnectClients(void)
     this->pfds.push_back(pfdStruct);
     while(1)
     {
-        std::cout << "looping\n";
+        // std::cout << "looping\n";
         int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
         if (val < 0)
             ThrowException("Poll Error: ");
         for (int i = 0; i < this->pfd_count; i++) //going through each socket to check for incoming requests
         {
-            std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
+            // std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
             if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
             {
                 if (pfds[i].fd == this->listener)
                     AcceptConnections();
                 else
-                    ReceiveMessage(i);
+                    str = ReceiveMessage(i, str);
             }
         }
     }
@@ -226,10 +223,10 @@ void Server::LoadAddrinfo(void)
     memset(&hints, 0 , sizeof(hints));
     hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
-    hints.ai_flags = AI_PASSIVE; // fills my ip address
+    // hints.ai_flags = AI_PASSIVE; // fills my ip address
         
     std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
-    if ((status = getaddrinfo(NULL, port_str.c_str(), &hints, &this->servinfo)) != 0) 
+    if ((status = getaddrinfo("127.0.0.1", port_str.c_str(), &hints, &this->servinfo)) != 0) 
     { 
        throw AddrInfoError(status);
     }
