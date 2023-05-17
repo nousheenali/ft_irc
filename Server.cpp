@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/16 19:08:14 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/17 12:31:19 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,38 +86,6 @@ void Server::Listen(void)
     }
 }
 
-// void Server::VerifyPwd(int clientfd)
-// {
-//     char input[256];
-//     std::string str, substr;
-//     size_t pos;
-    
-//     send(clientfd, "Connecting to ft_irc server......\n",34,0);
-//     do
-//     {
-//         memset(&input, 0, sizeof(input));
-//         send(clientfd, "Please enter password : ",24,0);
-//         recv(clientfd, &input, 10, 0);
-//         // if (recv(clientfd, &input, 10, 0) == -1)
-//         //     std::cout <<"error 0000000000000000\n";
-//         pos = strcspn(input, "\n"); //find position of newline
-//         str = std::string(input);
-    
-//         substr = str.substr(0, pos);
-//         if (substr == this->password)
-//             break;
-//         send(clientfd, "Incorrect Password. Try Again!\n",31,0);
-//     }while( substr != this->password);
-      
-//     send(clientfd, "Password verfication Successful.\n",33,0);
-//     send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
-//     send(clientfd,"\n",1,0);
-//     send(clientfd, "                       Welcome To ft_irc server",48,0);
-//     send(clientfd,"\n",1,0);
-//     send(clientfd, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",70,0);
-//     send(clientfd,"\n",1,0);
-// }
-
 void Server::AcceptConnections()
 {
     pollfd pfdStruct;
@@ -145,10 +113,12 @@ void Server::AcceptConnections()
     }
 }
 
-std::string Server::ReceiveMessage(int i, std::string str)
+void Server::ReceiveMessage(int i)
 {
     char buf[1];
     int nbytes, sender_fd;
+    static std::string tmp;
+    static std::vector<std::string> vec_tmp;
     
     memset(&buf, 0, sizeof(buf));
     nbytes = recv(this->pfds[i].fd, buf, sizeof(buf), 0);
@@ -163,24 +133,34 @@ std::string Server::ReceiveMessage(int i, std::string str)
     
     else if (nbytes < 0)
         ThrowException("recv Error: ");
-        
     else
     {
-        // std::cout << "buf is " << buf <<"\n";
-        if(*buf != '\n')
-        str.push_back(*buf);
-        // std::cout << "str is " << str <<"\n";
-        // for (int j = 0; j < this->pfd_count; j++)
-        // {
-        //     int dest_id = pfds[j].fd;
-        //     if (dest_id != this->listener && dest_id != sender_fd)
-        //     {
-        //         if (send(dest_id, buf, nbytes, 0)  == -1)
-        //             ThrowException("send Error: ");
-        //     }
-        // }
-        return (str);
+        if (buf[0] != ' ' && buf[0] != '\n')
+            tmp += buf[0];
+        // std::cout << "tmp is " << tmp <<"\n";
+        else if (buf[0] == ' ' || buf[0] == '\n')
+        {
+            vec_tmp.push_back(tmp);
+            tmp.clear();
+            if (buf[0] == '\n')
+            {
+                cmds.push_back(vec_tmp);
+                vec_tmp.clear();
+                print_messages();
+            }
+        }
     }
+    // return buf[0];
+}
+
+void Server::print_messages()
+{
+    //printing the input messages recieved
+    for (int j = 0; j < cmds.size(); j++)
+        for (int k = 0; k < cmds[j].size(); k++)
+            std::cout << cmds[j][k] <<"\n";
+    std::cout << "-------------------\n";
+    
 }
 
 void Server::ConnectClients(void)
@@ -188,6 +168,9 @@ void Server::ConnectClients(void)
     pollfd pfdStruct; // to store socket information
     this->pfd_count = 0;
     std::string str;
+    // std::string tmp;
+    // std::vector<std::string> vec_tmp;
+    // char c;
 
     //adding listener socket to list of poll fds
     pfdStruct.fd = this->listener; 
@@ -208,11 +191,65 @@ void Server::ConnectClients(void)
                 if (pfds[i].fd == this->listener)
                     AcceptConnections();
                 else
-                    str = ReceiveMessage(i, str);
+                    ReceiveMessage(i);
             }
         }
     }
 }
+   
+// void Server::ConnectClients(void)
+// {
+//     pollfd pfdStruct; // to store socket information
+//     this->pfd_count = 0;
+//     std::string str;
+//     std::string tmp;
+//     std::vector<std::string> vec_tmp;
+//     char c;
+
+//     //adding listener socket to list of poll fds
+//     pfdStruct.fd = this->listener; 
+//     pfdStruct.events = POLLIN; //for input operations are possible on this fd
+//     this->pfd_count += 1;
+//     this->pfds.push_back(pfdStruct);
+//     while(1)
+//     {
+//         // std::cout << "looping\n";
+//         int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
+//         if (val < 0)
+//             ThrowException("Poll Error: ");
+//         for (int i = 0; i < this->pfd_count; i++) //going through each socket to check for incoming requests
+//         {
+//             // std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
+//             if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
+//             {
+//                 if (pfds[i].fd == this->listener)
+//                     AcceptConnections();
+//                 else
+//                 {
+//                     c = ReceiveMessage(i);
+//                     if (c != ' ' && c != '\n')
+//                         tmp += c;
+//                     else if (c == ' ' || c == '\n')
+//                     {
+//                         vec_tmp.push_back(tmp);
+//                         tmp.clear();
+//                         if (c == '\n')
+//                         {
+//                             cmds.push_back(vec_tmp);
+//                             vec_tmp.clear();
+//                             //printing the input messages recieved
+//                             for (int j = 0; j < cmds.size(); j++)
+//                                 for (int k = 0; k < cmds[j].size(); k++)
+//                                     std::cout << cmds[j][k] <<"\n";
+//                             std::cout << "-------------------\n";
+//                         }
+//                     }
+//                 }
+                    
+//             }
+//         }
+//     }
+// }
     
 
 void Server::LoadAddrinfo(void)

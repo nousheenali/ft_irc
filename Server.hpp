@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/16 14:55:50 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/17 12:30:00 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Server
         std::vector<pollfd> pfds; //vector to store poll fds
         int pfd_count;
         std::vector<Client *> client_array;
+        std::vector<std::vector <std::string> > cmds; //2d vector to save incoming msgs
         
     public:
         Server();
@@ -56,9 +57,8 @@ class Server
         void ConnectClients(void);
         void AcceptConnections();
         void ThrowException(std::string err_msg);
-        void PrintIP(struct sockaddr *sa, int clientfd);
-        // void VerifyPwd(int clientfd);
         void ReceiveMessage(int i);
+        void print_messages();
     
         class AddrInfoError: public std::exception //custom exception
         {

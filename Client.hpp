@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/05/16 18:29:02 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/17 09:11:51 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,12 @@
 class Client
 {
     private:
+        
         int fd; //socket
         bool auth; //set to true when authenticated by server
         char ip_addr[INET6_ADDRSTRLEN];
         int port;
+        std::string nick;
         
     public:
         Client();
