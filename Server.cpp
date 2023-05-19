@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/17 12:31:19 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/19 12:10:11 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ Server::Server(int port, std::string pwd)
 {
     this->port = port;
     this->password = pwd;
+    this->server_ip = "127.0.0.1";
     this->pfd_count = 0;
+    
     this->CreateSocket();
     this->Listen();
     this->ConnectClients();
@@ -58,6 +60,7 @@ void Server::CreateSocket(void)
         if (setsockopt(this->listener, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
         {
             freeaddrinfo(this->servinfo);
+            close(this->listener);
             ThrowException("SetSockOpt Error: ");
         }
         
@@ -73,16 +76,69 @@ void Server::CreateSocket(void)
     }
     
     freeaddrinfo(this->servinfo);
-    if (p  == NULL)
-        ThrowException("Socket Bind Error: ");
+    if (p  == NULL) // in case of any other error
+    {
+        close(this->listener);
+        ThrowException("Socket Error: ");
+    }
+}
+
+void Server::LoadAddrinfo(void)
+{
+    int status = -1;
+    struct addrinfo hints;
+    
+    memset(&hints, 0 , sizeof(hints));
+    hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM; // type is stream socket
+    // hints.ai_flags = AI_PASSIVE; // fills my ip address
+        
+    std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
+    if ((status = getaddrinfo(server_ip.c_str(), port_str.c_str(), &hints, &this->servinfo)) != 0) 
+    { 
+       throw AddrInfoError(status);
+    }
 }
 
 void Server::Listen(void)
 {
     if (listen(this->listener, BACKLOG) == -1)
     {
-        close(this->listener);
+        if (close(this->listener) == -1)
+            ThrowException("FD Close Error: ");
         ThrowException("Socket Listen Error: ");
+    }
+}
+
+void Server::ConnectClients(void)
+{
+    pollfd pfdStruct; // to store socket information
+
+    //adding listener socket to list of poll fds
+    pfdStruct.fd = this->listener; 
+    pfdStruct.events = POLLIN; //for input operations are possible on this fd
+    this->pfd_count += 1;
+    this->pfds.push_back(pfdStruct);
+    while(1)
+    {
+        int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
+        if (val < 0)
+        {
+            //close all fds
+            close_fds();
+            ThrowException("Poll Error: ");
+        }
+        for (int i = 0; i < this->pfd_count; i++) //going through each socket to check for incoming requests
+        {
+            // std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
+            if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
+            {
+                if (pfds[i].fd == this->listener)
+                    AcceptConnections();
+                else
+                    ReceiveMessage(i);
+            }
+        }
     }
 }
 
@@ -102,14 +158,15 @@ void Server::AcceptConnections()
         ThrowException("Accept Error: ");
     else
     {
-        send(clientfd, "Connection established...\n",26,0);
+        std::string msg = "Connection established...\n";
+        send(clientfd, msg.c_str(), msg.size(), 0);
         pfdStruct.fd = clientfd;
         pfdStruct.events = POLLIN;
         c = new Client(clientfd);
-        client_array.push_back(c);
+        client_array.insert(std::make_pair<int, Client *>(clientfd, c));
         this->pfds.push_back(pfdStruct);
         this->pfd_count += 1;
-        std::cout << "Server got connection from " << c->get_ip_addr() << " on socket " << c->get_socket() <<std::endl;
+        std::cout << YELLOW <<" *** Server got connection from " << c->get_ip_addr() << " on socket " << c->get_socket() << " *** "<< RESET <<std::endl;
     }
 }
 
@@ -117,158 +174,77 @@ void Server::ReceiveMessage(int i)
 {
     char buf[1];
     int nbytes, sender_fd;
-    static std::string tmp;
-    static std::vector<std::string> vec_tmp;
     
     memset(&buf, 0, sizeof(buf));
     nbytes = recv(this->pfds[i].fd, buf, sizeof(buf), 0);
     sender_fd = pfds[i].fd;
     if (nbytes == 0)
     {
-        std::cout << " *** Connection Closed by Client *** \n";
+        std::cout << RED <<" *** Connection Closed by Client *** \n" << RESET ;
         if (close(sender_fd) == -1)
-            ThrowException("Close Error: ");
+            ThrowException("FD Close Error: ");
+        client_array.erase(pfds[i].fd); // remove the client from the array
         pfds[i].fd = -1; //make the socket fd negative so it is ignored in future
     }
     
     else if (nbytes < 0)
         ThrowException("recv Error: ");
-    else
-    {
-        if (buf[0] != ' ' && buf[0] != '\n')
-            tmp += buf[0];
-        // std::cout << "tmp is " << tmp <<"\n";
-        else if (buf[0] == ' ' || buf[0] == '\n')
-        {
-            vec_tmp.push_back(tmp);
-            tmp.clear();
-            if (buf[0] == '\n')
-            {
-                cmds.push_back(vec_tmp);
-                vec_tmp.clear();
-                print_messages();
-            }
-        }
-    }
-    // return buf[0];
-}
-
-void Server::print_messages()
-{
-    //printing the input messages recieved
-    for (int j = 0; j < cmds.size(); j++)
-        for (int k = 0; k < cmds[j].size(); k++)
-            std::cout << cmds[j][k] <<"\n";
-    std::cout << "-------------------\n";
-    
-}
-
-void Server::ConnectClients(void)
-{
-    pollfd pfdStruct; // to store socket information
-    this->pfd_count = 0;
-    std::string str;
-    // std::string tmp;
-    // std::vector<std::string> vec_tmp;
-    // char c;
-
-    //adding listener socket to list of poll fds
-    pfdStruct.fd = this->listener; 
-    pfdStruct.events = POLLIN; //for input operations are possible on this fd
-    this->pfd_count += 1;
-    this->pfds.push_back(pfdStruct);
-    while(1)
-    {
-        // std::cout << "looping\n";
-        int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
-        if (val < 0)
-            ThrowException("Poll Error: ");
-        for (int i = 0; i < this->pfd_count; i++) //going through each socket to check for incoming requests
-        {
-            // std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
-            if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
-            {
-                if (pfds[i].fd == this->listener)
-                    AcceptConnections();
-                else
-                    ReceiveMessage(i);
-            }
-        }
-    }
-}
-   
-// void Server::ConnectClients(void)
-// {
-//     pollfd pfdStruct; // to store socket information
-//     this->pfd_count = 0;
-//     std::string str;
-//     std::string tmp;
-//     std::vector<std::string> vec_tmp;
-//     char c;
-
-//     //adding listener socket to list of poll fds
-//     pfdStruct.fd = this->listener; 
-//     pfdStruct.events = POLLIN; //for input operations are possible on this fd
-//     this->pfd_count += 1;
-//     this->pfds.push_back(pfdStruct);
-//     while(1)
-//     {
-//         // std::cout << "looping\n";
-//         int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 
-//         if (val < 0)
-//             ThrowException("Poll Error: ");
-//         for (int i = 0; i < this->pfd_count; i++) //going through each socket to check for incoming requests
-//         {
-//             // std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
-//             if (pfds[i].revents & POLLIN) //checking revents if it is set to POLLIN
-//             {
-//                 if (pfds[i].fd == this->listener)
-//                     AcceptConnections();
-//                 else
-//                 {
-//                     c = ReceiveMessage(i);
-//                     if (c != ' ' && c != '\n')
-//                         tmp += c;
-//                     else if (c == ' ' || c == '\n')
-//                     {
-//                         vec_tmp.push_back(tmp);
-//                         tmp.clear();
-//                         if (c == '\n')
-//                         {
-//                             cmds.push_back(vec_tmp);
-//                             vec_tmp.clear();
-//                             //printing the input messages recieved
-//                             for (int j = 0; j < cmds.size(); j++)
-//                                 for (int k = 0; k < cmds[j].size(); k++)
-//                                     std::cout << cmds[j][k] <<"\n";
-//                             std::cout << "-------------------\n";
-//                         }
-//                     }
-//                 }
-                    
-//             }
-//         }
-//     }
-// }
-    
-
-void Server::LoadAddrinfo(void)
-{
-    int status = -1;
-    struct addrinfo hints;
-    
-    memset(&hints, 0 , sizeof(hints));
-    hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
-    hints.ai_socktype = SOCK_STREAM; // type is stream socket
-    // hints.ai_flags = AI_PASSIVE; // fills my ip address
         
-    std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
-    if ((status = getaddrinfo("127.0.0.1", port_str.c_str(), &hints, &this->servinfo)) != 0) 
-    { 
-       throw AddrInfoError(status);
+    else
+        MessageStoreExecute(buf[0], pfds[i].fd);
+}
+
+void Server::MessageStoreExecute(char ch, int client_fd)
+{
+    std::map<int, Client *>::iterator it;
+    static std::string tmp;
+    
+    if (ch != ' ' && ch != '\n')
+        tmp += ch;
+    else if (ch == ' ' || ch == '\n')
+    {
+        // std::cout << "tmp is " << tmp <<"\n";
+        it = client_array.find(client_fd);
+        if (it != client_array.end())
+        {
+            it->second->message.push_back(tmp);
+            tmp.clear();
+            if (ch == '\n')
+            {
+                //parse and process request here
+                print_messages(client_fd);
+                it->second->message.clear();
+            }
+        }
     }
 }
 
+void Server::print_messages(int fd)
+{
+    std::map<int, Client *>::iterator it;
+    int size;
+
+    it = this->client_array.find(fd);
+    if (it != client_array.end())
+    {
+        size = it->second->message.size();
+        for (int j = 0; j < size; j++)
+            std::cout << it->second->message[j] << "\n";
+        std::cout << "-------------------\n";
+    }
+    
+}
+
+void Server::close_fds()
+{
+    std::cout << "close fd called \n";
+    for (int i = 0; i < pfds.size(); i++)
+    {
+        if (pfds[i].fd > 0)  // closed client connections are set to -1 so this check
+            if (close(pfds[i].fd) == -1)
+                ThrowException("FD Close Error: ");
+    }
+}
 
 //exceptions
 void Server::ThrowException(std::string err_msg)

@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/17 12:30:00 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/19 12:03:26 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,14 @@
 #include <fcntl.h>
 #include <arpa/inet.h> //inet_ntop
 #include <vector>
+#include <map>
 #include "Client.hpp"
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"    
+#define GREEN   "\033[32m"     
+#define YELLOW  "\033[33m"     
+#define BLUE    "\033[34m"      
 #define BACKLOG 10 //no.of connections in incoming queue that waits till accept()
 
 class Server
@@ -39,9 +45,8 @@ class Server
         std::string server_ip;
         struct addrinfo *servinfo;
         std::vector<pollfd> pfds; //vector to store poll fds
-        int pfd_count;
-        std::vector<Client *> client_array;
-        std::vector<std::vector <std::string> > cmds; //2d vector to save incoming msgs
+        int pfd_count;   //to store file descriptors to be polled
+        std::map<int, Client *> client_array; 
         
     public:
         Server();
@@ -58,7 +63,9 @@ class Server
         void AcceptConnections();
         void ThrowException(std::string err_msg);
         void ReceiveMessage(int i);
-        void print_messages();
+        void MessageStoreExecute(char c, int client_fd);
+        void print_messages(int fd);
+        void close_fds();
     
         class AddrInfoError: public std::exception //custom exception
         {

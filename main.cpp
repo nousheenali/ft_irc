@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:27:06 by nali              #+#    #+#             */
-/*   Updated: 2023/05/09 13:35:26 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/19 11:00:05 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
         std::cout << "Port number has to be a value from 1024 to 65535." << std::endl; 
         exit(1);
     }
-
+ 
     try
     {
         Server irc(port, argv[2]);
@@ -38,6 +38,5 @@ int main(int argc, char **argv)
     {
         std::cerr << e.what() << '\n';
     }
-    printf("hello there\n");
     return (0);
 }
