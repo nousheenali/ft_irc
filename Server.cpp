@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/19 12:10:11 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/19 19:25:22 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,18 +178,15 @@ void Server::ReceiveMessage(int i)
     memset(&buf, 0, sizeof(buf));
     nbytes = recv(this->pfds[i].fd, buf, sizeof(buf), 0);
     sender_fd = pfds[i].fd;
-    if (nbytes == 0)
+    if (nbytes <= 0)
     {
         std::cout << RED <<" *** Connection Closed by Client *** \n" << RESET ;
         if (close(sender_fd) == -1)
             ThrowException("FD Close Error: ");
         client_array.erase(pfds[i].fd); // remove the client from the array
         pfds[i].fd = -1; //make the socket fd negative so it is ignored in future
-    }
-    
-    else if (nbytes < 0)
-        ThrowException("recv Error: ");
-        
+        return;
+    }        
     else
         MessageStoreExecute(buf[0], pfds[i].fd);
 }
@@ -213,6 +210,8 @@ void Server::MessageStoreExecute(char ch, int client_fd)
             {
                 //parse and process request here
                 print_messages(client_fd);
+                std::string msg = "001 nali : Welcome nali to the ft_irc network\r\n";
+                send(client_fd, msg.c_str(), msg.length(), 0);
                 it->second->message.clear();
             }
         }
@@ -307,4 +306,16 @@ optval       -  To access option values for setsockopt. The parameter should be 
         short events;   //requested events
         short revents;  //returned events
     };
+*/
+
+/* Message format to client
+    
+    :server 001 <nick> :Welcome to the <network> Network, <nick>[!<user>@<host>]
+    <nick>: Nickname of the connecting user.
+    <network>: Network name.
+    <user>@<host>: Username and hostname of the connecting user.
+    
+    https://dd.ircdocs.horse/refs/numerics/001.html
+    https://www.rfc-editor.org/rfc/rfc2812
+    
 */
