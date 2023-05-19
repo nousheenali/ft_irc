@@ -15,3 +15,6 @@ socket programming reference links
 * https://www.ibm.com/docs/en/i/7.2?topic=clients-example-ipv4-ipv6-client
 * https://irssi.org/documentation/
 * https://github.com/irssi/irssi
+
+
+http://chi.cs.uchicago.edu/chirc/irc_examples.html
