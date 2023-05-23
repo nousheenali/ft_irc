@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/19 19:25:22 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/23 10:45:42 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ Server::Server(int port, std::string pwd)
     this->port = port;
     this->password = pwd;
     this->server_ip = "127.0.0.1";
+    this->server_name = "ft_irc";
     this->pfd_count = 0;
     
     this->CreateSocket();
@@ -158,8 +159,6 @@ void Server::AcceptConnections()
         ThrowException("Accept Error: ");
     else
     {
-        std::string msg = "Connection established...\n";
-        send(clientfd, msg.c_str(), msg.size(), 0);
         pfdStruct.fd = clientfd;
         pfdStruct.events = POLLIN;
         c = new Client(clientfd);
@@ -195,24 +194,28 @@ void Server::MessageStoreExecute(char ch, int client_fd)
 {
     std::map<int, Client *>::iterator it;
     static std::string tmp;
+    static std::vector<std::string> vec;
     
-    if (ch != ' ' && ch != '\n')
+    if (ch != ' ' && ch != '\n' && ch != '\r')
         tmp += ch;
     else if (ch == ' ' || ch == '\n')
     {
         // std::cout << "tmp is " << tmp <<"\n";
-        it = client_array.find(client_fd);
-        if (it != client_array.end())
+        vec.push_back(tmp);
+        tmp.clear();
+        if (ch == '\n')
         {
-            it->second->message.push_back(tmp);
-            tmp.clear();
-            if (ch == '\n')
+            it = client_array.find(client_fd);
+            if (it != client_array.end())
             {
                 //parse and process request here
+                it->second->message.push_back(vec);
+                vec.clear();
                 print_messages(client_fd);
-                std::string msg = "001 nali : Welcome nali to the ft_irc network\r\n";
-                send(client_fd, msg.c_str(), msg.length(), 0);
-                it->second->message.clear();
+                it->second->nick = "nali";
+                // SendReply(client_fd, RPL_WELCOME(it->second->nick));
+                SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->nick, "TESTING"));
+                // it->second->message.clear();
             }
         }
     }
@@ -221,18 +224,42 @@ void Server::MessageStoreExecute(char ch, int client_fd)
 void Server::print_messages(int fd)
 {
     std::map<int, Client *>::iterator it;
-    int size;
+    std::vector <std::vector <std::string> > vec;
 
     it = this->client_array.find(fd);
     if (it != client_array.end())
     {
-        size = it->second->message.size();
-        for (int j = 0; j < size; j++)
-            std::cout << it->second->message[j] << "\n";
-        std::cout << "-------------------\n";
+        vec = it->second->message;
+        for (int i = 0; i < vec.size(); i++)
+        {
+            for (int j= 0; j < vec[i].size(); j++)
+                std::cout << vec[i][j] << " ";
+            std::cout << "\n";
+        }
+        std::cout << "---------------------\n";
     }
-    
 }
+
+void Server::SendReply(int client_fd, std::string msg)
+{
+    send(client_fd, msg.c_str(), msg.length(), 0);
+}
+
+// void Server::print_messages(int fd)
+// {
+//     std::map<int, Client *>::iterator it;
+//     int size;
+
+//     it = this->client_array.find(fd);
+//     if (it != client_array.end())
+//     {
+//         size = it->second->message.size();
+//         for (int j = 0; j < size; j++)
+//             std::cout << it->second->message[j] << "\n";
+//         std::cout << "-------------------\n";
+//     }
+    
+// }
 
 void Server::close_fds()
 {

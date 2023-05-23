@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/19 12:03:26 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/22 18:14:32 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 #include "Client.hpp"
+#include "Replies.hpp"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"    
@@ -43,6 +44,7 @@ class Server
         int listener;
         std::string password;
         std::string server_ip;
+        std::string server_name;
         struct addrinfo *servinfo;
         std::vector<pollfd> pfds; //vector to store poll fds
         int pfd_count;   //to store file descriptors to be polled
@@ -66,6 +68,7 @@ class Server
         void MessageStoreExecute(char c, int client_fd);
         void print_messages(int fd);
         void close_fds();
+        void SendReply(int client_fd, std::string msg);
     
         class AddrInfoError: public std::exception //custom exception
         {

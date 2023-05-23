@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/05/19 10:21:55 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/22 18:28:44 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@ class Client
         bool auth; //set to true when authenticated by server
         char ip_addr[INET6_ADDRSTRLEN];
         int port;
-        std::string nick;
         
     public:
-        std::vector <std::string> message;
+        std::string nick;
+        // std::vector <std::string> message;
+        std::vector <std::vector<std::string> > message;
         
     public:
         Client();
