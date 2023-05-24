@@ -1,20 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Replies.hpp                                        :+:      :+:    :+:   */
+/*   Mode.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 11:25:52 by nali             ###   ########.fr       */
+/*   Created: 2023/05/24 11:32:53 by nali              #+#    #+#             */
+/*   Updated: 2023/05/24 11:34:32 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REPLIES_HPP
-#define REPLIES_HPP
+#ifndef MODE_HPP
+#define MODE_HPP
 
-#define RPL_WELCOME(nick) ("001" + nick + ": a Welcome to the Internet Relay Network.\r\n")
-#define ERR_UNKNOWNCOMMAND(nick, command)	 ("421 " + nick + " " + command + " :Unknown command\r\n")
-#define ERR_NOSUCHCHANNEL(channel)          ("403 " + channel + " :No such channel\r\n")
+#include "Replies.hpp"
+#include "Channel.hpp"
+#include "Server.hpp"
+
+class Server;
+class Mode
+{
+    // enum option{ZERO = 0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN} ;
+    // option hashit (std::string &opt);
+
+    public:
+        Mode();
+        Mode(int client_fd, Server *serv);
+};
 
 #endif

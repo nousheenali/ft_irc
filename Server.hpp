@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/22 18:14:32 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 11:51:21 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <map>
 #include "Client.hpp"
 #include "Replies.hpp"
+#include "Mode.hpp"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"    
@@ -51,6 +52,7 @@ class Server
         std::map<int, Client *> client_array; 
         
     public:
+        std::map<int, Channel *> channel_array; 
         Server();
         Server(int port, std::string pwd);
         Server(Server const &other);

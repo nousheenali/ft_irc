@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/05/16 18:30:15 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 11:30:09 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,3 +44,9 @@ int Client::get_port()
 
 int Client::get_socket()
 {   return (this->fd); }
+
+int Client::get_auth()
+{   return (this->auth); }
+
+void Client::set_auth(int val)
+{   this->auth = val;}

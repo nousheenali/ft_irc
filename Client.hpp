@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 11:13:30 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 11:30:18 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ class Client
         char *get_ip_addr();
         int get_port();
         int get_socket();
+        int get_auth();
+        void set_auth(int val);
         
 };
 
