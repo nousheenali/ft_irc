@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/23 10:45:42 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 11:19:29 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,28 +194,26 @@ void Server::MessageStoreExecute(char ch, int client_fd)
 {
     std::map<int, Client *>::iterator it;
     static std::string tmp;
-    static std::vector<std::string> vec;
+    // static std::vector<std::string> vec;
     
     if (ch != ' ' && ch != '\n' && ch != '\r')
         tmp += ch;
     else if (ch == ' ' || ch == '\n')
     {
-        // std::cout << "tmp is " << tmp <<"\n";
-        vec.push_back(tmp);
-        tmp.clear();
-        if (ch == '\n')
+        it = client_array.find(client_fd);
+        if (it != client_array.end())
         {
-            it = client_array.find(client_fd);
-            if (it != client_array.end())
+            it->second->message.push_back(tmp);
+            // std::cout << "tmp is " << tmp <<"\n";
+            tmp.clear();
+            if (ch == '\n')
             {
                 //parse and process request here
-                it->second->message.push_back(vec);
-                vec.clear();
                 print_messages(client_fd);
                 it->second->nick = "nali";
-                // SendReply(client_fd, RPL_WELCOME(it->second->nick));
-                SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->nick, "TESTING"));
-                // it->second->message.clear();
+                SendReply(client_fd, RPL_WELCOME(it->second->nick));
+                // SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->nick, "TESTING"));
+                it->second->message.clear();
             }
         }
     }
@@ -224,19 +222,15 @@ void Server::MessageStoreExecute(char ch, int client_fd)
 void Server::print_messages(int fd)
 {
     std::map<int, Client *>::iterator it;
-    std::vector <std::vector <std::string> > vec;
+    int size;
 
     it = this->client_array.find(fd);
     if (it != client_array.end())
     {
-        vec = it->second->message;
-        for (int i = 0; i < vec.size(); i++)
-        {
-            for (int j= 0; j < vec[i].size(); j++)
-                std::cout << vec[i][j] << " ";
-            std::cout << "\n";
-        }
-        std::cout << "---------------------\n";
+        size = it->second->message.size();
+        for (int j= 0; j < size; j++)
+            std::cout << it->second->message[j] << " ";
+        std::cout << "\n---------------------\n";
     }
 }
 

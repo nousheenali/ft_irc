@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/05/22 18:28:44 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 11:13:30 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ class Client
         
     public:
         std::string nick;
-        // std::vector <std::string> message;
-        std::vector <std::vector<std::string> > message;
+        std::vector <std::string> message;
+        // std::vector <std::vector<std::string> > message;
         
     public:
         Client();
