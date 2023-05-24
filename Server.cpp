@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 13:15:34 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 13:37:36 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,6 +296,25 @@ void Server::close_fds()
             if (close(pfds[i].fd) == -1)
                 ThrowException("FD Close Error: ");
     }
+}
+
+
+Client* Server::GetClient(int client_fd)
+{
+    std::map<int, Client*>::iterator it;
+    it = this->client_array.find(client_fd);
+    if (it != client_array.end())
+        return (it->second);
+    return (NULL);
+}
+
+Channel* Server::GetChannel(std::string name)
+{
+    std::map<std::string, Channel*>::iterator it;
+    it = this->channel_array.find(name);
+    if (it != channel_array.end())
+        return (it->second);
+    return (NULL);
 }
 
 //exceptions
