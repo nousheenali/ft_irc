@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 11:51:21 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 12:41:24 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ class Server
         void ReceiveMessage(int i);
         void MessageStoreExecute(char c, int client_fd);
         void print_messages(int fd);
+		int	 check_auth(int fd);
         void close_fds();
         void SendReply(int client_fd, std::string msg);
     
