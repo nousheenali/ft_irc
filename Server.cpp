@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 12:40:01 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 13:15:34 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,9 +214,11 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 it->second->nick = "nali";
                 if (it->second->get_auth() == 0)
                 {
+					int ret = check_auth(client_fd);
                     SendReply(client_fd, RPL_WELCOME(it->second->nick));
                     // SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->nick, "TESTING"));
-                    it->second->set_auth(1);
+					if (ret == 0)
+                    	it->second->set_auth(1);
                 }
                 if (it->second->get_auth() == 1)
                 {
@@ -248,6 +250,20 @@ void Server::print_messages(int fd)
             std::cout << it->second->message[j] << " ";
         std::cout << "\n---------------------\n";
     }
+}
+
+int Server::check_auth(int fd)
+{
+	std::map<int, Client *>::iterator it;
+
+	it = client_array.find(fd);
+	if (it != client_array.end())
+    {
+		if (it->second->message[0].compare("PASS") && it->second->message[1].compare(this->password))
+			return (0);
+        std::cout << "cmd is PASS but password incorrect\n";
+	}
+	return (1);
 }
 
 void Server::SendReply(int client_fd, std::string msg)
