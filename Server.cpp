@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 13:37:36 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 13:49:15 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,15 +239,15 @@ void Server::MessageStoreExecute(char ch, int client_fd)
 
 void Server::print_messages(int fd)
 {
-    std::map<int, Client *>::iterator it;
+    Client *c;
     int size;
-
-    it = this->client_array.find(fd);
-    if (it != client_array.end())
+    
+    c = GetClient(fd);
+    if (c != NULL)
     {
-        size = it->second->message.size();
+        size = c->message.size();
         for (int j= 0; j < size; j++)
-            std::cout << it->second->message[j] << " ";
+            std::cout << c->message[j] << " ";
         std::cout << "\n---------------------\n";
     }
 }
