@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 12:02:49 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 12:40:01 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,14 +220,14 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 }
                 if (it->second->get_auth() == 1)
                 {
-                    // if (it->second->message[0] == "MODE")
-                    // {
-                    //     chl = new Channel("chl1");
-                    //     this->channel_array.insert(std::make_pair("chl1", chl));
-                    //     chl = new Channel("chl2");
-                    //     this->channel_array.insert(std::make_pair("chl2", chl));
-                    //     Mode(client_fd, this);
-                    // }
+                    if (it->second->message[0] == "MODE")
+                    {
+                        chl = new Channel("chl1");
+                        this->channel_array.insert(std::make_pair("chl1", chl));
+                        chl = new Channel("chl2");
+                        this->channel_array.insert(std::make_pair("chl2", chl));
+                        Mode(client_fd, this);
+                    }
                 }
                 it->second->message.clear();
             }

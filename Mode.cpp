@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 12:04:01 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 12:47:13 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ Mode::Mode(int client_fd, Server *serv)
 {
     // if channel does not exist
     // std::cout <<"here...." <<msg[1] << std::endl;
-    // std::vector<std::string> msg;
-    // std::map<std::string, Channel *>::iterator it;
+    std::vector<std::string> msg;
+    std::map<std::string, Channel *>::iterator it;
 
     // it = serv->channel_array.find();
     // if (it == serv->channels.end())
