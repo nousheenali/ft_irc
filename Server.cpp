@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 14:21:53 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/05/24 14:40:22 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,10 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                         it->second->message.clear();
                         return;
                     }
+					else
+					{
+						// execute_cmds
+					}
                 }
                 if (it->second->get_auth() == 1)
                 {
@@ -270,12 +274,14 @@ int Server::check_auth(int fd)
     {
         if (c->message.size() < 1)
             SendReply(fd, ERR_NEEDMOREPARAMS(c->message[0]));
-		if (c->message[0] == "PASS")
+		if (c->message[0] == "PASS" || c->message[0] == "NICK" || c->message[0] == "USER")
         {
-            if (c->message[1] == this->password)
+            if (c->message[0] == "PASS" && c->message[1] == this->password)
 			    return (0);
-            else
+            else if ((c->message[0] == "PASS" && c->message[1] != this->password))
                 return (-1);
+			else
+				return (1);
         }
         // std::cout << "cmd is PASS but password incorrect" << this->password << it->second->message[1] << "\n";
 	}

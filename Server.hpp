@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 13:38:58 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 14:33:49 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <map>
 #include "Client.hpp"
 #include "Replies.hpp"
+#include "Command.hpp"
 #include "Mode.hpp"
 
 #define RESET   "\033[0m"
@@ -51,6 +52,7 @@ class Server
         int pfd_count;   //to store file descriptors to be polled
         std::map<int, Client *> client_array; 
         std::map<std::string, Channel *> channel_array; 
+		Command *cmd_cls;
         
     public:
         Server();
