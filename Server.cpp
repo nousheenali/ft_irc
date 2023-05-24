@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 13:49:15 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/24 14:21:53 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,9 +215,11 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 if (it->second->get_auth() == 0)
                 {
 					int ret = check_auth(client_fd);
-                    SendReply(client_fd, RPL_WELCOME(it->second->nick));
 					if (ret == 0)
+					{
+                    	SendReply(client_fd, RPL_WELCOME(it->second->nick));
                     	it->second->set_auth(1);
+					}
                     else if (ret == -1)
                     {
                         SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->message[0]));
@@ -259,16 +261,18 @@ void Server::print_messages(int fd)
 
 int Server::check_auth(int fd)
 {
+	Client *c;
 	std::map<int, Client *>::iterator it;
 
-	it = client_array.find(fd);
-	if (it != client_array.end())
+	// it = client_array.find(fd);
+	c = GetClient(fd);
+	if (c != NULL)
     {
-        if (it->second->message.size() < 1)
-            SendReply(fd, ERR_NEEDMOREPARAMS(it->second->message[0]));
-		if (it->second->message[0] == "PASS")
+        if (c->message.size() < 1)
+            SendReply(fd, ERR_NEEDMOREPARAMS(c->message[0]));
+		if (c->message[0] == "PASS")
         {
-            if (it->second->message[1] == this->password)
+            if (c->message[1] == this->password)
 			    return (0);
             else
                 return (-1);
