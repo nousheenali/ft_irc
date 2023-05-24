@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 12:41:24 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/05/24 13:38:58 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,16 @@ class Server
         std::vector<pollfd> pfds; //vector to store poll fds
         int pfd_count;   //to store file descriptors to be polled
         std::map<int, Client *> client_array; 
+        std::map<std::string, Channel *> channel_array; 
         
     public:
-        std::map<int, Channel *> channel_array; 
         Server();
         Server(int port, std::string pwd);
         Server(Server const &other);
         Server &operator= (Server const &other);
         ~Server();
+        Client* GetClient(int client_fd);
+        Channel* GetChannel(std::string name);
 
     private:
         void CreateSocket(void);

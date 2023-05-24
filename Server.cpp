@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 12:42:51 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/05/24 13:49:15 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,7 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 if (it->second->get_auth() == 0)
                 {
 					int ret = check_auth(client_fd);
+                    SendReply(client_fd, RPL_WELCOME(it->second->nick));
 					if (ret == 0)
                     	it->second->set_auth(1);
                     else if (ret == -1)
@@ -226,15 +227,14 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 }
                 if (it->second->get_auth() == 1)
                 {
-                    SendReply(client_fd, RPL_WELCOME(it->second->nick));
-                    // if (it->second->message[0] == "MODE")
-                    // {
-                    //     chl = new Channel("chl1");
-                    //     this->channel_array.insert(std::make_pair("chl1", chl));
-                    //     chl = new Channel("chl2");
-                    //     this->channel_array.insert(std::make_pair("chl2", chl));
-                    //     Mode(client_fd, this);
-                    // }
+                    if (it->second->message[0] == "MODE")
+                    {
+                        chl = new Channel("chl1");
+                        this->channel_array.insert(std::make_pair("chl1", chl));
+                        chl = new Channel("chl2");
+                        this->channel_array.insert(std::make_pair("chl2", chl));
+                        Mode(client_fd, this);
+                    }
                 }
                 it->second->message.clear();
             }
@@ -244,15 +244,15 @@ void Server::MessageStoreExecute(char ch, int client_fd)
 
 void Server::print_messages(int fd)
 {
-    std::map<int, Client *>::iterator it;
+    Client *c;
     int size;
-
-    it = this->client_array.find(fd);
-    if (it != client_array.end())
+    
+    c = GetClient(fd);
+    if (c != NULL)
     {
-        size = it->second->message.size();
+        size = c->message.size();
         for (int j= 0; j < size; j++)
-            std::cout << it->second->message[j] << " ";
+            std::cout << c->message[j] << " ";
         std::cout << "\n---------------------\n";
     }
 }
@@ -308,6 +308,25 @@ void Server::close_fds()
             if (close(pfds[i].fd) == -1)
                 ThrowException("FD Close Error: ");
     }
+}
+
+
+Client* Server::GetClient(int client_fd)
+{
+    std::map<int, Client*>::iterator it;
+    it = this->client_array.find(client_fd);
+    if (it != client_array.end())
+        return (it->second);
+    return (NULL);
+}
+
+Channel* Server::GetChannel(std::string name)
+{
+    std::map<std::string, Channel*>::iterator it;
+    it = this->channel_array.find(name);
+    if (it != channel_array.end())
+        return (it->second);
+    return (NULL);
 }
 
 //exceptions
