@@ -24,6 +24,6 @@
 #define ERR_UNAVAILRESOURCE(nick_channel)	("437 " + nick_channel + " :Nick/channel is temporarily unavailable\r\n")
 #define ERR_RESTRICTED()					("484 :Your connection is restricted!\r\n")
 
-#define ERR_UNKNOWNCOMMAND(nick, command)	("421 " + nick + " " + command + " :Unknown command\r\n")
+#define ERR_UNKNOWNCOMMAND(command)	("421 " + command + " :Unknown command\r\n")
 
 #endif

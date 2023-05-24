@@ -215,13 +215,18 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 if (it->second->get_auth() == 0)
                 {
 					int ret = check_auth(client_fd);
-                    SendReply(client_fd, RPL_WELCOME(it->second->nick));
-                    // SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->nick, "TESTING"));
 					if (ret == 0)
                     	it->second->set_auth(1);
+                    else if (ret == -1)
+                    {
+                        SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->message[0]));
+                        it->second->message.clear();
+                        return;
+                    }
                 }
                 if (it->second->get_auth() == 1)
                 {
+                    SendReply(client_fd, RPL_WELCOME(it->second->nick));
                     // if (it->second->message[0] == "MODE")
                     // {
                     //     chl = new Channel("chl1");
@@ -259,9 +264,16 @@ int Server::check_auth(int fd)
 	it = client_array.find(fd);
 	if (it != client_array.end())
     {
-		if (it->second->message[0].compare("PASS") && it->second->message[1].compare(this->password))
-			return (0);
-        std::cout << "cmd is PASS but password incorrect\n";
+        if (it->second->message.size() < 1)
+            SendReply(fd, ERR_NEEDMOREPARAMS(it->second->message[0]));
+		if (it->second->message[0] == "PASS")
+        {
+            if (it->second->message[1] == this->password)
+			    return (0);
+            else
+                return (-1);
+        }
+        // std::cout << "cmd is PASS but password incorrect" << this->password << it->second->message[1] << "\n";
 	}
 	return (1);
 }
