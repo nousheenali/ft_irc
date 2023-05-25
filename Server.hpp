@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 14:33:49 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/05/24 15:03:00 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class Server
         ~Server();
         Client* GetClient(int client_fd);
         Channel* GetChannel(std::string name);
+        void SendReply(int client_fd, std::string msg);
 
     private:
         void CreateSocket(void);
@@ -75,7 +76,7 @@ class Server
         void print_messages(int fd);
 		int	 check_auth(int fd);
         void close_fds();
-        void SendReply(int client_fd, std::string msg);
+        
     
         class AddrInfoError: public std::exception //custom exception
         {

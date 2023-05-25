@@ -17,4 +17,8 @@ socket programming reference links
 * https://github.com/irssi/irssi
 
 
-http://chi.cs.uchicago.edu/chirc/irc_examples.html
+#### How messages are sent between client and server
+* http://chi.cs.uchicago.edu/chirc/irc_examples.html
+* https://www.rfc-editor.org/rfc/rfc2812#section-3.2.3
+* https://defs.ircdocs.horse/defs/numerics.html
+* https://dd.ircdocs.horse/refs/numerics/001.html
