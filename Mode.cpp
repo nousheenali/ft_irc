@@ -6,24 +6,20 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 14:48:31 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 23:24:50 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Mode.hpp"
 
-Mode::Mode()
-{}
 // mode command format
 /* /Mode <channel-name> <modes> <args>*/
 Mode::Mode(int client_fd, Server *serv)
-{
-    Client *c;
-    
+{   
     this->client_fd = client_fd;
     this->serv = serv;
-    c = serv->GetClient(client_fd);
-    this->msg = c->message;
+    this->client = serv->GetClient(client_fd);
+    this->msg = client->message;
     
     if (msg.size() < 3) //if no arguments
     {
@@ -59,7 +55,7 @@ void Mode::CheckMode()
             if (ch == '+' || ch == '-')
                 prev = ch;
             else
-            {
+            { 
                 if (prev == '+' || prev == '-')
                     s.push_back(prev);
                 else
@@ -76,6 +72,7 @@ void Mode::CheckMode()
             s.clear();
         }
     }
+    //send reply to channel combining reply_mode + " " + reply_args
 }
 
 //using a hash function becauce switches dont handle strings
@@ -96,90 +93,96 @@ Mode::option Mode::hashit (std::string &opt)
 
 void Mode::SelectOption(std::string str)
 {
+    // if client does not have operator rights on channel none of the 
+    // commands should be possible
+    // serv->SendReply(client_fd, ERR_CHANOPRIVSNEEDED(channel));
+        // return;
+    
     switch (hashit(str))
     {
         case ZERO:  
-        /* code */
-        break;
+            break;
         
         case ONE: /* -i */
             if (this->chl->get_invite_flag() == 1)
             {
                 chl->set_invite_flag(0);
-                //message channel "<nick> has changed mode: +i"
+                reply_mode += "-i";
             }  
-        break;
+            break;
         
         case TWO: /* +i */
             if (this->chl->get_invite_flag() == 0)
             {
                 chl->set_invite_flag(1);
-                //message channel "<nick> has changed mode: -i"
+                reply_mode += "+i";
             }
-        break;
+            break;
 
         case THREE: /* -t */
             if (this->chl->get_topic_flag() == 1)
             {
                 chl->set_topic_flag(0);
-                //message channel "<nick> has changed mode: -t"
+                reply_mode += "-t";
             }
-        break;
+            break;
 
         case FOUR:  /* -t */
             if (this->chl->get_topic_flag() == 0)
             {
                 chl->set_topic_flag(1);
-                //message channel "<nick> has changed mode: +t"
+                reply_mode += "-t";
             }
-        break;
+            break;
 
         case FIVE:  /* -k */
-            if (msg[2].size() < 4)
+            if (msg[2].size() < 4) //-k requires an argument
             {
                 serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "k", "*", MODEMSG1));
                 break;
             }
-            if (this->chl->get_key_flag() == 1)
+            if (this->chl->get_key_flag() == 1) //mode is changed to -k only if current flag +k
             {
                 if (chl->get_key() == msg[3]) //change mode only if key value is correct
                 {
                     chl->set_key_flag(0);
-                    //message channel "<nick> has changed mode: -k <key value>"
+                    reply_mode += "-k";
+                    reply_args += (msg[3] + " ");
                 }
                 else
                     serv->SendReply(client_fd, ERR_KEYSET(msg[1]));
-                msg.erase(msg.begin() + 3); //deleting that argument
+                msg.erase(msg.begin() + 3); //deleting the argument for k mode so we move to argument of next mode
             }
-        break;
+            break;
 
         case SIX:  /* +k */
-            if (msg[2].size() < 4)
+            if (msg[2].size() < 4)  //+k requires an argument
             {
                 serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "k", "*", MODEMSG1));
                 break;
             }
-            if (this->chl->get_key_flag() == 0)
+            if (this->chl->get_key_flag() == 0) 
             {
                 chl->set_key(msg[3]);
                 chl->set_key_flag(1);
-                //message channel "<nick> has changed mode: +k <key value>"
+                reply_mode += "+k";
+                reply_args += (msg[3] + " ");
             }
             msg.erase(msg.begin() + 3); //deleting that argument
-        break;
+            break;
 
         case SEVEN:  /* -o */
-        /* code */
-        break;
+            // check nick is there in channle error 401
+            break;
 
         case EIGHT:  /* +o */
-        /* code */
-        break;
+            // check nick is there in channle error 401
+            break;
 
         case NINE:  /* -l */
             chl->set_limit_flag(0);
-            //message channel "<nick> has changed mode: -l"
-        break;
+            reply_mode += "-l";
+            break;
 
         case TEN:  /* +l */
             if (msg[2].size() < 4)
@@ -187,9 +190,9 @@ void Mode::SelectOption(std::string str)
                 serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "l", "*", MODEMSG1));
                 break;
             }
-            //need not check if it is already set
+            //need not check if limit is already set
             int limit = atoi(msg[3].c_str());
-            if (limit < 1)
+            if (limit < 1) 
             {
                 serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "l", msg[3], MODEMSG2));
                 msg.erase(msg.begin() + 3);
@@ -197,9 +200,10 @@ void Mode::SelectOption(std::string str)
             }  
             chl->set_limit(limit);
             chl->set_limit_flag(1);
-            //message channel "<nick> has changed mode: +l <limit value>"
+            reply_mode += "+l";
+            reply_args += (msg[3] + " ");
             msg.erase(msg.begin() + 3); //deleting that argument
-        break;
+            break;
     }
 }
 

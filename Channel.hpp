@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:20 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 13:54:04 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 22:06:34 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ class Channel
         std::string topic;
         std::string key; //password 
         int limit;
-
+        std::vector<int> operators; //to store client_fds of operators
+        
         //modes
         bool iflag; //invite_only flag --> +i = 1, -i = 0
         bool tflag; //topic flag
@@ -49,8 +50,6 @@ class Channel
         int get_limit();
         void set_limit(int val);
         
-        
-
 };
 
 #endif
@@ -68,7 +67,6 @@ class Channel
 
     limit   - set to 0 initially, which means no limit on no.of users(-l)
             - can be changed to 1 to set user limit (+l)
-
-            
-
 */
+
+// https://github.com/irssi/irssi/blob/master/docs/manual.txt

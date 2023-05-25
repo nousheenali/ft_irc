@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:27:06 by nali              #+#    #+#             */
-/*   Updated: 2023/05/19 11:00:05 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 23:06:31 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ int main(int argc, char **argv)
         std::cout << "Port number has to be a value from 1024 to 65535." << std::endl; 
         exit(1);
     }
+
+    // if (strlen(argv[2]) < 10 or strlen(argv[2]) > 15)
+    // {
+    //     std::cout << "Server password must contain 10-15 characters." << std::endl; 
+    //     exit(1);
+    // }
  
     try
     {

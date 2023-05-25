@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 15:01:48 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 23:24:59 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 }
                 if (it->second->get_auth() == 1)
                 {
-                    if (it->second->message[0] == "/MODE")
+                    if (it->second->message[0] == "MODE")
                     {
                         //creating dummy channels for testing mode
                         chl = new Channel("chl1");

@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 14:50:39 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 22:03:16 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ Client::Client(int fd)
 {
     this->fd = fd;
     this->auth = false;
-    this->oper = 0;
     
     struct sockaddr_in my_addr;
     socklen_t addr_len = sizeof(my_addr);

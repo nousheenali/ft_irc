@@ -1,6 +1,6 @@
 # ft_irc
 
-socket programming reference links
+####socket programming reference links
 
 - https://beej.us/guide/bgnet/
 - https://www.bogotobogo.com/cplusplus/sockets_server_client.php
@@ -22,3 +22,6 @@ socket programming reference links
 * https://www.rfc-editor.org/rfc/rfc2812#section-3.2.3
 * https://defs.ircdocs.horse/defs/numerics.html
 * https://dd.ircdocs.horse/refs/numerics/001.html
+
+## Channel Management
+* https://datatracker.ietf.org/doc/rfc2811/

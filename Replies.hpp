@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 14:32:28 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 22:02:14 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@
 #define ERR_UNKNOWNMODE(mode)               ("472 " + mode + " :is unknown mode char to me for <channel>\r\n")
 #define ERR_INVALIDMODEPARAM(channel, mode, param, msg) ("696 " + channel + " " + mode + " " + param + " " + msg + " Syntax: <key>.\r\n")
 #define ERR_KEYSET(channel)                 ("467 " + channel + " :Channel key already set\r\n")
-
+#define ERR_CHANOPRIVSNEEDED(channel)       ("482 " + channel + "You must have channel halfop access or above to set channel mode\r\n")
+#define ERR_NOSUCHNICK(nick)                ("401 " + nick +  " :No such nick/channel\r\n")
 
 #define MODEMSG1 "You must specify a parameter for the limit mode."
 #define MODEMSG2 "Invalid limit mode parameter."
