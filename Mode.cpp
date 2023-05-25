@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 14:43:51 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 14:48:31 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void Mode::CheckMode()
     }
 }
 
+//using a hash function becauce switches dont handle strings
 Mode::option Mode::hashit (std::string &opt) 
 {
     if (opt == "-i") return ONE;

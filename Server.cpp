@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 14:10:13 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 15:01:48 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,21 @@ Server::Server()
 {}
 
 Server::~Server()
-{}
+{
+    close_fds();
+    if (!this->client_array.empty())
+    {
+        std::map<int, Client *>::iterator it; 
+        for(it = client_array.begin(); it != client_array.end(); it++)
+            delete(it->second);
+    }
+    if (!this->channel_array.empty())
+    {
+        std::map<std::string, Channel *>::iterator it2; 
+        for(it2 = channel_array.begin(); it2 != channel_array.end(); it2++)
+            delete(it2->second);
+    }
+}
 
 Server::Server(int port, std::string pwd)
 {
@@ -197,7 +211,7 @@ void Server::MessageStoreExecute(char ch, int client_fd)
     // static std::vector<std::string> vec;
     Channel *chl;
     
-    if (ch != ' ' && ch != '\n' && ch != '\r' && ch != '/' )
+    if (ch != ' ' && ch != '\n' && ch != '\r')
         tmp += ch;
     else if (ch == ' ' || ch == '\n')
     {
@@ -233,8 +247,9 @@ void Server::MessageStoreExecute(char ch, int client_fd)
                 }
                 if (it->second->get_auth() == 1)
                 {
-                    if (it->second->message[0] == "MODE")
+                    if (it->second->message[0] == "/MODE")
                     {
+                        //creating dummy channels for testing mode
                         chl = new Channel("chl1");
                         this->channel_array.insert(std::make_pair("chl1", chl));
                         chl = new Channel("chl2");
@@ -319,7 +334,6 @@ void Server::close_fds()
                 ThrowException("FD Close Error: ");
     }
 }
-
 
 Client* Server::GetClient(int client_fd)
 {
