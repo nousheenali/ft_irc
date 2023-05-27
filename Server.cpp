@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 23:24:59 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/27 17:21:54 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,14 +102,15 @@ void Server::LoadAddrinfo(void)
 {
     int status = -1;
     struct addrinfo hints;
+    char port_str[10];
     
     memset(&hints, 0 , sizeof(hints));
     hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
     // hints.ai_flags = AI_PASSIVE; // fills my ip address
-        
-    std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
-    if ((status = getaddrinfo(server_ip.c_str(), port_str.c_str(), &hints, &this->servinfo)) != 0) 
+    my_itoa(this->port, port_str);    
+    // std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
+    if ((status = getaddrinfo(server_ip.c_str(), port_str, &hints, &this->servinfo)) != 0) 
     { 
        throw AddrInfoError(status);
     }
@@ -326,8 +327,10 @@ void Server::SendReply(int client_fd, std::string msg)
 
 void Server::close_fds()
 {
+    unsigned long i;
+    
     std::cout << "close fd called \n";
-    for (int i = 0; i < pfds.size(); i++)
+    for (i = 0; i < pfds.size(); i++)
     {
         if (pfds[i].fd > 0)  // closed client connections are set to -1 so this check
             if (close(pfds[i].fd) == -1)

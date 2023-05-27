@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/24 15:03:00 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/27 17:11:34 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include "Replies.hpp"
 #include "Command.hpp"
 #include "Mode.hpp"
+#include "Utils.hpp"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"    
