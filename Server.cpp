@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/27 17:21:54 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/27 19:38:23 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,14 +102,13 @@ void Server::LoadAddrinfo(void)
 {
     int status = -1;
     struct addrinfo hints;
-    char port_str[10];
+    char port_str[15];
     
     memset(&hints, 0 , sizeof(hints));
     hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
     // hints.ai_flags = AI_PASSIVE; // fills my ip address
-    my_itoa(this->port, port_str);    
-    // std::string port_str = std::to_string(this->port); // convert port from int and then to char * with c_str()
+    sprintf(port_str, "%d", this->port); // convert port from int to char * 
     if ((status = getaddrinfo(server_ip.c_str(), port_str, &hints, &this->servinfo)) != 0) 
     { 
        throw AddrInfoError(status);
