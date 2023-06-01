@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 15:50:55 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 16:51:04 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,9 @@ void Server::fillDetails(Client *c , int client_fd, std::string cmd)
 	if (parseCommand(cmd, msg_info) == FAILURE)
 		return ;
 	
+	for (size_t i = 0; i < cmd.find_first_of(' '); i++)
+		cmd[i] = std::toupper(cmd[i]);
+		
 	if (cmd.find("NICK") != std::string::npos)
 		nick(this, client_fd, msg_info);
 	else if (cmd.find("USER") != std::string::npos)
