@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 13:35:53 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 16:40:05 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,19 @@ static void print(std::string intro, int client_fd, char *msg)
 std::string Server::getPassword()
 { return (this->password); }
 
+void Server::deleteClient(int fd)
+{
+	this->client_array.erase(fd);
+}
+
+void Server::setPfds(int fd, int temp)
+{
+	for(int i = 0; i < this->pfd_count; i++)
+	{
+		if (pfds[i].fd == fd)
+			pfds[i].fd = -1;
+	}
+}
 
 void Server::ReceiveMessage(int i)
 {
@@ -215,25 +228,27 @@ void Server::ReceiveMessage(int i)
     else
 	{
         // MessageStoreExecute(msg[0], pfds[i].fd);
-		print("[Client] Message received from client ", sender_fd, msg);
         c->set_MsgInClient(msg);
-        if (c->get_MsgFrmClient().find("\r\n") != std::string::npos)
+        if (c->get_MsgFrmClient().find("\n") != std::string::npos)
 		{
-			try 
-			{
+			const char *temp = c->get_MsgFrmClient().c_str();
+			print("[Client] Message received from client ", sender_fd, (char *)temp);
+			// try 
+			// {
 				parseMessage(sender_fd, c->get_MsgFrmClient());
-				if (c->get_MsgFrmClient().find("\r\n"))
+				if (c->get_MsgFrmClient().find("\n"))
 					c->get_MsgFrmClient().clear();
-			}
-			catch(const std::exception& e) 
-			{ 
-				std::cout << "[SERVER] Caught exception : ";
-				std::cerr << e.what() << std::endl;
-				return;
-			}
+			// }
+			// catch(const std::exception& e) 
+			// { 
+			// 	std::cout << "[SERVER] Caught exception : ";
+			// 	std::cerr << e.what() << std::endl;
+			// 	return;
+			// }
 		}
 	}
 }
+
 
 /*
 int Server::check_auth(int fd)

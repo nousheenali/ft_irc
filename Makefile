@@ -6,13 +6,13 @@
 #    By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 17:20:20 by nali              #+#    #+#              #
-#    Updated: 2023/06/01 11:16:12 by sfathima         ###   ########.fr        #
+#    Updated: 2023/06/01 14:26:56 by sfathima         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= ft_irc
+NAME	= ircserv
 
-SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp Mode.cpp pass.cpp parsing.cpp nick.cpp user.cpp
+SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp Mode.cpp pass.cpp parsing.cpp nick.cpp user.cpp quit.cpp
 
 OBJS	= ${SRCS:.cpp=.o}
 

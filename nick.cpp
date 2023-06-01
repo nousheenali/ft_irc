@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:16:46 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 11:18:05 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:45:11 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,19 +68,19 @@ void nick(Server *server, int fd, msg_struct msg_info)
     {
 		server->SendReply(fd, ERR_NONICKNAMEGIVEN());
 		if (c->isRegistration() == false)
-			c->set_count(-1);
+			c->set_count(0);
 	}
     else if (check_if_valid(nickname) == false) //check valid characters and length is 8/9
     {
 		server->SendReply(fd, ERR_ERRONEUSNICKNAME(nickname));
 		if (c->isRegistration() == false)
-			c->set_count(-1);
+			c->set_count(0);
 	}
     else if (already_used(server, fd, nickname) == true) //check if nickname given is already used by available clients
     {
 		server->SendReply(fd, ERR_NICKNAMEINUSE(nickname));
 		if (c->isRegistration() == false)
-			c->set_count(-1);
+			c->set_count(0);
 	}
     else 
     {	

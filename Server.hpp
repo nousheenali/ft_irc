@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 11:21:42 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 13:44:03 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ class Server
         void SendReply(int client_fd, std::string msg);
 		std::map<int, Client *> GetAllClients();
         std::string getPassword();
+		void deleteClient(int fd);
+		void setPfds(int fd, int temp);
 
 
     private:

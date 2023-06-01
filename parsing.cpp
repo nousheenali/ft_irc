@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 11:18:41 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:50:55 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 	{
 		cmd_infos.cmd.insert(0, copy, 0, std::string::npos);
 		if (cmd_infos.cmd.find('\r') != std::string::npos) // delete the \r\n
-			cmd_infos.cmd.erase(cmd_infos.cmd.find('\r'), 1); 
+			cmd_infos.cmd.erase(cmd_infos.cmd.find('\r'), 1);
 	}
 	else
 		cmd_infos.cmd.insert(0, copy, 0, copy.find_first_of(' ')); //---->put the command inside struct
@@ -53,24 +53,24 @@ int	parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 
 	size_t msg_beginning = cmd_line.find(cmd_infos.cmd, 0) + cmd_infos.cmd.length() + 1;
 	cmd_infos.parameter = cmd_line.substr(msg_beginning, std::string::npos);//---->put pararmeter into struct
-	cmd_infos.parameter.erase(cmd_infos.parameter.find("\r"), 1);//---->remove \r\n
+	if (cmd_infos.parameter.find("\r") != std::string::npos)
+		cmd_infos.parameter.erase(cmd_infos.parameter.find("\r"), 1);//---->remove \r\n
 
 	for (size_t i = 0; i < cmd_infos.cmd.size(); i++)
 		cmd_infos.cmd[i] = std::toupper(cmd_infos.cmd[i]);
 	
-	std::cout << "Command : " << cmd_infos.cmd << "\n";
-	std::cout << "Prefix : " << cmd_infos.prefix << "\n";
-	std::cout << "Message : " << cmd_infos.parameter << "\n";
+	// std::cout << "Command : " << cmd_infos.cmd << "\n";
+	// std::cout << "Prefix : " << cmd_infos.prefix << "\n";
+	// std::cout << "Message : " << cmd_infos.parameter << "\n";
 	return (SUCCESS);
 }
 
 void Server::fillDetails(Client *c , int client_fd, std::string cmd)
 {
 	msg_struct msg_info;
-
 	if (parseCommand(cmd, msg_info) == FAILURE)
 		return ;
-
+	
 	if (cmd.find("NICK") != std::string::npos)
 		nick(this, client_fd, msg_info);
 	else if (cmd.find("USER") != std::string::npos)
@@ -98,7 +98,9 @@ void Server::parseMessage(int fd, std::string msg)
 			if (c->has_all_info() == false)
 			{
 				fillDetails(c, fd, cmds[i]);
-				if (c->get_count() == 3)
+				// if (c->get_count() == 3)
+				// 	c->has_all_info() = true;
+				if (!c->get_nickname().empty() && !c->get_username().empty() && c->get_passFlag())
 					c->has_all_info() = true;
 			}
 			if (c->has_all_info() == true && c->first_invite() == false)
@@ -134,12 +136,11 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 			break;
 		i++;
 	}
-	std::cout << "new edit \n";
 	switch (i)
 	{
 		case 0: nick(this, client_fd, cmd_infos);	break;
 		case 1: user(this, client_fd, cmd_infos);	break;
-		// case 2: quit(this, client_fd, cmd_infos);	break;
+		case 2: quit(this, client_fd, cmd_infos);	break;
 		default:
 			this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));
 	}

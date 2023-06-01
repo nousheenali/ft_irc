@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:19:00 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 11:19:09 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 16:38:44 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,12 @@ int		pass(Server *server, int client_fd, msg_struct cmd_infos)
 	}
 	else if (server->getPassword() != password)
 	{
+		// std::cout << password << "*" << server->getPassword() << "\n";
 		// std::cout << ":" << server->getPassword() << ": -" << password << "-\n";
 		server->SendReply(client_fd, ERR_PASSWDMISMATCH(cmd_infos.cmd));
+		password.clear();
 		if (client->isRegistration() == false)
-			client->set_count(-1);
+			client->set_count(0);
 		return (FAILURE);
 	}
 	else

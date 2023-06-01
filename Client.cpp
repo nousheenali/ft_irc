@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 10:40:08 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 15:45:17 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,6 @@ bool& Client::first_invite()
 void Client::set_count(int n)
 {
 	_ct += n;
-	if (_ct <= 0)
-		_ct = 0;
 }
 
 bool& Client::isRegistration() 	
