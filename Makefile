@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+         #
+#    By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 17:20:20 by nali              #+#    #+#              #
-#    Updated: 2023/05/27 19:37:18 by nali             ###   ########.fr        #
+#    Updated: 2023/06/01 11:16:12 by sfathima         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= ft_irc
 
-SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp Mode.cpp
+SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp Mode.cpp pass.cpp parsing.cpp nick.cpp user.cpp
 
 OBJS	= ${SRCS:.cpp=.o}
 

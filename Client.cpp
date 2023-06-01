@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 22:03:16 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/01 10:40:08 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,11 @@ Client::Client()
 
 Client::Client(int fd)
 {
-    this->fd = fd;
-    this->auth = false;
+    this->fd		= fd;
+    this->auth		= false;
+	this->hasInfo	= false;
+    this->registrationFlag = false;
+    this->_ct       = 0;
     
     struct sockaddr_in my_addr;
     socklen_t addr_len = sizeof(my_addr);
@@ -48,5 +51,81 @@ int Client::get_socket()
 int Client::get_auth()
 {   return (this->auth); }
 
+std::string& Client::get_MsgFrmClient()
+{   return (this->_readmsg);        }
+
+bool& Client::get_passFlag() 
+{ return (this->passFlag);  }
+
+int Client::get_count() 
+{ return (this->_ct);     }
+
+std::string	Client::get_nickname()
+{   return (this->_nickname);   }
+
+std::string	Client::get_old_nickname()
+{ return (this->_old_nickname); }
+
+std::string Client::get_username()
+{ return (this->_username);     }
+
+std::string Client::get_realname()
+{ return (this->_realname);     }
+
+bool& Client::has_all_info()
+{   return (this->hasInfo);     }
+
+int Client::get_info()
+{   return (this->hasInfo);     }
+
+//////////////////////////Setters////////////////////
+
 void Client::set_auth(int val)
-{   this->auth = val;}
+{   this->auth = val;               }
+
+void Client::set_MsgInClient(std::string const &buf)
+{   this->_readmsg += buf;          }
+
+
+void Client::set_nickname(std::string nick)
+{	this->_nickname = nick;			}
+
+void Client::set_old_nickname(std::string old_nick)
+{	this->_old_nickname = old_nick;	}
+
+void Client::set_username(std::string username)
+{	this->_username = username;		}
+
+void Client::set_realname(std::string realname)
+{	this->_realname = realname;		}
+
+void	Client::set_passFlag(bool flag)
+{
+	passFlag = flag;
+}
+
+bool& Client::first_invite()
+{   return (this->welcomeFlag);   }
+
+
+void Client::set_count(int n)
+{
+	_ct += n;
+	if (_ct <= 0)
+		_ct = 0;
+}
+
+bool& Client::isRegistration() 	
+{ return (this->registrationFlag); }
+
+
+int	Client::is_valid() const
+{
+	if (_username.empty())
+		return (FAILURE);
+	if (_nickname.empty())
+		return (FAILURE);
+    if (this->_ct < 3)
+		return (FAILURE);
+	return (SUCCESS);
+}

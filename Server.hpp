@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/05/27 19:37:47 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/01 11:21:42 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ class Server
         int pfd_count;   //to store file descriptors to be polled
         std::map<int, Client *> client_array; 
         std::map<std::string, Channel *> channel_array; 
-		Command *cmd_cls;
+		// Command *cmd_cls;
         
     public:
         Server();
@@ -63,6 +63,9 @@ class Server
         Client* GetClient(int client_fd);
         Channel* GetChannel(std::string name);
         void SendReply(int client_fd, std::string msg);
+		std::map<int, Client *> GetAllClients();
+        std::string getPassword();
+
 
     private:
         void CreateSocket(void);
@@ -76,6 +79,9 @@ class Server
         void print_messages(int fd);
 		int	 check_auth(int fd);
         void close_fds();
+		void parseMessage(int fd, std::string msg);
+        void fillDetails(Client *c , int client_fd, std::string cmd);
+        void execCommand(int const client_fd, std::string cmd_line);
         
     
         class AddrInfoError: public std::exception //custom exception

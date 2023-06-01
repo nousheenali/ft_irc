@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/05/27 19:38:23 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/01 11:29:34 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,13 +183,24 @@ void Server::AcceptConnections()
     }
 }
 
+static void print(std::string intro, int client_fd, char *msg)
+{
+	if (msg != NULL)
+		std::cout << std::endl << intro << client_fd << " << " << BLUE << msg << RESET;
+}
+
+std::string Server::getPassword()
+{ return (this->password); }
+
+
 void Server::ReceiveMessage(int i)
 {
-    char buf[1];
+    char msg[4096]; //prototype says 512 char for safety...cross verify this!
     int nbytes, sender_fd;
+	Client *c;
     
-    memset(&buf, 0, sizeof(buf));
-    nbytes = recv(this->pfds[i].fd, buf, sizeof(buf), 0);
+    memset(&msg, 0, sizeof(msg));
+    nbytes = recv(this->pfds[i].fd, msg, sizeof(msg), 0);
     sender_fd = pfds[i].fd;
     if (nbytes <= 0)
     {
@@ -201,7 +212,52 @@ void Server::ReceiveMessage(int i)
         return;
     }        
     else
-        MessageStoreExecute(buf[0], pfds[i].fd);
+	{
+        // MessageStoreExecute(msg[0], pfds[i].fd);
+		print("[Client] Message received from client ", sender_fd, msg);
+        c->set_MsgInClient(msg);
+        if (c->get_MsgFrmClient().find("\r\n") != std::string::npos)
+		{
+			try 
+			{
+				parseMessage(sender_fd, c->get_MsgFrmClient());
+				if (c->get_MsgFrmClient().find("\r\n"))
+					c->get_MsgFrmClient().clear();
+			}
+			catch(const std::exception& e) 
+			{ 
+				std::cout << "[SERVER] Caught exception : ";
+				std::cerr << e.what() << std::endl;
+				return;
+			}
+		}
+	}
+}
+
+/*
+int Server::check_auth(int fd)
+{
+	Client *c;
+	std::map<int, Client *>::iterator it;
+
+	// it = client_array.find(fd);
+	c = GetClient(fd);
+	if (c != NULL)
+    {
+        if (c->message.size() < 1)
+            SendReply(fd, ERR_NEEDMOREPARAMS(c->message[0]));
+		if (c->message[0] == "PASS" || c->message[0] == "NICK" || c->message[0] == "USER")
+        {
+            if (c->message[0] == "PASS" && c->message[1] == this->password)
+			    return (0);
+            else if ((c->message[0] == "PASS" && c->message[1] != this->password))
+                return (-1);
+			else
+				return (1);
+        }
+        // std::cout << "cmd is PASS but password incorrect" << this->password << it->second->message[1] << "\n";
+	}
+	return (1);
 }
 
 void Server::MessageStoreExecute(char ch, int client_fd)
@@ -261,7 +317,7 @@ void Server::MessageStoreExecute(char ch, int client_fd)
             }
         }
     }
-}
+}*/
 
 void Server::print_messages(int fd)
 {
@@ -278,51 +334,12 @@ void Server::print_messages(int fd)
     }
 }
 
-int Server::check_auth(int fd)
-{
-	Client *c;
-	std::map<int, Client *>::iterator it;
 
-	// it = client_array.find(fd);
-	c = GetClient(fd);
-	if (c != NULL)
-    {
-        if (c->message.size() < 1)
-            SendReply(fd, ERR_NEEDMOREPARAMS(c->message[0]));
-		if (c->message[0] == "PASS" || c->message[0] == "NICK" || c->message[0] == "USER")
-        {
-            if (c->message[0] == "PASS" && c->message[1] == this->password)
-			    return (0);
-            else if ((c->message[0] == "PASS" && c->message[1] != this->password))
-                return (-1);
-			else
-				return (1);
-        }
-        // std::cout << "cmd is PASS but password incorrect" << this->password << it->second->message[1] << "\n";
-	}
-	return (1);
-}
 
 void Server::SendReply(int client_fd, std::string msg)
 {
     send(client_fd, msg.c_str(), msg.length(), 0);
 }
-
-// void Server::print_messages(int fd)
-// {
-//     std::map<int, Client *>::iterator it;
-//     int size;
-
-//     it = this->client_array.find(fd);
-//     if (it != client_array.end())
-//     {
-//         size = it->second->message.size();
-//         for (int j = 0; j < size; j++)
-//             std::cout << it->second->message[j] << "\n";
-//         std::cout << "-------------------\n";
-//     }
-    
-// }
 
 void Server::close_fds()
 {
@@ -375,6 +392,11 @@ Server::AddrInfoError::AddrInfoError(int status) //exception constructor
 const char *Server::CustomException::what() const throw()
 {
     return (strerror(errno));
+}
+
+std::map<int, Client *> Server::GetAllClients()		
+{
+     return (client_array); 
 }
 
 
