@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 11:29:34 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/01 13:35:53 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,8 +200,9 @@ void Server::ReceiveMessage(int i)
 	Client *c;
     
     memset(&msg, 0, sizeof(msg));
-    nbytes = recv(this->pfds[i].fd, msg, sizeof(msg), 0);
-    sender_fd = pfds[i].fd;
+    nbytes		= recv(this->pfds[i].fd, msg, sizeof(msg), 0);
+    sender_fd	= pfds[i].fd;
+	c           = GetClient(sender_fd);
     if (nbytes <= 0)
     {
         std::cout << RED <<" *** Connection Closed by Client *** \n" << RESET ;
