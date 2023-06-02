@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "Command.hpp"
+void printRcvMsg(int fd, std::string msg);
 
 /* Quit command: is used to terminate a client’s session. The server acknowledges this by sending an ERROR message to the client.
  * 	
@@ -21,12 +22,13 @@
 
 void quit(Server *server, int fd, msg_struct cmd_infos)
 {
+    Client *c = server->GetClient(fd);
+	std::string msg      = cmd_infos.parameter;
+    std::string quit_msg = ":" + c->get_nickname() + "!" + c->get_username() + "@localhost QUIT " + msg + "\n";
+
+    printRcvMsg(fd, quit_msg);
 	std::cout << RED <<" *** Connection Closed by Client *** \n" << RESET ;
-	
     server->deleteClient(fd);
 	server->setPfds(fd, -1);
-	// server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
-
-        // pfds[i].fd = -1; //make the socket fd negative so it is ignored in future
-        return;
+    return;
 }

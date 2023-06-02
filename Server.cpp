@@ -197,6 +197,8 @@ std::string Server::getPassword()
 
 void Server::deleteClient(int fd)
 {
+    if (close(fd) == -1)
+            ThrowException("FD Close Error: ");
 	this->client_array.erase(fd);
 }
 
@@ -205,7 +207,10 @@ void Server::setPfds(int fd, int temp)
 	for(int i = 0; i < this->pfd_count; i++)
 	{
 		if (pfds[i].fd == fd)
+        {
 			pfds[i].fd = -1;
+            break;
+        }
 	}
 }
 
@@ -241,18 +246,9 @@ void Server::ReceiveMessage(int i)
 		{
 			const char *temp = c->get_MsgFrmClient().c_str();
 			print("[Client] Message received from client ", sender_fd, (char *)temp);
-			// try 
-			// {
-				parseMessage(sender_fd, c->get_MsgFrmClient());
-				if (c->get_MsgFrmClient().find("\n"))
-					c->get_MsgFrmClient().clear();
-			// }
-			// catch(const std::exception& e) 
-			// { 
-			// 	std::cout << "[SERVER] Caught exception : ";
-			// 	std::cerr << e.what() << std::endl;
-			// 	return;
-			// }
+			parseMessage(sender_fd, c->get_MsgFrmClient());
+			if (c->get_MsgFrmClient().find("\n"))
+				c->get_MsgFrmClient().clear();
 		}
 	}
 }

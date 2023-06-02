@@ -17,15 +17,7 @@
 #define RPL_WELCOME(nickname) ("001" + nickname + ": a Welcome to the Internet Relay Network.\r\n")
 #define RPL_YOURHOST(nickname, servername, version) ("002 " + nickname + " :Your host is " + servername + ", running version " + version + "\r\n")
 #define RPL_CREATED(client, date) ("003 " + client + " :This server was created " + date + "\r\n")
-
-
 #define RPL_MYINFO(client, servername, version, nickname, chan_modes, chan_modes_param) ("004 " + client + " " + servername + " " + version + " " + nickname + " " + chan_modes + " " + chan_modes_param + "\r\n")
-#define WELCOME2 "hello there"
-
-#define RPL_MYINFO2(str1) (str1 + "\r\n")
-
-
-# define RPL_ISUPPORT(client, tokens) (":localhost 005 " + client + " " + tokens " :are supported by this server\r\n")
 
 #define ERR_NEEDMOREPARAMS(command)			("461 " + command + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTRED(client)		("462 " + client + " :Unauthorized command (already registered)\r\n")
