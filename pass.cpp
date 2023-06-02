@@ -49,17 +49,11 @@ int		pass(Server *server, int client_fd, msg_struct cmd_infos)
 	else if (server->getPassword() != password)
 	{
 		// std::cout << password << "*" << server->getPassword() << "\n";
-		// std::cout << ":" << server->getPassword() << ": -" << password << "-\n";
 		server->SendReply(client_fd, ERR_PASSWDMISMATCH(cmd_infos.cmd));
 		password.clear();
-		if (client->isRegistration() == false)
-			client->set_count(0);
 		return (FAILURE);
 	}
 	else
-	{
-		client->set_count(1);
 		return (SUCCESS);
-	}
 	return (SUCCESS);
 }

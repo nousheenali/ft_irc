@@ -11,12 +11,3 @@
 /* ************************************************************************** */
 
 #include "Command.hpp"
-
-Command::Command()	{}
-
-Command::~Command()	{}
-
-Command::Command(std::string cmd)
-{
-	this->_cmd = cmd;
-}

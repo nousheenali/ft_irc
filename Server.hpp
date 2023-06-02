@@ -79,7 +79,6 @@ class Server
         void ReceiveMessage(int i);
         void MessageStoreExecute(char c, int client_fd);
         void print_messages(int fd);
-		int	 check_auth(int fd);
         void close_fds();
 		void parseMessage(int fd, std::string msg);
         void fillDetails(Client *c , int client_fd, std::string cmd);
