@@ -209,6 +209,11 @@ void Server::setPfds(int fd, int temp)
 	}
 }
 
+std::string Server::getDate()
+{
+    return (this->creation_time);
+}
+
 void Server::ReceiveMessage(int i)
 {
     char msg[4096]; //prototype says 512 char for safety...cross verify this!

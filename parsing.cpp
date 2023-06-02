@@ -39,7 +39,7 @@ int	parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 			copy.erase(0, copy.find_first_of(' ') + 1);
 	}
 	
-	if (copy.find_first_of(' ') == std::string::npos) // Case of a "NICK" or ":prefix NICK" command without arguments---->check if needed
+	if (copy.find_first_of(' ') == std::string::npos) // incase of command without arguments
 	{
 		cmd_infos.cmd.insert(0, copy, 0, std::string::npos);
 		if (cmd_infos.cmd.find('\r') != std::string::npos) // delete the \r\n
@@ -50,9 +50,9 @@ int	parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 
 	size_t prefix_length = cmd_line.find(cmd_infos.cmd, 0);
 	cmd_infos.prefix.assign(cmd_line, 0, prefix_length);//---->put prefix into struct
-
 	size_t msg_beginning = cmd_line.find(cmd_infos.cmd, 0) + cmd_infos.cmd.length() + 1;
-	cmd_infos.parameter = cmd_line.substr(msg_beginning, std::string::npos);//---->put pararmeter into struct
+	if (msg_beginning < cmd_line.length())
+		cmd_infos.parameter = cmd_line.substr(msg_beginning, std::string::npos);//---->put pararmeter into struct
 	if (cmd_infos.parameter.find("\r") != std::string::npos)
 		cmd_infos.parameter.erase(cmd_infos.parameter.find("\r"), 1);//---->remove \r\n
 
@@ -68,10 +68,13 @@ int	parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 void Server::fillDetails(Client *c , int client_fd, std::string cmd)
 {
 	msg_struct msg_info;
+	int temp;
+
 	if (parseCommand(cmd, msg_info) == FAILURE)
 		return ;
-	
-	for (size_t i = 0; i < cmd.find_first_of(' '); i++)
+	temp =  (cmd.find(' ') == std::string::npos) ? 0 : cmd.find_first_of(' ');
+
+	for (size_t i = 0; i < temp; i++)
 		cmd[i] = std::toupper(cmd[i]);
 		
 	if (cmd.find("NICK ") != std::string::npos)
@@ -115,7 +118,7 @@ void Server::parseMessage(int fd, std::string msg)
 				// printRcvMsg(fd, RPL_WELCOME(c->get_nickname()));
                 this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1")); //--->get version and other details
 				// printRcvMsg(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1"));
-				this->SendReply(fd, RPL_CREATED(c->get_nickname(), "31 May 2023")); //---->get date in realtime and print it
+				this->SendReply(fd, RPL_CREATED(c->get_nickname(), this->getDate())); //---->get date in realtime and print it
 				// printRcvMsg(fd, RPL_CREATED(c->get_nickname(), "31 May 2023"));
                 this->SendReply(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
 				// printRcvMsg(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));

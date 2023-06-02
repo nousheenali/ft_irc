@@ -69,6 +69,7 @@ class Server
         std::string getPassword();
 		void deleteClient(int fd);
 		void setPfds(int fd, int temp);
+        std::string getDate();
 
 
     private:
