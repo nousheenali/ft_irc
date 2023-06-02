@@ -6,7 +6,7 @@
 /*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 12:22:17 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/02 12:52:03 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,10 @@ Server::Server(int port, std::string pwd)
     this->server_ip = "127.0.0.1";
     this->server_name = "ft_irc";
     this->pfd_count = 0;
+    
+    time_t now = time(0); //getting current time and date
+    this->creation_time = ctime(&now);
+    
     this->CreateSocket();
     this->Listen();
     this->ConnectClients();

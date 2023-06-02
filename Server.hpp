@@ -6,7 +6,7 @@
 /*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 12:22:02 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/02 12:42:33 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <arpa/inet.h> //inet_ntop
 #include <vector>
 #include <map>
+#include <ctime>
 #include "Client.hpp"
 #include "Replies.hpp"
 #include "Command.hpp"
@@ -47,6 +48,7 @@ class Server
         std::string password;
         std::string server_ip;
         std::string server_name;
+        std::string creation_time;
         struct addrinfo *servinfo;
         std::vector<pollfd> pfds; //vector to store poll fds
         int pfd_count;   //to store file descriptors to be polled
