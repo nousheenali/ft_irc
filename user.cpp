@@ -76,12 +76,11 @@ void	user(Server *server, int client_fd, msg_struct msg_infos)
 
 	if (username.empty() || realname.empty())
 		server->SendReply(client_fd, ERR_NEEDMOREPARAMS(msg_infos.cmd));
-	else if (client->isRegistration() == true)
+	else if (client->isAuthDone() == true)
 		server->SendReply(client_fd, ERR_ALREADYREGISTRED(client->get_nickname()));
 	else
 	{
 		client->set_username(username);
 		client->set_realname(realname);
-		client->set_count(1);
 	}
 }

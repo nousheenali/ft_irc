@@ -74,17 +74,22 @@ void Server::fillDetails(Client *c , int client_fd, std::string cmd)
 	for (size_t i = 0; i < cmd.find_first_of(' '); i++)
 		cmd[i] = std::toupper(cmd[i]);
 		
-	if (cmd.find("NICK") != std::string::npos)
+	if (cmd.find("NICK ") != std::string::npos)
 		nick(this, client_fd, msg_info);
-	else if (cmd.find("USER") != std::string::npos)
+	else if (cmd.find("USER ") != std::string::npos)
 		user(this, client_fd, msg_info);
-	else if (cmd.find("PASS") != std::string::npos)
+	else if (cmd.find("PASS ") != std::string::npos)
 	{
 		if (pass(this, client_fd, msg_info) == SUCCESS)
 			c->set_passFlag(true);
 		else
 			c->set_passFlag(false);
 	}
+}
+
+void printRcvMsg(int fd, std::string msg)
+{
+	std::cout << "[Server] Message sent to client " << fd << ": " << RED << msg << RESET << "\n";
 }
 
 void Server::parseMessage(int fd, std::string msg)
@@ -96,26 +101,28 @@ void Server::parseMessage(int fd, std::string msg)
 
 	for (size_t i = 0; i != cmds.size(); i++)
 	{
-		if (c->isRegistration() == false)
+		if (c->isAuthDone() == false)
 		{
 			if (c->has_all_info() == false)
 			{
 				fillDetails(c, fd, cmds[i]);
-				// if (c->get_count() == 3)
-				// 	c->has_all_info() = true;
 				if (!c->get_nickname().empty() && !c->get_username().empty() && c->get_passFlag())
 					c->has_all_info() = true;
 			}
 			if (c->has_all_info() == true && c->first_invite() == false)
 			{
 		        this->SendReply(fd, RPL_WELCOME(c->get_nickname()));
+				// printRcvMsg(fd, RPL_WELCOME(c->get_nickname()));
                 this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1")); //--->get version and other details
-                this->SendReply(fd, RPL_CREATED(c->get_nickname(), "31 May 2023")); //---->get date in realtime and print it
+				// printRcvMsg(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1"));
+				this->SendReply(fd, RPL_CREATED(c->get_nickname(), "31 May 2023")); //---->get date in realtime and print it
+				// printRcvMsg(fd, RPL_CREATED(c->get_nickname(), "31 May 2023"));
                 this->SendReply(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
-				std::string msg = "hello there";
-                this->SendReply(fd, RPL_MYINFO2(msg));
+				// printRcvMsg(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
+				printRcvMsg(fd, ": Welcome message sent...\n");
+				
 				c->first_invite() = true;
-                c->isRegistration() = true;
+                c->isAuthDone() = true;
 			}
 		}
 		else
@@ -129,7 +136,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 	Client 		*client		  = this->GetClient(client_fd);
 	int i = 0;
 
-	std::string	validCmds[10] = {"NICK", "USER", "QUIT" }; //---->keep adding commands
+	std::string	validCmds[10] = {"NICK", "USER", "QUIT", "PASS"}; //---->keep adding commands
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return ;
@@ -144,6 +151,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 		case 0: nick(this, client_fd, cmd_infos);	break;
 		case 1: user(this, client_fd, cmd_infos);	break;
 		case 2: quit(this, client_fd, cmd_infos);	break;
+		case 3: pass(this, client_fd, cmd_infos);	break;
 		default:
 			this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));
 	}

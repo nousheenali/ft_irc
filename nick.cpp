@@ -58,33 +58,18 @@ void nick(Server *server, int fd, msg_struct msg_info)
     std::string nickname = msg_info.parameter;
     Client *c = server->GetClient(fd);
 
-    if (c->isRegistration() == false)
-	{
+    if (c->isAuthDone() == false)
 		c->set_nickname(nickname);
-		c->set_count(1);
-	}
 
     if (nickname.empty())   // no nickname given
-    {
 		server->SendReply(fd, ERR_NONICKNAMEGIVEN());
-		if (c->isRegistration() == false)
-			c->set_count(0);
-	}
     else if (check_if_valid(nickname) == false) //check valid characters and length is 8/9
-    {
 		server->SendReply(fd, ERR_ERRONEUSNICKNAME(nickname));
-		if (c->isRegistration() == false)
-			c->set_count(0);
-	}
     else if (already_used(server, fd, nickname) == true) //check if nickname given is already used by available clients
-    {
 		server->SendReply(fd, ERR_NICKNAMEINUSE(nickname));
-		if (c->isRegistration() == false)
-			c->set_count(0);
-	}
     else 
     {	
-		if (c->isRegistration() == true)
+		if (c->isAuthDone() == true)
 		{
             c->set_old_nickname(c->get_nickname());
 			std::cout << "[Server] Nickname change registered. Old nickname is now : " << c->get_old_nickname() << std::endl;

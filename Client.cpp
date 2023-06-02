@@ -18,10 +18,8 @@ Client::Client()
 Client::Client(int fd)
 {
     this->fd		= fd;
-    this->auth		= false;
 	this->hasInfo	= false;
-    this->registrationFlag = false;
-    this->_ct       = 0;
+    this->auth      = false;
     
     struct sockaddr_in my_addr;
     socklen_t addr_len = sizeof(my_addr);
@@ -48,17 +46,11 @@ int Client::get_port()
 int Client::get_socket()
 {   return (this->fd); }
 
-int Client::get_auth()
-{   return (this->auth); }
-
 std::string& Client::get_MsgFrmClient()
 {   return (this->_readmsg);        }
 
 bool& Client::get_passFlag() 
 { return (this->passFlag);  }
-
-int Client::get_count() 
-{ return (this->_ct);     }
 
 std::string	Client::get_nickname()
 {   return (this->_nickname);   }
@@ -79,9 +71,6 @@ int Client::get_info()
 {   return (this->hasInfo);     }
 
 //////////////////////////Setters////////////////////
-
-void Client::set_auth(int val)
-{   this->auth = val;               }
 
 void Client::set_MsgInClient(std::string const &buf)
 {   this->_readmsg += buf;          }
@@ -107,14 +96,8 @@ void	Client::set_passFlag(bool flag)
 bool& Client::first_invite()
 {   return (this->welcomeFlag);   }
 
-
-void Client::set_count(int n)
-{
-	_ct += n;
-}
-
-bool& Client::isRegistration() 	
-{ return (this->registrationFlag); }
+bool& Client::isAuthDone() 	
+{ return (this->auth); }
 
 
 int	Client::is_valid() const
@@ -122,8 +105,6 @@ int	Client::is_valid() const
 	if (_username.empty())
 		return (FAILURE);
 	if (_nickname.empty())
-		return (FAILURE);
-    if (this->_ct < 3)
 		return (FAILURE);
 	return (SUCCESS);
 }

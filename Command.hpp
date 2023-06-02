@@ -27,27 +27,9 @@ struct msg_struct
 	std::string	parameter;
 };
 
-// class Command
-// {
-//     private:
-//         std::string _cmd;
-// 		Client		*_client;
-// 		Server		*_server;
-		
-		
-//     public:
-//         Command();
-//         Command(std::string cmd);
-//         virtual ~Command();
-		
-// 		virtual void execute(std::string cmd)const = 0;  
-// };
-
 int		pass(Server *server, int client_fd, msg_struct cmd_infos);
 void	nick(Server *server, int fd, msg_struct msg_info);
 void	user(Server *server, int client_fd, msg_struct msg_infos);
 void	quit(Server *server, int fd, msg_struct cmd_infos);
-
-
 
 #endif
