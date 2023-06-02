@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 11:28:28 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/02 12:08:08 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,10 @@
 //PASS
 #define ERR_PASSWDMISMATCH(client) ("464 " + client + " :Password incorrect\r\n")
 
+#define ERR_NORECIPIENT(cmd)                ("411 :No recipient given " + cmd + "\r\n")
+#define ERR_NOTEXTTOSEND()               ("412 :No text to send\r\n")
+#define ERR_CANNOTSENDTOCHAN(channel)       ("404 " + channel + " :Cannot send to channel\r\n")
 
-#endif
+
+
+#endif  

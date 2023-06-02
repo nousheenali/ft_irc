@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 10:40:27 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/02 11:45:27 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ class Client
 		void	set_passFlag(bool flag);
 		void	set_count(int n);
 		int		is_valid() const;
+		void	SendReply(int recipient_fd, std::string msg);
 };
 
 #endif

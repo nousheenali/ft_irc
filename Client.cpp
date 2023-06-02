@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/06/01 15:45:17 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/02 11:46:34 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,4 +126,9 @@ int	Client::is_valid() const
     if (this->_ct < 3)
 		return (FAILURE);
 	return (SUCCESS);
+}
+
+void Client::SendReply(int recipient_fd, std::string msg)
+{
+    send(recipient_fd, msg.c_str(), msg.length(), 0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 23:24:50 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/02 10:13:27 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,26 @@ Mode::Mode(int client_fd, Server *serv)
     this->client = serv->GetClient(client_fd);
     this->msg = client->message;
     
-    if (msg.size() < 3) //if no arguments
+    if (msg.size() < 2) //if no arguments
     {
         serv->SendReply(client_fd, ERR_NEEDMOREPARAMS(msg[0]));
         return ;
     }
-        
-    this->chl = serv->GetChannel(msg[1]);
+    // if (msg[1][0] != '#' or msg[1][0] != '&') //check if channel name
+    // {
+    //     serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(msg[1]));
+    //     return ;
+    // }
+    this->chl = serv->GetChannel(msg[1]); 
     if (chl == NULL) //channel doesn't exist
     {
         serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(msg[1]));
+        return ;
+    }
+    if (msg.size() == 2) // for /mode <#channle_name>  
+    {
+        //print server creation time
+        //print current modes
         return ;
     }
 
