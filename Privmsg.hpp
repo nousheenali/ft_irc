@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:19:36 by nali              #+#    #+#             */
-/*   Updated: 2023/06/03 23:08:11 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:48:39 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class privmsg
      private:
         int sender_fd;
         Server *serv;
-        Channel *chl;
+        // Channel *chl;
         std::vector<std::string> params;
         msg_struct *msg_info;
     

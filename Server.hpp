@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/03 23:19:52 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:49:54 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include "Command.hpp"
 #include "mode.hpp"
 #include "privmsg.hpp"
+#include "Channel.hpp"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"    

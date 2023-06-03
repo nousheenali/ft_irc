@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 00:19:55 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:48:21 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ void privmsg::CheckConditions()
 
 void privmsg::SendToChannel()
 {
-    Channel *ch = serv->GetChannel(params[0]);
-    if (ch == NULL) //channel doesn't exist
-    {
-        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
-        return ;
-    }
+    // Channel *ch = serv->GetChannel(params[0]);
+    // if (ch == NULL) //channel doesn't exist
+    // {
+    //     serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
+    //     return ;
+    // }
     //if channel exists 
     // check if sender does not have rights to the channel
     // {
