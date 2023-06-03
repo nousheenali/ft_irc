@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 12:52:03 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:10:36 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ void Server::ReceiveMessage(int i)
 	c           = GetClient(sender_fd);
     if (nbytes <= 0)
     {
-        std::cout << RED <<" *** Connection Closed by Client *** \n" << RESET ;
+        std::cout << RED <<" *** Connection Closed by Client on socket " << sender_fd << " *** \n" << RESET ;
         if (close(sender_fd) == -1)
             ThrowException("FD Close Error: ");
         client_array.erase(pfds[i].fd); // remove the client from the array
@@ -391,6 +391,9 @@ Channel* Server::GetChannel(std::string name)
         return (it->second);
     return (NULL);
 }
+
+std::string Server::GetServerName(void)
+{   return (this->server_name);  }
 
 //exceptions
 void Server::ThrowException(std::string err_msg)

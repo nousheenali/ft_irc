@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:19:36 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 12:05:40 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/03 23:08:11 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,20 @@
 
 #include "Server.hpp"
 
-class Privmsg
+std::vector<std::string>  convert_to_vector(std::string msg);
+
+class privmsg
 {
      private:
         int sender_fd;
-        Client *sender_client;
         Server *serv;
         Channel *chl;
-        std::vector<std::string> msg;
+        std::vector<std::string> params;
+        msg_struct *msg_info;
     
     public:
-        Privmsg(int client_fd, Server *serv);
-        void CheckConditions(void);
+        privmsg(Server *serv, int sender_fd, msg_struct msg_info);
+        void CheckConditions();
         void SendToChannel();
         void SendToClient();
         std::string MessageJoin();

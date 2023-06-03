@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 16:51:04 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/03 23:46:56 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void Server::parseMessage(int fd, std::string msg)
 			}
 			if (c->has_all_info() == true && c->first_invite() == false)
 			{
-		        this->SendReply(fd, RPL_WELCOME(c->get_nickname()));
+		        this->SendReply(fd, RPL_WELCOME(this->GetServerName(), c->get_nickname()));
 				// printRcvMsg(fd, RPL_WELCOME(c->get_nickname()));
                 this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1")); //--->get version and other details
 				// printRcvMsg(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1"));
@@ -139,7 +139,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 	Client 		*client		  = this->GetClient(client_fd);
 	int i = 0;
 
-	std::string	validCmds[10] = {"NICK", "USER", "QUIT", "PASS"}; //---->keep adding commands
+	std::string	validCmds[10] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG", "MODE"}; //---->keep adding commands
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return ;
@@ -155,6 +155,8 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 		case 1: user(this, client_fd, cmd_infos);	break;
 		case 2: quit(this, client_fd, cmd_infos);	break;
 		case 3: pass(this, client_fd, cmd_infos);	break;
+		case 4: privmsg(this, client_fd, cmd_infos);	break;
+		case 5: mode(this, client_fd, cmd_infos);	break;
 		default:
 			this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));
 	}

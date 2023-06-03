@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 11:46:34 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/03 16:36:10 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int Client::get_info()
 void Client::set_MsgInClient(std::string const &buf)
 {   this->_readmsg += buf;          }
 
-
 void Client::set_nickname(std::string nick)
 {	this->_nickname = nick;			}
 
@@ -89,12 +88,10 @@ void Client::set_realname(std::string realname)
 {	this->_realname = realname;		}
 
 void	Client::set_passFlag(bool flag)
-{
-	passFlag = flag;
-}
+{   passFlag = flag;                }
 
 bool& Client::first_invite()
-{   return (this->welcomeFlag);   }
+{   return (this->welcomeFlag);     }
 
 bool& Client::isAuthDone() 	
 { return (this->auth); }
@@ -109,7 +106,7 @@ int	Client::is_valid() const
 	return (SUCCESS);
 }
 
-void Client::SendReply(int recipient_fd, std::string msg)
+void Client::SendReply(std::string msg)
 {
-    send(recipient_fd, msg.c_str(), msg.length(), 0);
+    send(fd, msg.c_str(), msg.length(), 0);
 }

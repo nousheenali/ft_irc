@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nali <nali@student.42.fr>                  +#+  +:+       +#+         #
+#    By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 17:20:20 by nali              #+#    #+#              #
-#    Updated: 2023/06/02 11:50:02 by nali             ###   ########.fr        #
+#    Updated: 2023/06/03 23:07:28 by nali             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= ircserv
 
-SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp Mode.cpp pass.cpp parsing.cpp\
-		nick.cpp user.cpp quit.cpp Privmsg.cpp
+SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp pass.cpp parsing.cpp\
+		nick.cpp user.cpp quit.cpp privmsg.cpp utils.cpp mode.cpp 
 
 OBJS	= ${SRCS:.cpp=.o}
 

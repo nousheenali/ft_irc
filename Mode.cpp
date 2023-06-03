@@ -3,41 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 10:13:27 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/03 23:03:37 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Mode.hpp"
+#include "mode.hpp"
 
 // mode command format
-/* /Mode <channel-name> <modes> <args>*/
-Mode::Mode(int client_fd, Server *serv)
+/* /mode <channel-name> <modes> <args>*/
+mode::mode(Server *serv, int client_fd, msg_struct msg_info)
 {   
     this->client_fd = client_fd;
     this->serv = serv;
     this->client = serv->GetClient(client_fd);
-    this->msg = client->message;
+    this->params = convert_to_vector(msg_info.parameter);
     
-    if (msg.size() < 2) //if no arguments
+    if (params.size() == 0) //if no arguments
     {
-        serv->SendReply(client_fd, ERR_NEEDMOREPARAMS(msg[0]));
+        serv->SendReply(client_fd, ERR_NEEDMOREPARAMS(msg_info.cmd));
         return ;
     }
-    // if (msg[1][0] != '#' or msg[1][0] != '&') //check if channel name
+    // if (params[0][0] != '#' or params[0][0] != '&') //check if channel name
     // {
-    //     serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(msg[1]));
+    //     serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(params[0]));
     //     return ;
     // }
-    this->chl = serv->GetChannel(msg[1]); 
+    this->chl = serv->GetChannel(params[0]); 
     if (chl == NULL) //channel doesn't exist
     {
-        serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(msg[1]));
+        serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(params[0]));
         return ;
     }
-    if (msg.size() == 2) // for /mode <#channle_name>  
+    if (params.size() == 1) // for /mode <#channle_name>  
     {
         //print server creation time
         //print current modes
@@ -47,7 +47,7 @@ Mode::Mode(int client_fd, Server *serv)
     CheckMode();
 }
 
-void Mode::CheckMode()
+void mode::CheckMode()
 {
     char ch, prev = '\0';
     std::vector<std::string> options;
@@ -56,9 +56,9 @@ void Mode::CheckMode()
     std::string s;
     
     //iterating through mode options
-    for (std::string::size_type i = 0; i < msg[2].size(); i++) 
+    for (std::string::size_type i = 0; i < params[1].size(); i++) 
     {
-        ch = msg[2][i];
+        ch = params[1][i];
         exists = (std::find(arr, arr + 7, ch) != arr + 7); //checking if mode is valid
         if (exists)
         {
@@ -86,7 +86,7 @@ void Mode::CheckMode()
 }
 
 //using a hash function becauce switches dont handle strings
-Mode::option Mode::hashit (std::string &opt) 
+mode::option mode::hashit (std::string &opt) 
 {
     if (opt == "-i") return ONE;
     if (opt == "+i") return TWO;
@@ -101,7 +101,7 @@ Mode::option Mode::hashit (std::string &opt)
     else return ZERO;
 }
 
-void Mode::SelectOption(std::string str)
+void mode::SelectOption(std::string str)
 {
     // if client does not have operator rights on channel none of the 
     // commands should be possible
@@ -146,39 +146,39 @@ void Mode::SelectOption(std::string str)
             break;
 
         case FIVE:  /* -k */
-            if (msg[2].size() < 4) //-k requires an argument
+            if (params.size() < 3) //-k requires an argument
             {
-                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "k", "*", MODEMSG1));
+                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(params[0], "k", "*", MODEMSG1));
                 break;
             }
             if (this->chl->get_key_flag() == 1) //mode is changed to -k only if current flag +k
             {
-                if (chl->get_key() == msg[3]) //change mode only if key value is correct
+                if (chl->get_key() == params[2]) //change mode only if key value is correct
                 {
                     chl->set_key_flag(0);
                     reply_mode += "-k";
-                    reply_args += (msg[3] + " ");
+                    reply_args += (params[2] + " ");
                 }
                 else
-                    serv->SendReply(client_fd, ERR_KEYSET(msg[1]));
-                msg.erase(msg.begin() + 3); //deleting the argument for k mode so we move to argument of next mode
+                    serv->SendReply(client_fd, ERR_KEYSET(params[0]));
+                params.erase(params.begin() + 2); //deleting the argument for k mode so we move to argument of next mode
             }
             break;
 
         case SIX:  /* +k */
-            if (msg[2].size() < 4)  //+k requires an argument
+            if (params.size() < 3)  //+k requires an argument
             {
-                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "k", "*", MODEMSG1));
+                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(params[0], "k", "*", MODEMSG1));
                 break;
             }
             if (this->chl->get_key_flag() == 0) 
             {
-                chl->set_key(msg[3]);
+                chl->set_key(params[2]);
                 chl->set_key_flag(1);
                 reply_mode += "+k";
-                reply_args += (msg[3] + " ");
+                reply_args += (params[2] + " ");
             }
-            msg.erase(msg.begin() + 3); //deleting that argument
+            params.erase(params.begin() + 2); //deleting that argument
             break;
 
         case SEVEN:  /* -o */
@@ -195,24 +195,24 @@ void Mode::SelectOption(std::string str)
             break;
 
         case TEN:  /* +l */
-            if (msg[2].size() < 4)
+            if (params.size() < 3)
             {
-                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "l", "*", MODEMSG1));
+                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(params[0], "l", "*", MODEMSG1));
                 break;
             }
             //need not check if limit is already set
-            int limit = atoi(msg[3].c_str());
+            int limit = atoi(params[2].c_str());
             if (limit < 1) 
             {
-                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(msg[1], "l", msg[3], MODEMSG2));
-                msg.erase(msg.begin() + 3);
+                serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(params[0], "l", params[2], MODEMSG2));
+                params.erase(params.begin() + 2);
                 break;
             }  
             chl->set_limit(limit);
             chl->set_limit_flag(1);
             reply_mode += "+l";
-            reply_args += (msg[3] + " ");
-            msg.erase(msg.begin() + 3); //deleting that argument
+            reply_args += (params[2] + " ");
+            params.erase(params.begin() + 2); //deleting that argument
             break;
     }
 }

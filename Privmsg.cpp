@@ -3,48 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 12:09:58 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:19:55 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Privmsg.hpp"
+#include "privmsg.hpp"
 
-Privmsg::Privmsg(int sender_fd, Server *serv)
+privmsg::privmsg(Server *serv, int sender_fd, msg_struct msg_info)
 {   
     this->sender_fd = sender_fd;
     this->serv = serv;
-    this->sender_client = serv->GetClient(sender_fd);
-    this->msg = sender_client->message;
+    this->params = convert_to_vector(msg_info.parameter);
+    this->msg_info = &msg_info;
     CheckConditions();
 }
 
-void Privmsg::CheckConditions(void)
+void privmsg::CheckConditions()
 {
-    if (msg.size() == 1) //if no arguments
+    if (params.size() == 0) //if no arguments
     {
-        serv->SendReply(sender_fd, ERR_NORECIPIENT(msg[0]));
+        serv->SendReply(sender_fd, ERR_NORECIPIENT(msg_info->cmd));
         return ;
     }
-    else if (msg.size() == 2) //if only name given but no message
+    else if (params.size() == 1) //if only name given but no message
     {
         serv->SendReply(sender_fd, ERR_NOTEXTTOSEND());
         return ;
     }
-    if (msg[1][0] == '#' || msg[1][0] == '&') // if msg to channel
+    if (params[0][0] == '#' || params[0][0] == '&') // if msg to channel
         SendToChannel(); 
     else //if msg to user
         SendToClient();
 }
 
-void Privmsg::SendToChannel()
+void privmsg::SendToChannel()
 {
-    Channel *ch = serv->GetChannel(msg[1]);
+    Channel *ch = serv->GetChannel(params[0]);
     if (ch == NULL) //channel doesn't exist
     {
-        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(msg[1]));
+        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
         return ;
     }
     //if channel exists 
@@ -57,37 +57,44 @@ void Privmsg::SendToChannel()
 
 }
 
-void Privmsg::SendToClient()
+void privmsg::SendToClient()
 {
     int recipient_fd = -1;
     std::map<int, Client *>	client_list	= serv->GetAllClients();
     std::map<int, Client *>::iterator it = client_list.begin();
+    
     while (it != client_list.end()) //get fd of the recipient with matching nick
     {
-        if (it->second->get_nickname() == msg[1])
+        if (it->second->get_nickname() == params[0])
         {
             recipient_fd = it->first;
             break;
         }
+        it++;
     }
     if (recipient_fd == -1) //no user by the nick
     {
-        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(msg[1]));
+        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
         return ;
     }
     //if matching user found, send msg
-    Client *cl = serv->GetClient(recipient_fd);
-    std::string text = MessageJoin() + "\r\n";
-    cl->SendReply(recipient_fd, text);
+    std::cout << "user found....\n";
+    Client *sdr = serv->GetClient(sender_fd);
+    Client *rcvr = serv->GetClient(recipient_fd);
+    std::string text = ":" + sdr->get_nickname() + "!" + sdr->get_username() + "@" + sdr->get_ip_addr() + " PRIVMSG " + rcvr->get_nickname() + " :" + MessageJoin() +"\r\n";
+    serv->SendReply(rcvr->get_socket(), text);
 }
 
-std::string Privmsg::MessageJoin()
+std::string privmsg::MessageJoin()
 {
-    std::vector<std::string>::iterator it = this->msg.begin() + 2;
+    std::vector<std::string>::iterator it;
     std::string text;
     
-    while (it != msg.end())
-        text += *it + " ";
+    for (it = params.begin() + 1; it != params.end(); it++)
+           text += *it + " ";
     return text;
 }
 
+
+/*  reference for reply
+http://chi.cs.uchicago.edu/chirc/irc_examples.html */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 12:42:33 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/03 23:19:52 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@
 #include "Client.hpp"
 #include "Replies.hpp"
 #include "Command.hpp"
-#include "Mode.hpp"
+#include "mode.hpp"
+#include "privmsg.hpp"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"    
@@ -62,6 +63,7 @@ class Server
         Server(Server const &other);
         Server &operator= (Server const &other);
         ~Server();
+        std::string GetServerName(void);
         Client* GetClient(int client_fd);
         Channel* GetChannel(std::string name);
         void SendReply(int client_fd, std::string msg);

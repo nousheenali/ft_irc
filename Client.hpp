@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 11:45:27 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/03 16:36:18 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ class Client
 		std::string		_nickname;
 		std::string		_realname;
 		std::string		_old_nickname;
+		std::string		_hostname;
+		std::string		_servername;
+
+		
         
     public:
         std::string nick;
@@ -70,7 +74,7 @@ class Client
 		void	set_realname(std::string realname);
 		void	set_passFlag(bool flag);
 		int		is_valid() const;
-		void	SendReply(int recipient_fd, std::string msg);
+		void	SendReply(std::string msg);
 };
 
 #endif

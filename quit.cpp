@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quit.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:19:20 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 13:49:29 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/04 00:13:13 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void quit(Server *server, int fd, msg_struct cmd_infos)
     std::string quit_msg = ":" + c->get_nickname() + "!" + c->get_username() + "@localhost QUIT " + msg + "\n";
 
     printRcvMsg(fd, quit_msg);
-	std::cout << RED <<" *** Connection Closed by Client *** \n" << RESET ;
+    std::cout << RED <<" *** Connection Closed by Client on socket " << fd << " *** \n" << RESET ;
     server->deleteClient(fd);
 	server->setPfds(fd, -1);
     return;
