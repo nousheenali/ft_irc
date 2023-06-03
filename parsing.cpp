@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/03 23:46:56 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:35:46 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,11 @@ void Server::parseMessage(int fd, std::string msg)
 			{
 		        this->SendReply(fd, RPL_WELCOME(this->GetServerName(), c->get_nickname()));
 				// printRcvMsg(fd, RPL_WELCOME(c->get_nickname()));
-                this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1")); //--->get version and other details
+                this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), this->GetServerName(), "1.1")); //--->get version and other details
 				// printRcvMsg(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1"));
-				this->SendReply(fd, RPL_CREATED(c->get_nickname(), this->getDate())); //---->get date in realtime and print it
+				this->SendReply(fd, RPL_CREATED(this->GetServerName(), c->get_nickname(), this->getDate())); //---->get date in realtime and print it
 				// printRcvMsg(fd, RPL_CREATED(c->get_nickname(), "31 May 2023"));
-                this->SendReply(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
+                this->SendReply(fd, RPL_MYINFO(c->get_nickname(), this->GetServerName(), "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
 				// printRcvMsg(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
 				printRcvMsg(fd, ": Welcome message sent...\n");
 				

@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/03 23:56:19 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 00:34:17 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 //WELCOME MSG
 
 #define RPL_WELCOME(servername, nickname) (":" + servername + " 001 " + nickname + " : Welcome to the Internet Relay Network " + nickname +"\r\n")
-#define RPL_YOURHOST(nickname, servername, version) ("002 " + nickname + " :Your host is " + servername + ", running version " + version + "\r\n")
-#define RPL_CREATED(client, date) ("003 " + client + " :This server was created " + date + "\r\n")
-#define RPL_MYINFO(client, servername, version, nickname, chan_modes, chan_modes_param) ("004 " + client + " " + servername + " " + version + " " + nickname + " " + chan_modes + " " + chan_modes_param + "\r\n")
+#define RPL_YOURHOST(nickname, servername, version) (":" + servername + " 002 " + nickname + " :Your host is " + servername + ", running version " + version + "\r\n")
+#define RPL_CREATED(servername, client, date) (":" + servername + " 003 " + client + " :This server was created " + date + "\r\n")
+#define RPL_MYINFO(client, servername, version, nickname, chan_modes, chan_modes_param) (":" + servername + " 004 " + client + " " + servername + " " + version + " " + nickname + " " + chan_modes + " " + chan_modes_param + "\r\n")
 
 #define ERR_NEEDMOREPARAMS(command)			("461 " + command + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTRED(client)		("462 " + client + " :Unauthorized command (already registered)\r\n")
