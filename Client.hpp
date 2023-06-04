@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/06/03 16:36:18 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 13:49:39 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Client
 		bool		welcomeFlag;
 		bool		passFlag;
 		bool		_connection_pwd;
+		
 		std::string		_readmsg;
 		std::string		_username;
 		std::string		_nickname;
@@ -62,6 +63,7 @@ class Client
 		std::string		get_old_nickname();
 		std::string 	get_username();
 		std::string 	get_realname();
+		std::string		get_msg_prefix();
 		bool&			isAuthDone();
 		bool& 			has_all_info();
 		bool&			get_passFlag();

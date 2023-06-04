@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 00:10:36 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 11:02:23 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ void Server::ConnectClients(void)
     pfdStruct.events = POLLIN; //for input operations are possible on this fd
     this->pfd_count += 1;
     this->pfds.push_back(pfdStruct);
+    std::cout << GREEN << " *** Server running and waiting for connections *** " << RESET << std::endl;
     while(1)
     {
         int val = poll(&this->pfds[0], this->pfd_count, 5000); //returns no.of elements in pollfds whose revents has been set to a nonzero value 

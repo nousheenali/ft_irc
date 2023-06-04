@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Privmsg.cpp                                        :+:      :+:    :+:   */
+/*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 00:48:21 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 11:10:09 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,14 @@ void privmsg::SendToClient()
     std::cout << "user found....\n";
     Client *sdr = serv->GetClient(sender_fd);
     Client *rcvr = serv->GetClient(recipient_fd);
-    std::string text = ":" + sdr->get_nickname() + "!" + sdr->get_username() + "@" + sdr->get_ip_addr() + " PRIVMSG " + rcvr->get_nickname() + " :" + MessageJoin() +"\r\n";
+                                    //    _nickname + (_username.empty() ? "" : "!" + _username) + (_hostname.empty() ? "" : "@" + _hostname);
+    // std::string text = ":" + sdr->get_nickname() + "!" + sdr->get_username() + "@" + sdr->get_ip_addr() + " PRIVMSG " + rcvr->get_nickname() + " :" + MessageJoin() +"\r\n";
+    std::string text = sdr->get_msg_prefix() + " PRIVMSG " + rcvr->get_nickname() + " :" + ParamsJoin() +"\r\n";
+    
     serv->SendReply(rcvr->get_socket(), text);
 }
 
-std::string privmsg::MessageJoin()
+std::string privmsg::ParamsJoin()
 {
     std::vector<std::string>::iterator it;
     std::string text;

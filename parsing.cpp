@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/04 00:50:28 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 14:04:38 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 	Client 		*client		  = this->GetClient(client_fd);
 	int i = 0;
 
-	std::string	validCmds[10] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG"}; //---->keep adding commands
+	std::string	validCmds[10] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG", "PONG"}; //---->keep adding commands
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return ;
@@ -156,6 +156,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 		case 2: quit(this, client_fd, cmd_infos);	break;
 		case 3: pass(this, client_fd, cmd_infos);	break;
 		case 4: privmsg(this, client_fd, cmd_infos);	break;
+		case 5: pong(this, client_fd, cmd_infos);	break;
 		default:
 			this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));
 	}

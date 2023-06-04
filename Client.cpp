@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/06/03 16:36:10 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/04 13:49:59 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,11 @@ bool& Client::has_all_info()
 
 int Client::get_info()
 {   return (this->hasInfo);     }
+
+std::string Client::get_msg_prefix()
+{
+    return (":" + _nickname + "!" + _username + "@" + ip_addr);
+}
 
 //////////////////////////Setters////////////////////
 
