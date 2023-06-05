@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "privmsg.hpp"
+#include "Privmsg.hpp"
 
 privmsg::privmsg(Server *serv, int sender_fd, msg_struct msg_info)
 {   

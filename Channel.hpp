@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:20 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 00:50:41 by nali             ###   ########.fr       */
+/*   Updated: 2023/05/25 22:06:34 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,40 +16,70 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "Client.hpp"
+#include "Server.hpp"
 
 class Channel
 {
-//     private:
-//         std::string name;
-//         std::string topic;
-//         std::string key; //password 
-//         int limit;
-//         std::vector<int> operators; //to store client_fds of operators
-        
-//         //modes
-//         bool iflag; //invite_only flag --> +i = 1, -i = 0
-//         bool tflag; //topic flag
-//         bool kflag; // key or password flag
-//         bool lflag; //flag to set limit
-    
-//     public:
-//         Channel();
-//         Channel(std::string name);
-//         //getters and setters
-//         bool get_invite_flag();
-//         void set_invite_flag(bool i);
-//         bool get_topic_flag();
-//         void set_topic_flag(bool i);
-//         bool get_key_flag();
-//         void set_key_flag(bool i);
-//         bool get_limit_flag();
-//         void set_limit_flag(bool i);
 
-//         std::string get_key();
-//         void set_key(std::string key);
-//         int get_limit();
-//         void set_limit(int val);
-        
+private:
+        std::string name; // channel name
+        std::string topic;
+        std::string key; // password
+        int limit;
+        std::vector<int> operators; // to store client_fds of operators
+        int total_members;          // current number of members present in the channel
+        // modes
+        bool iflag; // invite_only flag --> +i = 1, -i = 0
+        bool tflag; // topic flag
+        bool kflag; // key or password flag
+        bool lflag; // flag to set limit
+
+public:
+        struct Channel_Member
+        {
+                Client *user;
+        };
+        std::vector<Channel_Member> members; // store all the members in the channel
+        // default constructor
+        Channel();
+
+        // construct with channel name
+        Channel(std::string name);
+
+        // getters and setters
+        bool get_invite_flag();
+        void set_invite_flag(bool i);
+        bool get_topic_flag();
+        void set_topic_flag(bool i);
+        bool get_key_flag();
+        void set_key_flag(bool i);
+        bool get_limit_flag();
+        void set_limit_flag(bool i);
+        int get_total_members();
+        std::string get_channel_name();
+        std::string get_key();
+        void set_key(std::string key);
+        int get_limit();
+        void set_limit(int val);
+
+        // channel join validation
+        bool isMember(std::string nick);
+        bool isFull();
+
+        // channel actions
+        void addUser(Client *client);
+        // void createChannel(Server *server, int client_fd, const std::string &channelName,
+        //                    const std::string &channelKey);
+
+        // PRINT ALL CHANNEL AND MEMBERS IN THE SERVER
+        // void printChannelAndMembers(Server *server);
+
+        // std::vector<std::string> getChannelKeys(const std::vector<std::string>
+        //                                             &param_splitted);
+        // int validateChannelNames(const std::vector<std::string> &channelNames);
+        // void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &channelKey);
+        // int join(Server *server, int client_fd, msg_struct cmd_infos);
 };
 
 #endif

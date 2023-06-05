@@ -13,23 +13,25 @@
 #include "Client.hpp"
 
 Client::Client()
-{}
+{
+}
 
 Client::Client(int fd)
 {
-    this->fd		= fd;
-	this->hasInfo	= false;
-    this->auth      = false;
-    
+    this->fd = fd;
+    this->hasInfo = false;
+    this->auth = false;
+
     struct sockaddr_in my_addr;
     socklen_t addr_len = sizeof(my_addr);
-    getsockname(this->fd,(sockaddr *)&my_addr, &addr_len);
+    getsockname(this->fd, (sockaddr *)&my_addr, &addr_len);
     inet_ntop(AF_INET, &my_addr.sin_addr, this->ip_addr, sizeof(ip_addr));
-    this->port = ntohs(my_addr.sin_port); 
+    this->port = ntohs(my_addr.sin_port);
 }
 
 Client::~Client()
-{}
+{
+}
 
 Client Client::operator=(Client other)
 {
@@ -38,37 +40,59 @@ Client Client::operator=(Client other)
 }
 
 char *Client::get_ip_addr()
-{   return (this->ip_addr); }
+{
+    return (this->ip_addr);
+}
 
 int Client::get_port()
-{   return (this->port); }
+{
+    return (this->port);
+}
 
 int Client::get_socket()
-{   return (this->fd); }
+{
+    return (this->fd);
+}
 
-std::string& Client::get_MsgFrmClient()
-{   return (this->_readmsg);        }
+std::string &Client::get_MsgFrmClient()
+{
+    return (this->_readmsg);
+}
 
-bool& Client::get_passFlag() 
-{ return (this->passFlag);  }
+bool &Client::get_passFlag()
+{
+    return (this->passFlag);
+}
 
-std::string	Client::get_nickname()
-{   return (this->_nickname);   }
+std::string Client::get_nickname()
+{
+    return (this->_nickname);
+}
 
-std::string	Client::get_old_nickname()
-{ return (this->_old_nickname); }
+std::string Client::get_old_nickname()
+{
+    return (this->_old_nickname);
+}
 
 std::string Client::get_username()
-{ return (this->_username);     }
+{
+    return (this->_username);
+}
 
 std::string Client::get_realname()
-{ return (this->_realname);     }
+{
+    return (this->_realname);
+}
 
-bool& Client::has_all_info()
-{   return (this->hasInfo);     }
+bool &Client::has_all_info()
+{
+    return (this->hasInfo);
+}
 
 int Client::get_info()
-{   return (this->hasInfo);     }
+{
+    return (this->hasInfo);
+}
 
 std::string Client::get_msg_prefix()
 {
@@ -78,40 +102,55 @@ std::string Client::get_msg_prefix()
 //////////////////////////Setters////////////////////
 
 void Client::set_MsgInClient(std::string const &buf)
-{   this->_readmsg += buf;          }
-
-void Client::set_nickname(std::string nick)
-{	this->_nickname = nick;			}
-
-void Client::set_old_nickname(std::string old_nick)
-{	this->_old_nickname = old_nick;	}
-
-void Client::set_username(std::string username)
-{	this->_username = username;		}
-
-void Client::set_realname(std::string realname)
-{	this->_realname = realname;		}
-
-void	Client::set_passFlag(bool flag)
-{   passFlag = flag;                }
-
-bool& Client::first_invite()
-{   return (this->welcomeFlag);     }
-
-bool& Client::isAuthDone() 	
-{ return (this->auth); }
-
-
-int	Client::is_valid() const
 {
-	if (_username.empty())
-		return (FAILURE);
-	if (_nickname.empty())
-		return (FAILURE);
-	return (SUCCESS);
+    this->_readmsg += buf;
 }
 
-void Client::SendReply(std::string msg)
+void Client::set_nickname(std::string nick)
+{
+    this->_nickname = nick;
+}
+
+void Client::set_old_nickname(std::string old_nick)
+{
+    this->_old_nickname = old_nick;
+}
+
+void Client::set_username(std::string username)
+{
+    this->_username = username;
+}
+
+void Client::set_realname(std::string realname)
+{
+    this->_realname = realname;
+}
+
+void Client::set_passFlag(bool flag)
+{
+    passFlag = flag;
+}
+
+bool &Client::first_invite()
+{
+    return (this->welcomeFlag);
+}
+
+bool &Client::isAuthDone()
+{
+    return (this->auth);
+}
+
+int Client::is_valid() const
+{
+    if (_username.empty())
+        return (FAILURE);
+    if (_nickname.empty())
+        return (FAILURE);
+    return (SUCCESS);
+}
+
+void Client::SendReply(int fd, std::string msg)
 {
     send(fd, msg.c_str(), msg.length(), 0);
 }
