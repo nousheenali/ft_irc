@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 00:49:54 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/05 14:00:33 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 #include <ctime>
+#include <csignal> 
 // #include "Channel.hpp"
 #include "Client.hpp"
 #include "Replies.hpp"

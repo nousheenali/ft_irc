@@ -6,13 +6,21 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 11:02:23 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/05 13:57:19 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <cstdio>
 #include <cerrno>
+
+bool CloseServer = false; //for signal handling
+void	SignalHandler(int signum)
+{
+    std::cout << "------------SIGINT CALLED-------------\n";
+    CloseServer = true; 
+}
+
 
 Server::Server()
 {
@@ -146,8 +154,11 @@ void Server::ConnectClients(void)
     this->pfd_count += 1;
     this->pfds.push_back(pfdStruct);
     std::cout << GREEN << " *** Server running and waiting for connections *** " << RESET << std::endl;
-    while (1)
+    signal(SIGINT, SignalHandler);
+    while(1)
     {
+        if (CloseServer)
+            this->~Server();
         int val = poll(&this->pfds[0], this->pfd_count, 5000); // returns no.of elements in pollfds whose revents has been set to a nonzero value
         if (val < 0)
         {
