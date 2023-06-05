@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/05 13:57:19 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/05 17:03:04 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 bool CloseServer = false; //for signal handling
 void	SignalHandler(int signum)
 {
-    std::cout << "------------SIGINT CALLED-------------\n";
+    std::cout << "\r------------SIGINT CALLED-------------\n";
     CloseServer = true; 
 }
 
