@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:20 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 22:06:34 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 10:35:36 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,14 @@ public:
         void set_key_flag(bool i);
         bool get_limit_flag();
         void set_limit_flag(bool i);
+        std::string get_topic();
+        void set_topic(std::string str);
         int get_total_members();
         std::string get_channel_name();
         std::string get_key();
         void set_key(std::string key);
         int get_limit();
         void set_limit(int val);
-
         // channel join validation
         bool isMember(std::string nick);
         bool isFull();

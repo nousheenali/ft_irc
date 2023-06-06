@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/05 14:00:33 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 05:08:52 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@
 #include <map>
 #include <ctime>
 #include <csignal> 
-// #include "Channel.hpp"
 #include "Client.hpp"
 #include "Replies.hpp"
 #include "Command.hpp"
@@ -76,6 +75,7 @@ public:
     void setPfds(int fd, int temp);
     std::string getDate();
     std::map<std::string, Channel *> &GetChannelList();
+    std::string getServerIP(void);
 
 private:
     void CreateSocket(void);

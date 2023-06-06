@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/05 18:36:47 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 09:56:05 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,14 @@ void privmsg::CheckConditions()
 void privmsg::SendToChannel()
 {
     Client *sdr, *rcvr;
-    std::string text;
-    
     Channel *ch = serv->GetChannel(params[0]);
+    
     if (ch == NULL) //channel doesn't exist
     {
         serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
         return ;
     }
-    std::cout << "channel found....\n";
+    // std::cout << "channel found....\n";
     if ((sdr = serv->GetClient(sender_fd)) != NULL)
     {
         if (ch->isMember(sdr->get_nickname()) == false) //sender not a member of channel
@@ -58,16 +57,11 @@ void privmsg::SendToChannel()
             serv->SendReply(sender_fd, ERR_CANNOTSENDTOCHAN(params[0]));
             return ;
         }
-        text = sdr->get_msg_prefix() + " PRIVMSG " + "#abc" + " :" + ParamsJoin() +"\r\n";
         for(int i = 0; i < ch->members.size(); i++)
         {
             rcvr = ch->members[i].user;
             if (rcvr->get_nickname() != sdr->get_nickname())
-            {
-                // std::cout << "++" << rcvr->get_nickname() <<" -> ";
-                // std::cout << text ;
-                serv->SendReply(rcvr->get_socket(), text);
-            }
+                serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG(sdr->get_msg_prefix(), ch->get_channel_name(), ParamsJoin()));
         }
     }
 }
@@ -93,14 +87,10 @@ void privmsg::SendToClient()
         serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
         return ;
     }
-    std::cout << "user found....\n";
+    // std::cout << "user found....\n";
     rcvr = serv->GetClient(recipient_fd);
     if ((sdr = serv->GetClient(sender_fd)) != NULL)
-    {
-        // std::string text = ":" + sdr->get_nickname() + "!" + sdr->get_username() + "@" + sdr->get_ip_addr() + " PRIVMSG " + rcvr->get_nickname() + " :" + MessageJoin() +"\r\n";
-        std::string text = sdr->get_msg_prefix() + " PRIVMSG " + rcvr->get_nickname() + " :" + ParamsJoin() +"\r\n";
-        serv->SendReply(rcvr->get_socket(), text);
-    }
+        serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG( sdr->get_msg_prefix(), rcvr->get_nickname(), ParamsJoin()));
 }
 
 std::string privmsg::ParamsJoin()
@@ -109,7 +99,7 @@ std::string privmsg::ParamsJoin()
     std::string text;
     
     for (it = params.begin() + 1; it != params.end(); it++)
-           text += *it + " ";
+        text += (*it + " ");
     return text;
 }
 

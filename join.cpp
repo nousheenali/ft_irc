@@ -50,6 +50,8 @@ void createChannel(Server *server, int client_fd, const std::string &channelName
     Client *cl = server->GetClient(client_fd);
     newCh->addUser(cl);
     server->GetChannelList()[channelName] = newCh;
+    server->SendReply(cl->get_socket(), RPL_JOIN(cl->get_msg_prefix(), newCh->get_channel_name()));
+    server->SendReply(cl->get_socket(), RPL_TOPIC(server->getServerIP(), cl->get_nickname(), newCh->get_channel_name(), newCh->get_topic() ));
 }
 
 std::string Channel::get_channel_name()
@@ -84,10 +86,12 @@ void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &
     }
     ch->addUser(cl);
     for (std::vector<Channel::Channel_Member>::iterator mem_it = ch->members.begin();
-         mem_it != ch->members.end(); ++mem_it)
+         mem_it != ch->members.end(); mem_it++)
     {
-        mem_it->user->SendReply(mem_it->user->get_socket(), ":" + mem_it->user->get_nickname() + " JOIN " + ch->get_channel_name());
+        server->SendReply(mem_it->user->get_socket(), RPL_JOIN(cl->get_msg_prefix(), ch->get_channel_name()));
+        // mem_it->user->SendReply(mem_it->user->get_socket(), ":" + mem_it->user->get_nickname() + " JOIN " + ch->get_channel_name());
     }
+    server->SendReply(cl->get_socket(), RPL_TOPIC(server->getServerIP(), cl->get_nickname(), ch->get_channel_name(), ch->get_topic() ));
 }
 
 int join(Server *server, int client_fd, msg_struct cmd_infos)

@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:23 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 13:54:22 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 10:38:20 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,4 +105,14 @@ int Channel::get_limit()
 void Channel::set_limit(int val)
 {
     this->limit = val;
+}
+
+std::string Channel::get_topic()
+{
+    return this->topic;
+}
+
+void Channel::set_topic(std::string str)
+{
+    this->topic = str;
 }

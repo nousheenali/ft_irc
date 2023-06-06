@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/05 17:03:04 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 11:04:51 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,7 +385,6 @@ void Server::close_fds()
 {
     unsigned long i;
 
-    std::cout << "close fd called \n";
     for (i = 0; i < pfds.size(); i++)
     {
         if (pfds[i].fd > 0) // closed client connections are set to -1 so this check
@@ -442,6 +441,11 @@ const char *Server::CustomException::what() const throw()
 std::map<int, Client *> Server::GetAllClients()
 {
     return (client_array);
+}
+
+std::string Server::getServerIP(void)
+{
+    return (this->server_ip);
 }
 
 /* Comment #1
