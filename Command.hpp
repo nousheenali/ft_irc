@@ -27,11 +27,13 @@ struct msg_struct
 	std::string parameter;
 };
 
-int pass(Server *server, int client_fd, msg_struct cmd_infos);
+int  pass(Server *server, int clifdent_fd, msg_struct msg_info);
 void nick(Server *server, int fd, msg_struct msg_info);
-void user(Server *server, int client_fd, msg_struct msg_infos);
-void quit(Server *server, int fd, msg_struct cmd_infos);
-void pong(Server *serv, int client_fd, msg_struct msg_info);
-int join(Server *serv, int client_fd, msg_struct msg_info);
+void user(Server *server, int client_fd, msg_struct msg_info);
+void quit(Server *server, int fd, msg_struct msg_info);
+void pong(Server *server, int client_fd, msg_struct msg_info);
+int  join(Server *server, int client_fd, msg_struct msg_info);
+void kick(Server *server, int client_fd, msg_struct msg_info);
+
 
 #endif

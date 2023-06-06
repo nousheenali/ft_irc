@@ -55,6 +55,11 @@
 #define ERR_CANNOTSENDTOCHAN(channel)               ("404 " + channel + " :Cannot send to channel\r\n")
 #define ERR_NOTEXTTOSEND()                          ("412 :No text to send\r\n")
 
+//KICK
+#define ERR_BADCHANMASK(channel)				("476 " + channel + " :Bad Channel Mask\r\n")
+#define ERR_USERNOTINCHANNEL(nick, channel)		("441 " + nick + " " + channel + " :They aren't on that channel\r\n")
+#define ERR_NOTONCHANNEL(channel)	 ("442 " + channel + " :You're not on that channel\r\n")
+
 //JOIN
 #define RPL_JOIN(client, channel)                   (client + " JOIN " + channel + "\r\n")
 #define RPL_TOPIC(server, nick, channel, topic)     (":" + server + " 332 " + nick + " " + channel + " :" + topic + "\r\n")
