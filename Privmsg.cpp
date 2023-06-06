@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 09:56:05 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 14:24:15 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void privmsg::SendToChannel()
     
     if (ch == NULL) //channel doesn't exist
     {
-        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
+        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(serv->GetClient(sender_fd)->get_nickname(), params[0]));
         return ;
     }
     // std::cout << "channel found....\n";
@@ -68,27 +68,16 @@ void privmsg::SendToChannel()
 
 void privmsg::SendToClient()
 {
-    int recipient_fd = -1;
+    // int recipient_fd = -1;
     Client *sdr,*rcvr;
-    std::map<int, Client *>	client_list	= serv->GetAllClients();
-    std::map<int, Client *>::iterator it = client_list.begin();
-    
-    while (it != client_list.end()) //get fd of the recipient with matching nick
+
+    rcvr = serv->GetClient(params[0]);
+    if (rcvr == NULL) //no user by the nick
     {
-        if (it->second->get_nickname() == params[0])
-        {
-            recipient_fd = it->first;
-            break;
-        }
-        it++;
-    }
-    if (recipient_fd == -1) //no user by the nick
-    {
-        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(params[0]));
+        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(serv->GetClient(sender_fd)->get_nickname(),params[0]));
         return ;
     }
     // std::cout << "user found....\n";
-    rcvr = serv->GetClient(recipient_fd);
     if ((sdr = serv->GetClient(sender_fd)) != NULL)
         serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG( sdr->get_msg_prefix(), rcvr->get_nickname(), ParamsJoin()));
 }

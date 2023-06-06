@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 05:08:52 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 14:17:13 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ public:
     ~Server();
     std::string GetServerName(void);
     Client *GetClient(int client_fd);
+    Client *GetClient(std::string nick);
     Channel *GetChannel(std::string name);
     void SendReply(int client_fd, std::string msg);
     std::map<int, Client *> GetAllClients();

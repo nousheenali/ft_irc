@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:23 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 10:38:20 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 14:42:40 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,19 @@ bool Channel::isMember(std::string nick)
     {
         if (this->members[i].user->get_nickname() == nick)
             return (true);
+    }
+    return (false);
+}
+
+bool Channel::isOperator(std::string nick)
+{
+    std::map<int, Client *>::iterator it = operators.begin();
+
+    while(it != operators.end())
+    {
+        if(it->second->get_nickname() == nick)
+            return (true);
+        it++;
     }
     return (false);
 }
@@ -115,4 +128,31 @@ std::string Channel::get_topic()
 void Channel::set_topic(std::string str)
 {
     this->topic = str;
+}
+
+void Channel::addOperator(Client *client)
+{
+    int client_fd = client->get_socket();
+    this->operators.insert(std::pair<int, Client *>(client_fd, client));
+}
+
+void Channel::removeOperator(Client *client)
+{
+    int client_fd = client->get_socket();
+    this->operators.erase(client_fd);
+}
+
+std::string Channel::getChannelMode()
+{
+    std::string str;
+
+    if (iflag == 1)
+        str += "i";
+    if (tflag == 1)
+        str += "t";
+    if (kflag == 1)
+        str += "k";
+    if (lflag == 1)
+        str += "l";
+    return (str);
 }

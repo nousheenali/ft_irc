@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:53 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 08:41:45 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 14:48:54 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,12 @@ class mode
         std::vector<std::string> params; 
         std::string reply_mode; //reply sent to channel after execution
         std::string reply_args; //reply sent to channel after execution
+        bool modeChanged;
         enum option{ZERO = 0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN} ;
 
     private:
         option hashit (std::string &opt);
+        int CheckParams(char c);
 
     public:
         mode(Server *serv, int client_fd, msg_struct msg_info);

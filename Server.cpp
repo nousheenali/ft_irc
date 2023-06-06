@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 11:04:51 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 14:20:09 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,6 +399,22 @@ Client *Server::GetClient(int client_fd)
     it = this->client_array.find(client_fd);
     if (it != client_array.end())
         return (it->second);
+    return (NULL);
+}
+
+Client *Server::GetClient(std::string nick)
+{
+    std::map<int, Client *>	client_list	= GetAllClients();
+    std::map<int, Client *>::iterator it = client_list.begin();
+    
+    while (it != client_list.end()) //get fd of the recipient with matching nick
+    {
+        if (it->second->get_nickname() == nick)
+        {
+            return(it->second);
+        }
+        it++;
+    }
     return (NULL);
 }
 

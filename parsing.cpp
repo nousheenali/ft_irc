@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/06 08:43:37 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/06 17:32:00 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ void Server::parseMessage(int fd, std::string msg)
 																											 // printRcvMsg(fd, RPL_CREATED(c->get_nickname(), "31 May 2023"));
 				this->SendReply(fd, RPL_MYINFO(c->get_nickname(), this->GetServerName(), "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
 				// printRcvMsg(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
+				this->SendReply(fd, RPL_MYINFO2(c->get_nickname(), this->GetServerName(), "Commands Available:"));
 				printRcvMsg(fd, ": Welcome message sent...\n");
 
 				c->first_invite() = true;

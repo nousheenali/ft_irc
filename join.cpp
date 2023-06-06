@@ -19,6 +19,13 @@ void printChannelAndMembers(Server *server)
             std::cout << mem_it->user->get_nickname() << ", ";
         }
         std::cout << std::endl;
+        std::cout << "Channel Operators: \n";
+        for (std::map<int, Client *>::iterator oper_it = it->second->operators.begin();
+        oper_it != it->second->operators.end(); ++oper_it)
+        {
+            std::cout << oper_it->second->get_nickname() << ", ";
+        }
+        std::cout << std::endl;
     }
 }
 
@@ -49,6 +56,7 @@ void createChannel(Server *server, int client_fd, const std::string &channelName
     }
     Client *cl = server->GetClient(client_fd);
     newCh->addUser(cl);
+    newCh->addOperator(cl);
     server->GetChannelList()[channelName] = newCh;
     server->SendReply(cl->get_socket(), RPL_JOIN(cl->get_msg_prefix(), newCh->get_channel_name()));
     server->SendReply(cl->get_socket(), RPL_TOPIC(server->getServerIP(), cl->get_nickname(), newCh->get_channel_name(), newCh->get_topic() ));
