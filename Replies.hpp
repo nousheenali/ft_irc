@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/07 10:55:54 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/07 14:58:14 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@
 #define ERR_INVALIDMODEPARAM(serv, chan, nick, mod)         (":" + serv + " 696 " + nick + " " + chan + " " + mod + " * You must specify a parameter for the key mode. Syntax: <key>.\r\n")
 #define ERR_INVALIDMODEPARAM2(serv, chan, nick, mod, param) (":" + serv + " 696 " + nick + " " + chan + " " + mod + " " + param + " Invalid limit mode parameter. Syntax: <limit>.\r\n")
 #define RPL_CHANNELMODEIS(server, nick, channel, modes)     (":" + server + " 324 " + nick + " " + channel + " :+" + modes + "\r\n")
-#define RPL_CHANNELMODEIS2(server, nick, channel, modes)    (":" + server + " 324 " + nick + " " + channel + " :" + modes + "\r\n")
+// #define RPL_CHANNELMODEIS2(server, nick, channel, modes)    (":" + server + " 324 " + nick + " " + channel + " :" + modes + "\r\n")
+#define RPL_MODE(client, channel, msg)                      (client + " MODE " + channel + " " + msg + "\r\n")
+#define RPL_YOUREOPER(server, nick, channel)                (":" + server + " 381 " + nick + " " + channel + ":You are now an IRC operator\r\n")
+              
 
 #define NICK_RPL(oclient, nclient)                  (":" + oclient + " NICK :" + nclient + "\r\n") //---->check if needed
 #define RPL_KICK(servername)						(":" + servername + " 001 " +  " kicked you out\r\n")// check format
@@ -63,6 +66,8 @@
 //JOIN
 #define RPL_JOIN(client, channel)                   (client + " JOIN " + channel + "\r\n")
 #define RPL_TOPIC(server, nick, channel, topic)     (":" + server + " 332 " + nick + " " + channel + " :" + topic + "\r\n")
+#define ERR_BADCHANNELKEY(client, channel)          ("475" + client + " " + channel + ": Cannot join channel (incorrect channel key)\r\n")
+#define ERR_CHANNELISFULL(client, channel)          ("471" + client + " " + channel + ": Cannot join channel (channel is full)\r\n")
 
 //PRIVMSG
 #define RPL_PRIVMSG(sender, receiver, message)     (sender + " PRIVMSG " + receiver + " :" + message +"\r\n")

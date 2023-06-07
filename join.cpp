@@ -76,20 +76,21 @@ void Channel::addUser(Client *client)
 
 void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &channelKey)
 {
-    if (ch->get_key_flag() && ch->get_key() != channelKey)
+    if ((ch->get_key_flag() && (ch->get_key() != channelKey) || channelKey.empty()))
     {
-        server->SendReply(client_fd, "Error: Incorrect key for channel.");
+        server->SendReply(client_fd, ERR_BADCHANNELKEY(server->GetClient(client_fd)->get_msg_prefix(), ch->get_channel_name()));
         return;
     }
     Client *cl = server->GetClient(client_fd);
     if (ch->isMember(cl->get_nickname()))
     {
-        cl->SendReply(client_fd, "Error: You are already a member of this channel.");
+        //no message needed
+        // cl->SendReply(client_fd, "Error: You are already a member of this channel.");
         return;
     }
     if (ch->get_limit_flag() && ch->get_total_members() >= ch->get_limit())
     {
-        server->SendReply(client_fd, "Error: Channel is full.");
+        server->SendReply(client_fd, ERR_CHANNELISFULL(server->GetClient(client_fd)->get_msg_prefix(), ch->get_channel_name()));
         return;
     }
     ch->addUser(cl);
@@ -105,8 +106,10 @@ void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &
 int join(Server *server, int client_fd, msg_struct cmd_infos)
 {
     std::vector<std::string> param_splitted = split(cmd_infos.parameter, ' ');
+    Client *cl = server->GetClient(client_fd);
 
-    if (param_splitted.size() > 2 || cmd_infos.parameter.empty())
+    if (param_splitted.size() > 2 || cmd_infos.parameter.empty() || 
+    (param_splitted.size() == 1 && param_splitted[0] == "#"))
     {
         server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
         return (FAILURE);
@@ -118,7 +121,8 @@ int join(Server *server, int client_fd, msg_struct cmd_infos)
     int invalidChannelIndex = validateChannelNames(channelNames);
     if (invalidChannelIndex != -1) 
     {
-        server->SendReply(client_fd, ": server_name  403 _nali  " + channelNames[invalidChannelIndex] + " :Bad channel name\n");
+        server->SendReply(client_fd, ERR_NOSUCHCHANNEL(cl->get_nickname(), channelNames[invalidChannelIndex]));
+        // server->SendReply(client_fd, ": server_name  403 _nali  " + channelNames[invalidChannelIndex] + " :Bad channel name\n");
         return (FAILURE);
     }
 

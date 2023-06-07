@@ -18,6 +18,7 @@
 
 
 #### How messages are sent between client and server
+* http://chi.cs.uchicago.edu/chirc/index.html
 * http://chi.cs.uchicago.edu/chirc/irc_examples.html
 * https://www.rfc-editor.org/rfc/rfc2812#section-3.2.3
 * https://defs.ircdocs.horse/defs/numerics.html

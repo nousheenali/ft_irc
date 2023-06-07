@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 17:30:01 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 14:08:27 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,15 @@ void mode::CheckMode()
     // serv->SendReply(client_fd, RPL_CHANNELMODEIS(cl->get_msg_prefix(),chl->get_channel_name(), "mode changed"));
     if (modeChanged)
     {
-        std::string str = client->get_nickname()+ " has changed mode: " +reply_mode + " " + reply_args;
-        std::cout << str<< "\n";
-        serv->SendReply(client_fd, RPL_CHANNELMODEIS2(client->get_msg_prefix(), client->get_nickname(), chl->get_channel_name(), str));
+        std::string str = reply_mode + " " + reply_args;
+        std::map<int, Client *> mp = serv->GetAllClients();
+        
+        for (std::map<int, Client *>::iterator it = mp.begin(); it!=mp.end(); it++)
+        {
+            if (chl->isMember(it->second->get_nickname()))
+                serv->SendReply(it->first, RPL_MODE(client->get_msg_prefix(), chl->get_channel_name(), str));
+                // serv->SendReply(it->first, RPL_CHANNELMODEIS2(client->get_msg_prefix(), client->get_nickname(), chl->get_channel_name(), str));
+        }
     }
 }
 
@@ -250,7 +256,6 @@ int mode::CheckParams(char c)
         serv->SendReply(client_fd, ERR_INVALIDMODEPARAM(serv->GetServerName(), params[0], client->get_nickname(), c));
         return(1);
     }
-    std::cout << "size : " << params.size()<<"\n";
     return (0);
 } 
 
