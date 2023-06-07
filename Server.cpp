@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 14:20:09 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 10:42:05 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,7 +268,9 @@ void Server::ReceiveMessage(int i)
         if (c->get_MsgFrmClient().find("\n") != std::string::npos)
         {
             const char *temp = c->get_MsgFrmClient().c_str();
-            print("[Client] Message received from client ", sender_fd, (char *)temp);
+			int found  = c->get_MsgFrmClient().find("PONG", 0);
+			if (found == std::string::npos)
+            	print("[Client] Message received from client ", sender_fd, (char *)temp);
             parseMessage(sender_fd, c->get_MsgFrmClient());
             if (c->get_MsgFrmClient().find("\n"))
                 c->get_MsgFrmClient().clear();

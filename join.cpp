@@ -11,15 +11,15 @@ void printChannelAndMembers(Server *server)
     for (std::map<std::string, Channel *>::iterator it = server->GetChannelList().begin();
          it != server->GetChannelList().end(); it++)
     {   
-        std::cout << "Channel Name: " << it->first << std::endl;
-        std::cout << "Channel Members: \n";
+        std::cout << "Channel Name		: " << it->first << std::endl;
+        std::cout << "Channel Members		: ";
         for (std::vector<Channel::Channel_Member>::iterator mem_it = it->second->members.begin();
              mem_it != it->second->members.end(); ++mem_it)
         {
             std::cout << mem_it->user->get_nickname() << ", ";
         }
         std::cout << std::endl;
-        std::cout << "Channel Operators: \n";
+        std::cout << "Channel Operators	: ";
         for (std::map<int, Client *>::iterator oper_it = it->second->operators.begin();
         oper_it != it->second->operators.end(); ++oper_it)
         {

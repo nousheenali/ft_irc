@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 10:49:56 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/06 16:42:29 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/07 10:49:00 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,32 +91,19 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 		kicked_lst.push_back(param[1]);
 
     if (param[0].empty() || kicked_lst.empty())
-	{
         server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
-		return ;
-	}
     else if (it_ch == ch_lst.end())
-	{
         server->SendReply(client_fd, ERR_NOSUCHCHANNEL(kicked_by, param[0]));
-		return ;
-	}
     else if (is_member(it_ch, kicked_lst) == FAILURE)
-	{
-        server->SendReply(client_fd, ERR_USERNOTINCHANNEL(kicked_by, param[0]));
-		return ;
-	}
+        server->SendReply(client_fd, ERR_USERNOTINCHANNEL(kicked_by, param[0])); //change to kicked_lst
     else if (is_member(it_ch, temp) == FAILURE)
-	{
         server->SendReply(client_fd, ERR_NOTONCHANNEL(param[0]));
-		return ;
-	}
     else if (it_ch->second->isOperator(kicked_by) == false)
-	{
         server->SendReply(client_fd, ERR_CHANOPRIVSNEEDED(server->GetServerName(), kicked_by));
-		return ;
-	}
     else
 	{
+		server->SendReply(client_fd, RPL_KICK(server->GetServerName()));
+		
         //send rpl_kick to all channels
         //erase client from channel list
         //return;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 16:46:46 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 10:55:54 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 #define RPL_CHANNELMODEIS2(server, nick, channel, modes)    (":" + server + " 324 " + nick + " " + channel + " :" + modes + "\r\n")
 
 #define NICK_RPL(oclient, nclient)                  (":" + oclient + " NICK :" + nclient + "\r\n") //---->check if needed
-
+#define RPL_KICK(servername)						(":" + servername + " 001 " +  " kicked you out\r\n")// check format
 //PASS
 #define ERR_PASSWDMISMATCH(client)                  ("464 " + client + " :Password incorrect\r\n")
 
