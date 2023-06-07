@@ -40,6 +40,9 @@ private:
 	std::string _old_nickname;
 	std::string _hostname;
 	std::string _servername;
+	std::vector<std::string> invitedChannels;
+
+	// And add this public method:
 
 public:
 	std::string nick;
@@ -66,6 +69,10 @@ public:
 	bool &has_all_info();
 	bool &get_passFlag();
 	bool &first_invite();
+
+	bool isInvitedTo(const std::string &channelName);
+
+	void addInvite(const std::string &channelName);
 
 	void set_MsgInClient(std::string const &buf);
 	void set_nickname(std::string nick);

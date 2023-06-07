@@ -131,7 +131,10 @@ void Server::parseMessage(int fd, std::string msg)
 			}
 		}
 		else
+		{
+
 			execCommand(fd, cmds[i]);
+		}
 	}
 }
 
@@ -141,7 +144,9 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 	Client *client = this->GetClient(client_fd);
 	int i = 0;
 
-	std::string validCmds[10] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG", "PONG", "JOIN", "MODE", "KICK"}; //---->keep adding commands
+	std::string validCmds[12] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG",
+								 "PONG", "JOIN", "MODE", "KICK", "PART",
+								 "INVITE", "TOPIC"}; //---->keep adding commands
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return;
@@ -179,6 +184,15 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 		break;
 	case 8:
 		kick(this, client_fd, cmd_infos);
+		break;
+	case 9:
+		part(this, client_fd, cmd_infos);
+		break;
+	case 10:
+		invite(this, client_fd, cmd_infos);
+		break;
+	case 11:
+		topic(this, client_fd, cmd_infos);
 		break;
 	default:
 		this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));

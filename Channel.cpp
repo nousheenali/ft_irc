@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:23 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 14:42:40 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 15:18:21 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,20 @@
 
 Channel::Channel()
 {
+}
+
+void Channel::removeUser(const std::string &nickname)
+{
+    std::vector<Channel_Member>::iterator it;
+    for (it = members.begin(); it != members.end(); ++it)
+    {
+        if (it->user->get_nickname() == nickname)
+        {
+            members.erase(it);
+            total_members--;
+            break;
+        }
+    }
 }
 
 Channel::Channel(std::string name)
@@ -41,9 +55,9 @@ bool Channel::isOperator(std::string nick)
 {
     std::map<int, Client *>::iterator it = operators.begin();
 
-    while(it != operators.end())
+    while (it != operators.end())
     {
-        if(it->second->get_nickname() == nick)
+        if (it->second->get_nickname() == nick)
             return (true);
         it++;
     }
@@ -155,4 +169,9 @@ std::string Channel::getChannelMode()
     if (lflag == 1)
         str += "l";
     return (str);
+}
+
+std::vector<struct Channel::Channel_Member> Channel::getClients()
+{
+    return (this->members);
 }

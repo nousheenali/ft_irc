@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/07 14:58:14 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 17:04:55 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,54 +14,51 @@
 #define REPLIES_HPP
 
 //WELCOME MSG
-
 #define RPL_WELCOME(servername, nickname)           (":" + servername + " 001 " + nickname + " : Welcome to the Internet Relay Network " + nickname +"\r\n")
 #define RPL_YOURHOST(nickname, servername, version) (":" + servername + " 002 " + nickname + " :Your host is " + servername + ", running version " + version + "\r\n")
 #define RPL_CREATED(servername, client, date)       (":" + servername + " 003 " + client + " :This server was created " + date + "\r\n")
 #define RPL_MYINFO(client, servername, version, nickname, chan_modes, chan_modes_param) (":" + servername + " 004 " + client + " " + servername + " " + version + " " + nickname + " " + chan_modes + " " + chan_modes_param + "\r\n")
 #define RPL_MYINFO2(client, servername, str)         (":" + servername + " 004 " + client + " " + str + "\r\n")
 
-
-#define ERR_NEEDMOREPARAMS(command)			        ("461 " + command + " :Not enough parameters\r\n")
-#define ERR_ALREADYREGISTRED(client)		        ("462 " + client + " :Unauthorized command (already registered)\r\n")
+//NICK
 #define ERR_NONICKNAMEGIVEN()				        ("431 :No nickname given\r\n")
 #define ERR_ERRONEUSNICKNAME(nickname)	            ("432 " + nickname + " :Erroneous nickname\r\n")
-
 #define ERR_NICKNAMEINUSE(nickname)				    ("433 " + nickname + " :Nickname is already in use\r\n")
 #define ERR_NICKCOLLISION(nickname, user, host)	    ("436 " + nickname + " :Nickname collision KILL from " + user + "@" + host + "\r\n")
 #define ERR_UNAVAILRESOURCE(nick_channel)	        ("437 " + nick_channel + " :Nick/channel is temporarily unavailable\r\n")
 #define ERR_RESTRICTED()					        ("484 :Your connection is restricted!\r\n")
 
-#define ERR_UNKNOWNCOMMAND(command)	                ("421 " + command + " :Unknown command\r\n")
+//PASS
+#define ERR_NEEDMOREPARAMS(command)			        ("461 " + command + " :Not enough parameters\r\n")
+#define ERR_ALREADYREGISTRED(client)		        ("462 " + client + " :Unauthorized command (already registered)\r\n")
+#define ERR_PASSWDMISMATCH(client)                  ("464 " + client + " :Password incorrect\r\n")
 
-//mode
+//MODE
 #define ERR_NOSUCHCHANNEL(nick, channel)            ("403 " + nick + " " + channel + " :No such channel\r\n")
 #define ERR_UNKNOWNMODE(server, nick, mod)          (":" + server + " 472 " + nick + " " + mod + " is not a recognised channel mode\r\n")
 #define ERR_KEYSET(server, nick, channel)           (":" + server + " 467 " + nick + " " + channel + " Channel key already set\r\n")
 #define ERR_NOSUCHNICK(nickname)                    ("401 " + nickname +  " :No such nick/channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(server, nick)          (":" + server + " 482 " + nick + " :You're not channel operator\r\n")
 
+#define ERR_UNKNOWNCOMMAND(command)	                ("421 " + command + " :Unknown command\r\n")
 #define ERR_INVALIDMODEPARAM(serv, chan, nick, mod)         (":" + serv + " 696 " + nick + " " + chan + " " + mod + " * You must specify a parameter for the key mode. Syntax: <key>.\r\n")
 #define ERR_INVALIDMODEPARAM2(serv, chan, nick, mod, param) (":" + serv + " 696 " + nick + " " + chan + " " + mod + " " + param + " Invalid limit mode parameter. Syntax: <limit>.\r\n")
 #define RPL_CHANNELMODEIS(server, nick, channel, modes)     (":" + server + " 324 " + nick + " " + channel + " :+" + modes + "\r\n")
 // #define RPL_CHANNELMODEIS2(server, nick, channel, modes)    (":" + server + " 324 " + nick + " " + channel + " :" + modes + "\r\n")
 #define RPL_MODE(client, channel, msg)                      (client + " MODE " + channel + " " + msg + "\r\n")
 #define RPL_YOUREOPER(server, nick, channel)                (":" + server + " 381 " + nick + " " + channel + ":You are now an IRC operator\r\n")
-              
-
+		      
 #define NICK_RPL(oclient, nclient)                  (":" + oclient + " NICK :" + nclient + "\r\n") //---->check if needed
-#define RPL_KICK(servername)						(":" + servername + " 001 " +  " kicked you out\r\n")// check format
-//PASS
-#define ERR_PASSWDMISMATCH(client)                  ("464 " + client + " :Password incorrect\r\n")
 
 #define ERR_NORECIPIENT(cmd)                        ("411 :No recipient given " + cmd + "\r\n")
 #define ERR_CANNOTSENDTOCHAN(channel)               ("404 " + channel + " :Cannot send to channel\r\n")
 #define ERR_NOTEXTTOSEND()                          ("412 :No text to send\r\n")
 
 //KICK
-#define ERR_BADCHANMASK(channel)				("476 " + channel + " :Bad Channel Mask\r\n")
-#define ERR_USERNOTINCHANNEL(nick, channel)		("441 " + nick + " " + channel + " :They aren't on that channel\r\n")
-#define ERR_NOTONCHANNEL(channel)	 ("442 " + channel + " :You're not on that channel\r\n")
+#define RPL_KICK(user_id, channel, kicked, reason)	(user_id + " KICK " + channel +  " " + kicked + " " + reason + "\r\n")
+#define ERR_BADCHANMASK(channel)					("476 " + channel + " :Bad Channel Mask\r\n")
+#define ERR_USERNOTINCHANNEL(nick, channel)			("441 " + nick + " " + channel + " :They aren't on that channel\r\n")
+#define ERR_NOTONCHANNEL(channel)	 				("442 " + channel + " :You're not on that channel\r\n")
 
 //JOIN
 #define RPL_JOIN(client, channel)                   (client + " JOIN " + channel + "\r\n")

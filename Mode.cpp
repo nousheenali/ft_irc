@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/06/07 14:08:27 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 17:43:42 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,9 @@ void mode::SelectOption(std::string str)
 
     case SEVEN: /* -o */
         if (CheckParams('o'))
-            break;
+            params.erase(params.begin() + 2); // deleting that argument
+        modeChanged = true;
+        break;
         if (chl->isMember(params[2])) // check if user is member
         {
             if (chl->isOperator(params[2])) // if an operator

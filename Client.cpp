@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Client.hpp"
+#include <algorithm>
 
 Client::Client()
 {
@@ -148,6 +149,16 @@ int Client::is_valid() const
     if (_nickname.empty())
         return (FAILURE);
     return (SUCCESS);
+}
+
+void Client::addInvite(const std::string &channelName)
+{
+    invitedChannels.push_back(channelName);
+}
+
+bool Client::isInvitedTo(const std::string &channelName)
+{
+    return std::find(invitedChannels.begin(), invitedChannels.end(), channelName) != invitedChannels.end();
 }
 
 void Client::SendReply(int fd, std::string msg)
