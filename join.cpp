@@ -76,7 +76,7 @@ void Channel::addUser(Client *client)
 
 void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &channelKey)
 {
-    if ((ch->get_key_flag() && (ch->get_key() != channelKey) || channelKey.empty()))
+    if (ch->get_key_flag() && (ch->get_key() != channelKey || channelKey.empty()))
     {
         server->SendReply(client_fd, ERR_BADCHANNELKEY(server->GetClient(client_fd)->get_msg_prefix(), ch->get_channel_name()));
         return;
