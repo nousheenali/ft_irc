@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:20 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 17:33:17 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 15:17:44 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ public:
         void addOperator(Client *client);
         void removeOperator(Client *client);
         std::string getChannelMode();
+		std::vector<Channel_Member> getClients();
         // void createChannel(Server *server, int client_fd, const std::string &channelName,
         //                    const std::string &channelKey);
 

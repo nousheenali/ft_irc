@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:26:23 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 14:42:40 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/07 15:18:21 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,4 +155,9 @@ std::string Channel::getChannelMode()
     if (lflag == 1)
         str += "l";
     return (str);
+}
+
+std::vector<struct Channel::Channel_Member> Channel::getClients()
+{
+	return (this->members);
 }
