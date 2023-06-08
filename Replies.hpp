@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/08 18:55:34 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/08 20:22:49 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,18 @@
 #define RPL_MYINFO2(client, servername, str)         (":" + servername + " 004 " + client + " " + str + "\r\n")
 
 //NICK
-#define ERR_NONICKNAMEGIVEN()				        ("431 :No nickname given\r\n")
-#define ERR_ERRONEUSNICKNAME(nickname)	            ("432 " + nickname + " :Erroneous nickname\r\n")
-#define ERR_NICKNAMEINUSE(nickname)				    ("433 " + nickname + " :Nickname is already in use\r\n")
-#define ERR_NICKCOLLISION(nickname, user, host)	    ("436 " + nickname + " :Nickname collision KILL from " + user + "@" + host + "\r\n")
-#define ERR_UNAVAILRESOURCE(nick_channel)	        ("437 " + nick_channel + " :Nick/channel is temporarily unavailable\r\n")
-#define ERR_RESTRICTED()					        ("484 :Your connection is restricted!\r\n")
+#define ERR_NONICKNAMEGIVEN(nickname)			("431 " + nickname + " :No nickname given\r\n")
+#define ERR_ERRONEUSNICKNAME(nickname)	        ("432 " + nickname + " :Erroneous nickname\r\n")
+#define ERR_NICKNAMEINUSE(nickname)				("433 " + nickname + " :Nickname is already in use\r\n")
+#define ERR_NICKCOLLISION(nickname, user, host)	("436 " + nickname + " :Nickname collision KILL from " + user + "@" + host + "\r\n")
+#define ERR_UNAVAILRESOURCE(nick_channel)	    ("437 " + nick_channel + " :Nick/channel is temporarily unavailable\r\n")
+#define ERR_RESTRICTED()					    ("484 :Your connection is restricted!\r\n")
+#define RPL_NICK(uname, nclient, oclient)       (":" + oclient + "!" + uname + "@localhost NICK " + nclient + "\r\n") //---->check if needed
 
 //PASS
-#define ERR_NEEDMOREPARAMS(command)			        ("461 " + command + " :Not enough parameters\r\n")
-#define ERR_ALREADYREGISTRED(client)		        ("462 " + client + " :Unauthorized command (already registered)\r\n")
-#define ERR_PASSWDMISMATCH(client)                  ("464 " + client + " :Password incorrect\r\n")
+#define ERR_NEEDMOREPARAMS(command)		("461 " + command + " :Not enough parameters\r\n")
+#define ERR_ALREADYREGISTRED(client)	("462 " + client + " :Unauthorized command (already registered)\r\n")
+#define ERR_PASSWDMISMATCH(client)      ("464 " + client + " :Password incorrect\r\n")
 
 //MODE
 #define ERR_NOSUCHCHANNEL(nick, channel)            ("403 " + nick + " " + channel + " :No such channel\r\n")
@@ -40,15 +41,13 @@
 #define ERR_NOSUCHNICK(nickname)                    ("401 " + nickname +  " :No such nick/channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(server, nick)          (":" + server + " 482 " + nick + " :You're not channel operator\r\n")
 
-#define ERR_UNKNOWNCOMMAND(command)	                ("421 " + command + " :Unknown command\r\n")
+#define ERR_UNKNOWNCOMMAND(command)	                		("421 " + command + " :Unknown command\r\n")
 #define ERR_INVALIDMODEPARAM(serv, chan, nick, mod)         (":" + serv + " 696 " + nick + " " + chan + " " + mod + " * You must specify a parameter for the key mode. Syntax: <key>.\r\n")
 #define ERR_INVALIDMODEPARAM2(serv, chan, nick, mod, param) (":" + serv + " 696 " + nick + " " + chan + " " + mod + " " + param + " Invalid limit mode parameter. Syntax: <limit>.\r\n")
 #define RPL_CHANNELMODEIS(server, nick, channel, modes)     (":" + server + " 324 " + nick + " " + channel + " :+" + modes + "\r\n")
 // #define RPL_CHANNELMODEIS2(server, nick, channel, modes)    (":" + server + " 324 " + nick + " " + channel + " :" + modes + "\r\n")
 #define RPL_MODE(client, channel, msg)                      (client + " MODE " + channel + " " + msg + "\r\n")
 #define RPL_YOUREOPER(server, nick, channel)                (":" + server + " 381 " + nick + " " + channel + ":You are now an IRC operator\r\n")
-		      
-#define NICK_RPL(oclient, nclient)                  (":" + oclient + " NICK :" + nclient + "\r\n") //---->check if needed
 
 #define ERR_NORECIPIENT(cmd)                        ("411 :No recipient given " + cmd + "\r\n")
 #define ERR_CANNOTSENDTOCHAN(channel)               ("404 " + channel + " :Cannot send to channel\r\n")
@@ -57,7 +56,7 @@
 //KICK
 #define RPL_KICK(user_id, channel, kicked, reason)	(user_id + " KICK " + channel +  " " + kicked + " " + reason + "\r\n")
 #define ERR_BADCHANMASK(channel)					("476 " + channel + " :Bad Channel Mask\r\n")
-#define ERR_USERNOTINCHANNEL(nick, channel)			("441 " + nick + " " + channel + " :They aren't on that channel\r\n")
+#define ERR_USERNOTINCHANNEL(client, nicky, channel)("441 " + client + " " + nicky + " " + channel + " :They aren't on that channel\r\n")
 #define ERR_NOTONCHANNEL(channel)	 				("442 " + channel + " :You're not on that channel\r\n")
 
 //JOIN
@@ -84,6 +83,5 @@
 
 // #define MODEMSG1 "You must specify a parameter for the limit mode."
 // #define MODEMSG2 "Invalid limit mode parameter."
-
 
 #endif  

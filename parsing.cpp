@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/06 17:32:00 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/08 17:07:29 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ int parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 	for (size_t i = 0; i < cmd_infos.cmd.size(); i++)
 		cmd_infos.cmd[i] = std::toupper(cmd_infos.cmd[i]);
 
-	// std::cout << "Command : " << cmd_infos.cmd << "\n";
-	// std::cout << "Prefix : " << cmd_infos.prefix << "\n";
-	// std::cout << "Message : " << cmd_infos.parameter << "\n";
+	std::cout << "Command : " << cmd_infos.cmd << "\n";
+	std::cout << "Prefix : " << cmd_infos.prefix << "\n";
+	std::cout << "Message : " << cmd_infos.parameter << "\n";
 	return (SUCCESS);
 }
 
@@ -96,6 +96,23 @@ void printRcvMsg(int fd, std::string msg)
 	std::cout << "[Server] Message sent to client " << fd << ": " << RED << msg << RESET << "\n";
 }
 
+void sendListOfCmds(Server *s, int fd)
+{
+	Client *c = s->GetClient(fd);
+
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "Commands Available:"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* NICK"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* QUIT"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PASS"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PRIVMSG"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* JOIN"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* MODE"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* KICK"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PART"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* INVITE"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* TOPIC"));
+}
+
 void Server::parseMessage(int fd, std::string msg)
 {
 	std::vector<std::string> cmds;
@@ -120,10 +137,10 @@ void Server::parseMessage(int fd, std::string msg)
 				this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), this->GetServerName(), "1.1")); //--->get version and other details
 				// printRcvMsg(fd, RPL_YOURHOST(c->get_nickname(), "ft_irc", "1.1"));
 				this->SendReply(fd, RPL_CREATED(this->GetServerName(), c->get_nickname(), this->getDate())); //---->get date in realtime and print it
-																											 // printRcvMsg(fd, RPL_CREATED(c->get_nickname(), "31 May 2023"));
+				 // printRcvMsg(fd, RPL_CREATED(c->get_nickname(), "31 May 2023"));
 				this->SendReply(fd, RPL_MYINFO(c->get_nickname(), this->GetServerName(), "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
 				// printRcvMsg(fd, RPL_MYINFO(c->get_nickname(), "localhost", "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
-				this->SendReply(fd, RPL_MYINFO2(c->get_nickname(), this->GetServerName(), "Commands Available:"));
+				sendListOfCmds(this, fd);
 				printRcvMsg(fd, ": Welcome message sent...\n");
 
 				c->first_invite() = true;
@@ -150,7 +167,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return;
-	while (i < 10)
+	while (i < 12)
 	{
 		if (cmd_infos.cmd == validCmds[i])
 			break;

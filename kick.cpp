@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 10:49:56 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/07 17:02:11 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/08 11:12:17 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,12 +87,12 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 		kicked_lst.push_back(param[1]);
 
 	//error handling
-    if (param[0].empty() || kicked_lst.empty())
+    if ((param[0].empty() && param[0].find(':') != std::string::npos) || kicked_lst.empty())
         server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
     else if (it_ch == ch_lst.end())
         server->SendReply(client_fd, ERR_NOSUCHCHANNEL(kicked_by, param[0]));
     else if (is_member(it_ch, kicked_lst) == FAILURE)
-        server->SendReply(client_fd, ERR_USERNOTINCHANNEL(kicked_by, param[0])); //change to kicked_lst
+        server->SendReply(client_fd, ERR_USERNOTINCHANNEL(kicked_by, kicked_lst[0], param[0])); //change to kicked_lst
     else if (is_member(it_ch, temp) == FAILURE)
         server->SendReply(client_fd, ERR_NOTONCHANNEL(param[0]));
     else if (it_ch->second->isOperator(kicked_by) == false)
@@ -107,7 +107,19 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
     		server->SendReply(ite->user->get_socket(), RPL_KICK(client->get_msg_prefix(), it_ch->second->get_channel_name(), kicked_lst[0], reason));
     		ite++;
         }
-        //erase client from channel list
-		
+		for (int i = 0; i < kicked_lst.size(); i++)
+		{
+			ite = it.begin();
+			it_ch->second->removeUser(kicked_lst[i]);
+			while(ite != it.end())
+			{
+				if (ite->user->get_nickname() == kicked_lst[i])
+				{
+					it_ch->second->removeOperator(ite->user);
+					break;
+				}
+				ite++;
+			}
+		}
 	}
 }

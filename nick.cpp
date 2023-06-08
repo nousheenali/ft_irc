@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:16:46 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/01 15:45:11 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/08 14:05:25 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,15 @@
 static bool check_if_valid(std::string nick)
 {
     std::size_t found;
+	std::string str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]\\`_- ^{}|";
   
     found = nick.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]\\`_- ^{}|");
+	bool isfound = str.find(nick[0]) != std::string::npos;
 
-    if (found != std::string::npos)
+    if (found != std::string::npos || !isfound)
         return (false);
-    // if (nick.size() < 5) //---->change later
-    //     return (false);
+    if (nick.size() > 9)
+        return (false);
     return (true);
 }
 
@@ -59,10 +61,13 @@ void nick(Server *server, int fd, msg_struct msg_info)
     Client *c = server->GetClient(fd);
 
     if (c->isAuthDone() == false)
-		c->set_nickname(nickname);
+	{
+		if (check_if_valid(nickname))
+			c->set_nickname(nickname);
+	}
 
-    if (nickname.empty())   // no nickname given
-		server->SendReply(fd, ERR_NONICKNAMEGIVEN());
+    if (nickname.empty() || nickname == ":")   // no nickname given
+		server->SendReply(fd, ERR_NONICKNAMEGIVEN(c->get_nickname()));
     else if (check_if_valid(nickname) == false) //check valid characters and length is 8/9
 		server->SendReply(fd, ERR_ERRONEUSNICKNAME(nickname));
     else if (already_used(server, fd, nickname) == true) //check if nickname given is already used by available clients
@@ -72,8 +77,11 @@ void nick(Server *server, int fd, msg_struct msg_info)
 		if (c->isAuthDone() == true)
 		{
             c->set_old_nickname(c->get_nickname());
-			std::cout << "[Server] Nickname change registered. Old nickname is now : " << c->get_old_nickname() << std::endl;
 			c->set_nickname(nickname);
+			std::cout << "[Server] Nickname change registered. " << std::endl;
+			std::cout << "Old nickname is now : " << GREEN << c->get_old_nickname() << RESET << std::endl;
+			std::cout << "New nickname is now : " << GREEN << c->get_nickname() << RESET << std::endl;
+    		server->SendReply(fd, RPL_NICK(c->get_username(), c->get_nickname(), c->get_old_nickname()));
 		}
 	}
 }
