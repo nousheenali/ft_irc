@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/07 17:04:55 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:55:34 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,20 @@
 #define RPL_TOPIC(server, nick, channel, topic)     (":" + server + " 332 " + nick + " " + channel + " :" + topic + "\r\n")
 #define ERR_BADCHANNELKEY(client, channel)          ("475" + client + " " + channel + ": Cannot join channel (incorrect channel key)\r\n")
 #define ERR_CHANNELISFULL(client, channel)          ("471" + client + " " + channel + ": Cannot join channel (channel is full)\r\n")
+#define ERR_INVITEONLYCHAN(client, channel)         ("473" + client + " " + channel + ": Cannot join channel (+i)\r\n")
+
 
 //PRIVMSG
 #define RPL_PRIVMSG(sender, receiver, message)     (sender + " PRIVMSG " + receiver + " :" + message +"\r\n")
 
 //PONG
 #define ERR_NOORIGIN(cmd)                           ("409 " + cmd + " :No origin specified\r\n")
+
+//INVITE
+#define RPL_INVITING(nickname, recipient,channel)   (":" + nickname + " INVITE " + recipient + " " + channel + " " + nickname + "\r\n")
+#define RPL_INVITING2(server, recipient,channel)    (":" + server + " 341 " + recipient + " " + recipient + " " + channel + "\r\n")
+#define ERR_USERONCHANNEL(server, nickname, msg)    (":" + server + " 443 *" + nickname + " " + msg + "\r\n")
+
 
 
 

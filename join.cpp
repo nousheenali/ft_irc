@@ -81,18 +81,26 @@ void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &
         server->SendReply(client_fd, ERR_BADCHANNELKEY(server->GetClient(client_fd)->get_msg_prefix(), ch->get_channel_name()));
         return;
     }
+
     Client *cl = server->GetClient(client_fd);
     if (ch->isMember(cl->get_nickname()))
     {
-        // no message needed
-        //  cl->SendReply(client_fd, "Error: You are already a member of this channel.");
+        server->SendReply(client_fd, ERR_USERONCHANNEL(server->GetServerName(), cl->get_nickname(), "You are already member of that channel"));
         return;
     }
+
     if (ch->get_limit_flag() && ch->get_total_members() >= ch->get_limit())
     {
         server->SendReply(client_fd, ERR_CHANNELISFULL(server->GetClient(client_fd)->get_msg_prefix(), ch->get_channel_name()));
         return;
     }
+
+    if (ch->get_invite_flag() && !(cl->isInvitedTo(ch->get_channel_name())))
+    {
+        server->SendReply(client_fd, ERR_INVITEONLYCHAN(server->GetClient(client_fd)->get_msg_prefix(), ch->get_channel_name()));
+        return;
+    }
+
     ch->addUser(cl);
     for (std::vector<Channel::Channel_Member>::iterator mem_it = ch->members.begin();
          mem_it != ch->members.end(); mem_it++)

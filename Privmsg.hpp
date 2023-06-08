@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:19:36 by nali              #+#    #+#             */
-/*   Updated: 2023/06/05 14:42:57 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/08 12:06:05 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Server.hpp"
 
 std::vector<std::string>  convert_to_vector(std::string msg);
+std::string ParamsJoin(std::vector<std::string> vec);
 
 class privmsg
 {
@@ -26,7 +27,6 @@ class privmsg
         msg_struct *msg_info;
         
     private:
-        std::string ParamsJoin();
         void CheckConditions();
         void SendToChannel();
         void SendToClient();

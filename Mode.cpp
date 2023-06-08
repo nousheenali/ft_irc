@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/06/07 17:43:42 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/08 12:01:26 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void mode::SelectOption(std::string str)
             {
                 chl->set_key_flag(0);
                 reply_mode += "-k";
+                chl->set_key("");
                 reply_args += (params[2] + " ");
                 modeChanged = true;
             }

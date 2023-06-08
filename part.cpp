@@ -10,6 +10,7 @@
 
 std::vector<std::string> convert_to_vector(std::string msg);
 std::vector<std::string> split(const std::string &s, char delimiter);
+std::string ParamsJoin(std::vector<std::string> vec);
 
 int part(Server *server, int client_fd, msg_struct cmd_infos)
 {
@@ -19,13 +20,13 @@ int part(Server *server, int client_fd, msg_struct cmd_infos)
     // Split command parameters into channels and optional message
     std::vector<std::string> param_splitted = convert_to_vector(cmd_infos.parameter);
 
-    if (param_splitted.size() < 1 || param_splitted.size() > 2 || cmd_infos.parameter.empty())
+    if (param_splitted.size() < 1 || cmd_infos.parameter.empty())
     {
         server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
         return (FAILURE);
     }
     std::vector<std::string> channelNames = split(param_splitted[0], ',');
-    std::string message = (param_splitted.size() > 1) ? param_splitted[1] : "";
+    std::string message = (param_splitted.size() > 1) ? ParamsJoin(param_splitted) : "";
 
     // Iterate over the list of channels
     for (std::vector<std::string>::iterator it = channelNames.begin(); it != channelNames.end(); ++it)
@@ -46,15 +47,15 @@ int part(Server *server, int client_fd, msg_struct cmd_infos)
             continue;
         }
 
-        // Remove user from the channel
-        channelIt->second->removeUser(cl->get_nickname());
-
         // Send part message to all channel members
-        std::string partMsg = ":" + cl->get_nickname() + " PART " + *it + " :" + message;
+        std::string partMsg = cl->get_msg_prefix() + " PART " + *it + " " + message + "\r\n";
         for (std::vector<Channel::Channel_Member>::iterator mem_it = channelIt->second->members.begin(); mem_it != channelIt->second->members.end(); ++mem_it)
         {
             server->SendReply(mem_it->user->get_socket(), partMsg);
         }
+
+        // Remove user from the channel
+        channelIt->second->removeUser(cl->get_nickname());
     }
     return (SUCCESS);
 }

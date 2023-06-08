@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 14:24:15 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/08 12:06:17 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void privmsg::SendToChannel()
         {
             rcvr = ch->members[i].user;
             if (rcvr->get_nickname() != sdr->get_nickname())
-                serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG(sdr->get_msg_prefix(), ch->get_channel_name(), ParamsJoin()));
+                serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG(sdr->get_msg_prefix(), ch->get_channel_name(), ParamsJoin(params)));
         }
     }
 }
@@ -79,17 +79,7 @@ void privmsg::SendToClient()
     }
     // std::cout << "user found....\n";
     if ((sdr = serv->GetClient(sender_fd)) != NULL)
-        serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG( sdr->get_msg_prefix(), rcvr->get_nickname(), ParamsJoin()));
-}
-
-std::string privmsg::ParamsJoin()
-{
-    std::vector<std::string>::iterator it;
-    std::string text;
-    
-    for (it = params.begin() + 1; it != params.end(); it++)
-        text += (*it + " ");
-    return text;
+        serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG( sdr->get_msg_prefix(), rcvr->get_nickname(), ParamsJoin(params)));
 }
 
 

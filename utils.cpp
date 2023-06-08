@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 22:00:24 by nali              #+#    #+#             */
-/*   Updated: 2023/06/02 22:19:43 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/08 11:33:19 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,14 @@ std::vector<std::string> split(const std::string &s, char delimiter)
     }
     tokens.push_back(token);
     return tokens;
+}
+
+std::string ParamsJoin(std::vector<std::string> vec)
+{
+    std::vector<std::string>::iterator it;
+    std::string text;
+    
+    for (it = vec.begin() + 1; it != vec.end(); it++)
+        text += (*it + " ");
+    return text;
 }
