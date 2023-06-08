@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/08 14:23:41 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/08 17:07:29 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ int parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 	for (size_t i = 0; i < cmd_infos.cmd.size(); i++)
 		cmd_infos.cmd[i] = std::toupper(cmd_infos.cmd[i]);
 
-	// std::cout << "Command : " << cmd_infos.cmd << "\n";
-	// std::cout << "Prefix : " << cmd_infos.prefix << "\n";
-	// std::cout << "Message : " << cmd_infos.parameter << "\n";
+	std::cout << "Command : " << cmd_infos.cmd << "\n";
+	std::cout << "Prefix : " << cmd_infos.prefix << "\n";
+	std::cout << "Message : " << cmd_infos.parameter << "\n";
 	return (SUCCESS);
 }
 
@@ -167,7 +167,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return;
-	while (i < 10)
+	while (i < 12)
 	{
 		if (cmd_infos.cmd == validCmds[i])
 			break;
