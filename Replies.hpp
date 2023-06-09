@@ -79,8 +79,6 @@
 #define ERR_USERONCHANNEL(server, nickname, msg)    (":" + server + " 443 *" + nickname + " " + msg + "\r\n")
 
 
-
-
 // #define MODEMSG1 "You must specify a parameter for the limit mode."
 // #define MODEMSG2 "Invalid limit mode parameter."
 

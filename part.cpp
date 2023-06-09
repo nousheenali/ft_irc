@@ -54,8 +54,13 @@ int part(Server *server, int client_fd, msg_struct cmd_infos)
             server->SendReply(mem_it->user->get_socket(), partMsg);
         }
 
+        std::cout <<"people left in " << channelIt->second->get_channel_name() << " " << channelIt->second->get_total_members() <<"\n";
         // Remove user from the channel
         channelIt->second->removeUser(cl->get_nickname());
+        std::cout <<"people left in " << channelIt->second->get_channel_name() << " " << channelIt->second->get_total_members() <<"\n";
+        if (channelIt->second->get_total_members() == 0)
+            server->RemoveChannel(channelIt->second->get_channel_name());
+        
     }
     return (SUCCESS);
 }

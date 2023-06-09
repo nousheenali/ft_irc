@@ -28,6 +28,10 @@ Client::Client(int fd)
     getsockname(this->fd, (sockaddr *)&my_addr, &addr_len);
     inet_ntop(AF_INET, &my_addr.sin_addr, this->ip_addr, sizeof(ip_addr));
     this->port = ntohs(my_addr.sin_port);
+
+	welcomeFlag = false;
+	passFlag = false;
+	_connection_pwd = false;
 }
 
 Client::~Client()

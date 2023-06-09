@@ -38,7 +38,9 @@ Channel::Channel(std::string name)
     tflag = 1;
     kflag = 0;
     lflag = 0;
-    this->total_members = 1;
+    this->total_members = 0;
+    this->topic = "yay";
+    this->key = "";
 }
 
 bool Channel::isMember(std::string nick)

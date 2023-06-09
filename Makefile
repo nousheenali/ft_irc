@@ -13,7 +13,8 @@
 NAME	= ircserv
 
 SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp pass.cpp parsing.cpp\
-		nick.cpp user.cpp quit.cpp Privmsg.cpp utils.cpp Mode.cpp pong.cpp join.cpp kick.cpp part.cpp invite.cpp topic.cpp
+		nick.cpp user.cpp quit.cpp Privmsg.cpp utils.cpp Mode.cpp pong.cpp \
+		join.cpp kick.cpp part.cpp invite.cpp topic.cpp list.cpp
 
 OBJS	= ${SRCS:.cpp=.o}
 

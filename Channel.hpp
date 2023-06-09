@@ -19,6 +19,8 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
+class Server;
+
 class Channel
 {
 

@@ -113,14 +113,14 @@ void sendListOfCmds(Server *s, int fd)
 	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* TOPIC"));
 }
 
-void Server::parseMessage(int fd, std::string msg)
+int Server::parseMessage(int fd, std::string msg)
 {
 	std::vector<std::string> cmds;
 	Client *c = GetClient(fd);
 
 	splitMsg(cmds, msg);
-
-	for (size_t i = 0; i != cmds.size(); i++)
+	int size = cmds.size();
+	for (size_t i = 0; i != size; i++)
 	{
 		if (c->isAuthDone() == false)
 		{
@@ -149,24 +149,26 @@ void Server::parseMessage(int fd, std::string msg)
 		}
 		else
 		{
-
-			execCommand(fd, cmds[i]);
+			//returns 1 in case of QUIT(condition added so conditional jumps can be avoided)
+			if (execCommand(fd, cmds[i]) == 1) 
+				return (1);
 		}
 	}
+	return (0);
 }
 
-void Server::execCommand(int client_fd, std::string cmd_line)
+int Server::execCommand(int client_fd, std::string cmd_line)
 {
 	msg_struct cmd_infos;
 	Client *client = this->GetClient(client_fd);
 	int i = 0;
 
-	std::string validCmds[12] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG",
+	std::string validCmds[13] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG",
 								 "PONG", "JOIN", "MODE", "KICK", "PART",
-								 "INVITE", "TOPIC"}; //---->keep adding commands
+								 "INVITE", "TOPIC", "LIST" }; //---->keep adding commands
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
-		return;
+		return (0);
 	while (i < 12)
 	{
 		if (cmd_infos.cmd == validCmds[i])
@@ -183,6 +185,7 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 		break;
 	case 2:
 		quit(this, client_fd, cmd_infos);
+		return (1);
 		break;
 	case 3:
 		pass(this, client_fd, cmd_infos);
@@ -211,7 +214,11 @@ void Server::execCommand(int client_fd, std::string cmd_line)
 	case 11:
 		topic(this, client_fd, cmd_infos);
 		break;
+	case 12:
+		list(this, client_fd, cmd_infos);
+		break;
 	default:
 		this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));
 	}
+	return (0);
 }

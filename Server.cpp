@@ -28,18 +28,27 @@ Server::Server()
 
 Server::~Server()
 {
+    std::cout << "\r------------DESTRUCTOR CALLED-------------\n";
+    
     close_fds();
     if (!this->client_array.empty())
     {
         std::map<int, Client *>::iterator it;
         for (it = client_array.begin(); it != client_array.end(); it++)
-            delete (it->second);
+        {
+            if (it->second)
+                delete (it->second);
+        }
     }
+
     if (!this->channel_array.empty())
     {
         std::map<std::string, Channel *>::iterator it2;
         for (it2 = channel_array.begin(); it2 != channel_array.end(); it2++)
-            delete (it2->second);
+        {
+            if (it2->second)
+                delete (it2->second);
+        }
     }
 }
 
@@ -139,7 +148,7 @@ void Server::Listen(void)
     if (listen(this->listener, BACKLOG) == -1)
     {
         if (close(this->listener) == -1)
-            ThrowException("FD Close Error: ");
+            ThrowException("FD Close Error 2: ");
         ThrowException("Socket Listen Error: ");
     }
 }
@@ -151,6 +160,7 @@ void Server::ConnectClients(void)
     // adding listener socket to list of poll fds
     pfdStruct.fd = this->listener;
     pfdStruct.events = POLLIN; // for input operations are possible on this fd
+    pfdStruct.revents = 0; //setting to one to prevent conditional jump
     this->pfd_count += 1;
     this->pfds.push_back(pfdStruct);
     std::cout << GREEN << " *** Server running and waiting for connections *** " << RESET << std::endl;
@@ -158,10 +168,12 @@ void Server::ConnectClients(void)
     while(1)
     {
         if (CloseServer)
-            this->~Server();
+            break;
         int val = poll(&this->pfds[0], this->pfd_count, 5000); // returns no.of elements in pollfds whose revents has been set to a nonzero value
         if (val < 0)
         {
+            if (CloseServer)
+                break;
             // close all fds
             close_fds();
             ThrowException("Poll Error: ");
@@ -183,12 +195,12 @@ void Server::ConnectClients(void)
 void Server::AcceptConnections()
 {
     pollfd pfdStruct;
-    std::string str;
-    int clientfd;
+    int clientfd = -1;
     socklen_t addr_len;
     struct sockaddr_storage client_addr; // to store clients details
-    Client *c;
+    Client *c = NULL;
 
+    memset(&client_addr, 0, sizeof(client_addr));
     addr_len = sizeof(struct sockaddr_storage);
     clientfd = accept(this->listener, (struct sockaddr *)&client_addr, &addr_len);
     if (clientfd == -1)
@@ -197,6 +209,7 @@ void Server::AcceptConnections()
     {
         pfdStruct.fd = clientfd;
         pfdStruct.events = POLLIN;
+        pfdStruct.revents = 0;
         c = new Client(clientfd);
         client_array.insert(std::pair<int, Client *>(clientfd, c));
         this->pfds.push_back(pfdStruct);
@@ -220,8 +233,13 @@ std::string Server::getPassword()
 void Server::deleteClient(int fd)
 {
     if (close(fd) == -1)
-        ThrowException("FD Close Error: ");
-    this->client_array.erase(fd);
+        ThrowException("FD Close Error 3: ");
+    std::map<int, Client*>::iterator it = client_array.find(fd);
+    if (it != client_array.end())
+    {
+        delete it->second;
+        this->client_array.erase(fd);
+    }
 }
 
 void Server::setPfds(int fd, int temp)
@@ -255,9 +273,7 @@ void Server::ReceiveMessage(int i)
     {
         std::cout << RED << " *** Connection Closed by Client on socket " << sender_fd << " *** \n"
                   << RESET;
-        if (close(sender_fd) == -1)
-            ThrowException("FD Close Error: ");
-        client_array.erase(pfds[i].fd); // remove the client from the array
+        deleteClient(pfds[i].fd);
         pfds[i].fd = -1;                // make the socket fd negative so it is ignored in future
         return;
     }
@@ -271,9 +287,11 @@ void Server::ReceiveMessage(int i)
 			int found  = c->get_MsgFrmClient().find("PONG", 0);
 			if (found == std::string::npos)
             	print("[Client] Message received from client ", sender_fd, (char *)temp);
-            parseMessage(sender_fd, c->get_MsgFrmClient());
-            if (c->get_MsgFrmClient().find("\n"))
-                c->get_MsgFrmClient().clear();
+            if (parseMessage(sender_fd, c->get_MsgFrmClient()) != 1)
+            {
+                if (c->get_MsgFrmClient().find("\n"))
+                    c->get_MsgFrmClient().clear();
+            }
         }
     }
 }
@@ -391,7 +409,7 @@ void Server::close_fds()
     {
         if (pfds[i].fd > 0) // closed client connections are set to -1 so this check
             if (close(pfds[i].fd) == -1)
-                ThrowException("FD Close Error: ");
+                ThrowException("FD Close Error 4: ");
     }
 }
 
@@ -464,6 +482,17 @@ std::map<int, Client *> Server::GetAllClients()
 std::string Server::getServerIP(void)
 {
     return (this->server_ip);
+}
+
+void Server::RemoveChannel(std::string name)
+{
+    std::map<std::string, Channel *>::iterator it;
+    it = this->channel_array.find(name);
+    if (it != channel_array.end())
+    {
+        delete it->second;
+        this->channel_array.erase(name);
+    }
 }
 
 /* Comment #1

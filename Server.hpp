@@ -77,6 +77,7 @@ public:
     std::string getDate();
     std::map<std::string, Channel *> &GetChannelList();
     std::string getServerIP(void);
+    void RemoveChannel(std::string name);
 
 private:
     void CreateSocket(void);
@@ -89,9 +90,9 @@ private:
     void MessageStoreExecute(char c, int client_fd);
     void print_messages(int fd);
     void close_fds();
-    void parseMessage(int fd, std::string msg);
+    int  parseMessage(int fd, std::string msg);
     void fillDetails(Client *c, int client_fd, std::string cmd);
-    void execCommand(int const client_fd, std::string cmd_line);
+    int execCommand(int const client_fd, std::string cmd_line);
 
     class AddrInfoError : public std::exception // custom exception
     {

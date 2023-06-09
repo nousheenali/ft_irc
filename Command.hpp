@@ -37,5 +37,6 @@ void kick(Server *server, int client_fd, msg_struct msg_info);
 int part(Server *server, int client_fd, msg_struct msg_info);
 int invite(Server *server, int client_fd, msg_struct msg_info);
 int topic(Server *server, int client_fd, msg_struct msg_info);
+void list(Server *server, int fd, msg_struct cmd_infos);
 
 #endif
