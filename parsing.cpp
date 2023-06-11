@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/08 17:07:29 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/11 11:05:20 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Server::fillDetails(Client *c, int client_fd, std::string cmd)
 		return;
 	temp = (cmd.find(' ') == std::string::npos) ? 0 : cmd.find_first_of(' ');
 
-	for (size_t i = 0; i < temp; i++)
+	for (int i = 0; i < temp; i++)
 		cmd[i] = std::toupper(cmd[i]);
 
 	if (cmd.find("NICK ") != std::string::npos)
@@ -120,7 +120,7 @@ int Server::parseMessage(int fd, std::string msg)
 
 	splitMsg(cmds, msg);
 	int size = cmds.size();
-	for (size_t i = 0; i != size; i++)
+	for (int i = 0; i != size; i++)
 	{
 		if (c->isAuthDone() == false)
 		{
@@ -160,7 +160,7 @@ int Server::parseMessage(int fd, std::string msg)
 int Server::execCommand(int client_fd, std::string cmd_line)
 {
 	msg_struct cmd_infos;
-	Client *client = this->GetClient(client_fd);
+	// Client *client = this->GetClient(client_fd);
 	int i = 0;
 
 	std::string validCmds[13] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG",

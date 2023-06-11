@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 22:00:24 by nali              #+#    #+#             */
-/*   Updated: 2023/06/08 11:33:19 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/11 11:00:32 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ std::vector<std::string> convert_to_vector(std::string msg)
     std::vector<std::string> vec;
     std::string tmp = "\0";
 
-    for (int i = 0; i < msg.length(); i++)
+    for (size_t i = 0; i < msg.length(); i++)
     {
         if (msg[i] != ' ')
             tmp.push_back(msg[i]);

@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/06 14:17:13 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/11 10:47:02 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ public:
     std::map<int, Client *> GetAllClients();
     std::string getPassword();
     void deleteClient(int fd);
-    void setPfds(int fd, int temp);
+    void setPfds(int fd);
     std::string getDate();
     std::map<std::string, Channel *> &GetChannelList();
     std::string getServerIP(void);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/07 10:42:05 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/11 11:08:46 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ bool CloseServer = false; //for signal handling
 void	SignalHandler(int signum)
 {
     std::cout << "\r------------SIGINT CALLED-------------\n";
+    (void)signum;
     CloseServer = true; 
 }
 
@@ -242,7 +243,7 @@ void Server::deleteClient(int fd)
     }
 }
 
-void Server::setPfds(int fd, int temp)
+void Server::setPfds(int fd)
 {
     for (int i = 0; i < this->pfd_count; i++)
     {
@@ -284,7 +285,7 @@ void Server::ReceiveMessage(int i)
         if (c->get_MsgFrmClient().find("\n") != std::string::npos)
         {
             const char *temp = c->get_MsgFrmClient().c_str();
-			int found  = c->get_MsgFrmClient().find("PONG", 0);
+			size_t found  = c->get_MsgFrmClient().find("PONG", 0);
 			if (found == std::string::npos)
             	print("[Client] Message received from client ", sender_fd, (char *)temp);
             if (parseMessage(sender_fd, c->get_MsgFrmClient()) != 1)

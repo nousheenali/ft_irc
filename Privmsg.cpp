@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/08 12:06:17 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/11 11:02:14 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void privmsg::SendToChannel()
             serv->SendReply(sender_fd, ERR_CANNOTSENDTOCHAN(params[0]));
             return ;
         }
-        for(int i = 0; i < ch->members.size(); i++)
+        for(size_t i = 0; i < ch->members.size(); i++)
         {
             rcvr = ch->members[i].user;
             if (rcvr->get_nickname() != sdr->get_nickname())

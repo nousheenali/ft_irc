@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 10:49:56 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/08 11:12:17 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/11 11:01:25 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ std::vector<std::string>	ft_split(std::string str, char delim)
 
 int is_member(std::map<std::string, Channel *>::iterator it, std::vector<std::string> lst)
 {
-    for(int i = 0; i < lst.size(); i++)
+    for(size_t i = 0; i < lst.size(); i++)
     {
         if (it->second->isMember(lst.at(i)) == false)
             return (FAILURE);
@@ -107,7 +107,7 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
     		server->SendReply(ite->user->get_socket(), RPL_KICK(client->get_msg_prefix(), it_ch->second->get_channel_name(), kicked_lst[0], reason));
     		ite++;
         }
-		for (int i = 0; i < kicked_lst.size(); i++)
+		for (size_t i = 0; i < kicked_lst.size(); i++)
 		{
 			ite = it.begin();
 			it_ch->second->removeUser(kicked_lst[i]);

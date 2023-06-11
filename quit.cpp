@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:19:20 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/04 00:13:13 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/11 10:46:46 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,6 @@ void quit(Server *server, int fd, msg_struct cmd_infos)
     printRcvMsg(fd, quit_msg);
     std::cout << RED <<" *** Connection Closed by Client on socket " << fd << " *** \n" << RESET ;
     server->deleteClient(fd);
-	server->setPfds(fd, -1);
+	server->setPfds(fd);
     return;
 }
