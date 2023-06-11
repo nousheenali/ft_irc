@@ -8,16 +8,16 @@ std::vector<std::string> split(const std::string &s, char delimiter);
 
 int topic(Server *server, int client_fd, msg_struct cmd_infos)
 {
-    std::cout << "PARAMS :" << cmd_infos.parameter << std::endl;
+    // std::cout << "PARAMS :" << cmd_infos.parameter << std::endl;
 
     std::vector<std::string> param_splitted = convert_to_vector(cmd_infos.parameter);
+
     Client *cl = server->GetClient(client_fd);
 
-    std::cout << "size :" << param_splitted.size() << std::endl;
+    // std::cout << "size :" << param_splitted.size() << std::endl;
 
-    std::cout
-        << "channel name :" << param_splitted[0] << std::endl;
-    return 1;
+    // std::cout
+    //     << "channel name :" << param_splitted[0] << std::endl;
 
     if (param_splitted.size() < 1 || param_splitted.size() > 2)
     {
@@ -64,6 +64,8 @@ int topic(Server *server, int client_fd, msg_struct cmd_infos)
         }
         else
         {
+            std::cout << "printing here\n"
+                      << ch->get_topic() << "\n";
             server->SendReply(client_fd, RPL_TOPIC(server->getServerIP(), cl->get_nickname(), ch->get_channel_name(), ch->get_topic()));
         }
     }

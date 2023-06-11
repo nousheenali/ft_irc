@@ -39,7 +39,7 @@ Channel::Channel(std::string name)
     kflag = 0;
     lflag = 0;
     this->total_members = 0;
-    this->topic = "yay";
+    this->topic = "";
     this->key = "";
 }
 
@@ -161,7 +161,6 @@ void Channel::removeOperator(Client *client)
 std::string Channel::getChannelMode()
 {
     std::string str;
-
     if (iflag == 1)
         str += "i";
     if (tflag == 1)
