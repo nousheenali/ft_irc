@@ -32,7 +32,7 @@ int invite(Server *server, int client_fd, msg_struct cmd_infos)
 
     // Check if channel exists
     Channel *channel = server->GetChannel(param_splitted[1]);
-    if (channel) 
+    if (channel)
     {
         std::string channelMode = channel->getChannelMode();
         // Check if user is a member of the channel
@@ -64,14 +64,21 @@ int invite(Server *server, int client_fd, msg_struct cmd_infos)
         // Check if invited user is already a member of the channel
         if (channel->isMember(invitedClient->get_nickname()))
         {
-            
+
             server->SendReply(client_fd, ERR_USERONCHANNEL(server->GetServerName(), cl->get_nickname(), invitedClient->get_nickname() + " already member of that channel"));
             return (FAILURE);
         }
     }
 
-    //according rfc2812,invite can be sent to a channel that has not been created also
-    if (param_splitted[1][0] != '#')
+    // according rfc2812,invite can be sent to a channel that has not been created also
+    // if (param_splitted[1][0] != '#')
+    // {
+    //     server->SendReply(client_fd, ERR_NOSUCHCHANNEL(cl->get_nickname(), param_splitted[1]));
+    //     return (FAILURE);
+    // }
+    std::map<std::string, Channel *>::iterator it = server->GetChannelList().find(param_splitted[1]);
+
+    if (it == server->GetChannelList().end())
     {
         server->SendReply(client_fd, ERR_NOSUCHCHANNEL(cl->get_nickname(), param_splitted[1]));
         return (FAILURE);
@@ -79,11 +86,11 @@ int invite(Server *server, int client_fd, msg_struct cmd_infos)
     // Add the channel name to the invited user's invite list
     invitedClient->addInvite(param_splitted[1]);
 
-     // Send the INVITE message to the invited user
+    // Send the INVITE message to the invited user
     server->SendReply(invitedClient->get_socket(), RPL_INVITING(cl->get_nickname(), invitedClient->get_nickname(), param_splitted[1])); // send invite to user
-    
+
     // Send a confirmation message to the user that sent the INVITE
     server->SendReply(client_fd, RPL_INVITING2(server->GetServerName(), invitedClient->get_nickname(), param_splitted[1]));
-    
+
     return (SUCCESS);
 }
