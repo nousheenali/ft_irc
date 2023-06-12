@@ -44,6 +44,8 @@ void removeUserFromChannels(Server *server, int fd)
         if (it->second->isMember(c->get_nickname()))
         {
             it->second->removeUser(c->get_nickname());
+            if (it->second->isOperator(c->get_nickname()))
+                it->second->removeOperator(c);
             if (it->second->get_total_members() == 0 && it->second->get_channel_name()[0] != '!') //dont destroy safe channels starting with '!'
                 server->RemoveChannel(it->second->get_channel_name());
         }
