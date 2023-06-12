@@ -110,4 +110,7 @@ private:
     };
 };
 
+void removeUserFromChannels(Server *server, int fd);
+
+
 #endif

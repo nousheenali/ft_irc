@@ -58,7 +58,7 @@ std::vector<std::string> split(const std::string &s, char delimiter)
         }
         else
         {
-            token += s[i];
+            token += tolower(s[i]);
         }
     }
     tokens.push_back(token);
@@ -71,6 +71,8 @@ std::string ParamsJoin(std::vector<std::string> vec)
     std::string text;
     
     for (it = vec.begin() + 1; it != vec.end(); it++)
+    {
         text += (*it + " ");
+    }
     return text;
 }

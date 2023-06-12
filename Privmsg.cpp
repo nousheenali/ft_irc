@@ -61,7 +61,12 @@ void privmsg::SendToChannel()
         {
             rcvr = ch->members[i].user;
             if (rcvr->get_nickname() != sdr->get_nickname())
-                serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG(sdr->get_msg_prefix(), ch->get_channel_name(), ParamsJoin(params)));
+            {
+                std::string reply = ParamsJoin(params);
+                if (reply[0] == ':')
+                    reply = reply.substr(1); //removing the colon added by limechat
+                serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG(sdr->get_msg_prefix(), ch->get_channel_name(), reply));
+            }
         }
     }
 }
@@ -105,7 +110,12 @@ void privmsg::SendToClient()
     }
     // std::cout << "user found....\n";
     if ((sdr = serv->GetClient(sender_fd)) != NULL)
-        serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG( sdr->get_msg_prefix(), rcvr->get_nickname(), ParamsJoin(params)));
+    {   
+        std::string reply = ParamsJoin(params);
+        if (reply[0] == ':')
+            reply = reply.substr(1); //removing the colon added by limechat
+        serv->SendReply(rcvr->get_socket(), RPL_PRIVMSG( sdr->get_msg_prefix(), rcvr->get_nickname(), reply));
+    }
 }
 
 

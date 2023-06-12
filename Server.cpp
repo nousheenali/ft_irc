@@ -274,6 +274,7 @@ void Server::ReceiveMessage(int i)
     {
         std::cout << RED << " *** Connection Closed by Client on socket " << sender_fd << " *** \n"
                   << RESET;
+        removeUserFromChannels(this, pfds[i].fd);
         deleteClient(pfds[i].fd);
         pfds[i].fd = -1;                // make the socket fd negative so it is ignored in future
         return;
