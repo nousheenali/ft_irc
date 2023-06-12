@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:56:34 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/12 15:04:32 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/12 15:27:03 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,10 @@ void set_topic(std::vector<std::string> param_splitted, Channel *ch, Client *cl,
 
 	if (param_splitted.size() == 2)
 	{
-		ch->set_topic(param_splitted[1]);
+		if (param_splitted[1][0] == ':') //clear topic when only ":" is passed
+			ch->set_topic("");
+		else
+			ch->set_topic(param_splitted[1]);
 		std::vector<struct Channel::Channel_Member> it = ch->getClients();
        	std::vector<struct Channel::Channel_Member>::iterator ite = it.begin();
        	while(ite != it.end())
