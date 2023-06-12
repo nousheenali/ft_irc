@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/11 11:08:46 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/12 11:08:03 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ Server::Server()
 
 Server::~Server()
 {
-    std::cout << "\r------------DESTRUCTOR CALLED-------------\n";
+    // std::cout << "\r------------DESTRUCTOR CALLED-------------\n";
     
     close_fds();
     if (!this->client_array.empty())
@@ -296,91 +296,6 @@ void Server::ReceiveMessage(int i)
         }
     }
 }
-
-/*
-int Server::check_auth(int fd)
-{
-    Client *c;
-    std::map<int, Client *>::iterator it;
-
-    // it = client_array.find(fd);
-    c = GetClient(fd);
-    if (c != NULL)
-    {
-        if (c->message.size() < 1)
-            SendReply(fd, ERR_NEEDMOREPARAMS(c->message[0]));
-        if (c->message[0] == "PASS" || c->message[0] == "NICK" || c->message[0] == "USER")
-        {
-            if (c->message[0] == "PASS" && c->message[1] == this->password)
-                return (0);
-            else if ((c->message[0] == "PASS" && c->message[1] != this->password))
-                return (-1);
-            else
-                return (1);
-        }
-        // std::cout << "cmd is PASS but password incorrect" << this->password << it->second->message[1] << "\n";
-    }
-    return (1);
-}
-
-void Server::MessageStoreExecute(char ch, int client_fd)
-{
-    std::map<int, Client *>::iterator it;
-    static std::string tmp;
-    // static std::vector<std::string> vec;
-    Channel *chl;
-
-    if (ch != ' ' && ch != '\n' && ch != '\r')
-        tmp += ch;
-    else if (ch == ' ' || ch == '\n')
-    {
-        it = client_array.find(client_fd);
-        if (it != client_array.end())
-        {
-            it->second->message.push_back(tmp);
-            // std::cout << "tmp is " << tmp <<"\n";
-            tmp.clear();
-            if (ch == '\n')
-            {
-                //parse and process request here
-                print_messages(client_fd);
-                it->second->nick = "nali";
-                if (it->second->get_auth() == 0)
-                {
-                    int ret = check_auth(client_fd);
-                    if (ret == 0)
-                    {
-                        SendReply(client_fd, RPL_WELCOME(it->second->nick));
-                        it->second->set_auth(1);
-                    }
-                    else if (ret == -1)
-                    {
-                        SendReply(client_fd, ERR_UNKNOWNCOMMAND(it->second->message[0]));
-                        it->second->message.clear();
-                        return;
-                    }
-                    else
-                    {
-                        // execute_cmds
-                    }
-                }
-                if (it->second->get_auth() == 1)
-                {
-                    if (it->second->message[0] == "MODE")
-                    {
-                        //creating dummy channels for testing mode
-                        chl = new Channel("chl1");
-                        this->channel_array.insert(std::make_pair("chl1", chl));
-                        chl = new Channel("chl2");
-                        this->channel_array.insert(std::make_pair("chl2", chl));
-                        Mode(client_fd, this);
-                    }
-                }
-                it->second->message.clear();
-            }
-        }
-    }
-}*/
 
 void Server::print_messages(int fd)
 {

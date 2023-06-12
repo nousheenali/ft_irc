@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:27:18 by nali              #+#    #+#             */
-/*   Updated: 2023/06/11 11:02:14 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/12 10:59:02 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void privmsg::SendToChannel()
 void privmsg::SendToClient()
 {
     // int recipient_fd = -1;
-    Client *sdr,*rcvr;
+    Client *sdr,*rcvr = NULL;
     std::string nick, username, ipaddr, host;
     size_t pos = params[0].find('!');
     size_t pos2 = params[0].find('@');

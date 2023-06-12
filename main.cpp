@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:27:06 by nali              #+#    #+#             */
-/*   Updated: 2023/05/25 23:06:31 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/12 11:12:39 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    // if (strlen(argv[2]) < 10 or strlen(argv[2]) > 15)
-    // {
-    //     std::cout << "Server password must contain 10-15 characters." << std::endl; 
-    //     exit(1);
-    // }
+    if (strlen(argv[2]) > 10 || strlen(argv[2]) < 5)
+    {
+        std::cout << RED << "Server password must contain 10-15 characters." << RESET << std::endl; 
+        exit(1);
+    }
  
     try
     {

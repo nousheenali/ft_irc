@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 13:28:12 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/04 14:00:36 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/12 15:09:35 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,16 @@ struct msg_struct
 	std::string parameter;
 };
 
-int pass(Server *server, int clifdent_fd, msg_struct msg_info);
+int  pass(Server *server, int clifdent_fd, msg_struct msg_info);
 void nick(Server *server, int fd, msg_struct msg_info);
 void user(Server *server, int client_fd, msg_struct msg_info);
 void quit(Server *server, int fd, msg_struct msg_info);
 void pong(Server *server, int client_fd, msg_struct msg_info);
-int join(Server *server, int client_fd, msg_struct msg_info);
+int  join(Server *server, int client_fd, msg_struct msg_info);
 void kick(Server *server, int client_fd, msg_struct msg_info);
-int part(Server *server, int client_fd, msg_struct msg_info);
-int invite(Server *server, int client_fd, msg_struct msg_info);
-int topic(Server *server, int client_fd, msg_struct msg_info);
-void list(Server *server, int fd, msg_struct cmd_infos);
+int  part(Server *server, int client_fd, msg_struct msg_info);
+int  invite(Server *server, int client_fd, msg_struct msg_info);
+int  topic(Server *server, int client_fd, msg_struct msg_info);
+void  list(Server *server, int fd, msg_struct cmd_infos);
 
 #endif
