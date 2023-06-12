@@ -24,20 +24,36 @@ mode::mode(Server *serv, int client_fd, msg_struct msg_info)
     this->params = convert_to_vector(msg_info.parameter);
     this->modeChanged = false;
 
-    if (params.size() == 0) // if no arguments
+    if (params.size() == 0)
     {
         serv->SendReply(client_fd, ERR_NEEDMOREPARAMS(msg_info.cmd));
         return;
     }
+
+    if (params.size() > 5) // if no arguments (there is a max limit of three changes per command for modes that take a parameter.)
+    {
+        serv->SendReply(client_fd, ERR_NEEDMOREPARAMS2(msg_info.cmd));
+        return;
+    }
+
     this->chl = serv->GetChannel(params[0]);
     if (chl == NULL) // channel doesn't exist
     {
         serv->SendReply(client_fd, ERR_NOSUCHCHANNEL(client->get_nickname(), params[0]));
         return;
     }
+    
     if (params.size() == 1) // in case of "/mode <#channle_name>"
     {
         serv->SendReply(client_fd, RPL_CHANNELMODEIS(serv->GetServerName(), client->get_nickname(), chl->get_channel_name(), chl->getChannelMode()));
+        return;
+    }
+
+    std::string chlname = chl->get_channel_name();
+    if(chlname[0] == '+')
+    {
+        //mode not supported for channels with prefix '+'
+        serv->SendReply(client_fd, ERR_UNKNOWNMODE2(serv->GetServerName(), client->get_nickname()));
         return;
     }
     CheckMode();

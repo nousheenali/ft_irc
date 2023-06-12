@@ -41,6 +41,7 @@ Channel::Channel(std::string name)
     this->total_members = 0;
     this->topic = "";
     this->key = "";
+    this->creator = "";
 }
 
 bool Channel::isMember(std::string nick)
@@ -144,6 +145,16 @@ std::string Channel::get_topic()
 void Channel::set_topic(std::string str)
 {
     this->topic = str;
+}
+
+std::string Channel::get_creator()
+{
+    return this->creator;
+}
+
+void Channel::set_creator(std::string str)
+{
+    this->creator = str;
 }
 
 void Channel::addOperator(Client *client)

@@ -28,6 +28,7 @@ private:
         std::string name; // channel name
         std::string topic;
         std::string key; // password
+        std::string creator; // channel name
         int limit;
         int total_members; // current number of members present in the channel
         // modes
@@ -67,6 +68,8 @@ public:
         void set_key(std::string key);
         int get_limit();
         void set_limit(int val);
+        std::string get_creator();
+        void set_creator(std::string str);
 
         // channel join validation
         bool isMember(std::string nick);

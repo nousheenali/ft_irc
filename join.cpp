@@ -38,7 +38,9 @@ int validateChannelNames(const std::vector<std::string> &channelNames)
 {
     for (size_t i = 0; i < channelNames.size(); i++)
     {
-        if (channelNames[i].size() < 2 || (channelNames[i][0] != '#' && channelNames[i][0] != '&'))
+        if (channelNames[i].size() < 2 || channelNames[i].size() > 50 || channelNames[i].find(':') != std::string::npos ||
+        channelNames[i].find(7) != std::string::npos || channelNames[i].find(' ') != std::string::npos ||
+        (channelNames[i][0] != '#' && channelNames[i][0] != '&' && channelNames[i][0] != '+' && channelNames[i][0] != '!'))
         {
             return i;
         }
@@ -57,6 +59,8 @@ void createChannel(Server *server, int client_fd, const std::string &channelName
     Client *cl = server->GetClient(client_fd);
     newCh->addUser(cl);
     newCh->addOperator(cl);
+    if (channelName[0] == '!') //only channels starting with '!' have creators
+        newCh->set_creator(cl->get_nickname());
     server->GetChannelList()[channelName] = newCh;
     server->SendReply(cl->get_socket(), RPL_JOIN(cl->get_msg_prefix(), newCh->get_channel_name()));
     server->SendReply(cl->get_socket(), RPL_TOPIC(server->getServerIP(), cl->get_nickname(), newCh->get_channel_name(), newCh->get_topic()));

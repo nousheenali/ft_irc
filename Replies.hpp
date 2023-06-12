@@ -37,15 +37,16 @@
 //MODE
 #define ERR_NOSUCHCHANNEL(nick, channel)            ("403 " + nick + " " + channel + " :No such channel\r\n")
 #define ERR_UNKNOWNMODE(server, nick, mod)          (":" + server + " 472 " + nick + " " + mod + " is not a recognised channel mode\r\n")
+#define ERR_UNKNOWNMODE2(server, nick)              (":" + server + " 472 " + nick + " Changing mode is not supported for this channel\r\n")
 #define ERR_KEYSET(server, nick, channel)           (":" + server + " 467 " + nick + " " + channel + " Channel key already set\r\n")
 #define ERR_NOSUCHNICK(nickname)                    ("401 " + nickname +  " :No such nick/channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(server, nick)          (":" + server + " 482 " + nick + " :You're not channel operator\r\n")
+#define ERR_NEEDMOREPARAMS2(command)		        ("461 " + command + " :Incorrect no.of Parameters\r\n")
 
 #define ERR_UNKNOWNCOMMAND(command)	                		("421 " + command + " :Unknown command\r\n")
 #define ERR_INVALIDMODEPARAM(serv, chan, nick, mod)         (":" + serv + " 696 " + nick + " " + chan + " " + mod + " * You must specify a parameter for the key mode. Syntax: <key>.\r\n")
 #define ERR_INVALIDMODEPARAM2(serv, chan, nick, mod, param) (":" + serv + " 696 " + nick + " " + chan + " " + mod + " " + param + " Invalid limit mode parameter. Syntax: <limit>.\r\n")
 #define RPL_CHANNELMODEIS(server, nick, channel, modes)     (":" + server + " 324 " + nick + " " + channel + " :+" + modes + "\r\n")
-// #define RPL_CHANNELMODEIS2(server, nick, channel, modes)    (":" + server + " 324 " + nick + " " + channel + " :" + modes + "\r\n")
 #define RPL_MODE(client, channel, msg)                      (client + " MODE " + channel + " " + msg + "\r\n")
 #define RPL_YOUREOPER(server, nick, channel)                (":" + server + " 381 " + nick + " " + channel + ":You are now an IRC operator\r\n")
 

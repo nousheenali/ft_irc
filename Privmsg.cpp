@@ -70,8 +70,34 @@ void privmsg::SendToClient()
 {
     // int recipient_fd = -1;
     Client *sdr,*rcvr;
-
-    rcvr = serv->GetClient(params[0]);
+    std::string nick, username, ipaddr, host;
+    size_t pos = params[0].find('!');
+    size_t pos2 = params[0].find('@');
+    size_t pos3 = params[0].find('%');
+    
+    if (pos != std::string::npos) //condition #1
+    {
+        nick = params[0].substr(0, pos);
+        if (pos2 != std::string::npos)
+        {
+            username = params[0].substr(pos + 1, pos2 - pos - 1);
+            ipaddr = params[0].substr(pos2 + 1);
+            rcvr = serv->GetClient(nick);
+            if (rcvr !=NULL && (rcvr->get_ip_addr() != ipaddr || rcvr->get_username() != username))
+                rcvr = NULL;
+        }
+    }
+    else if (pos3 != std::string::npos) //condition #2
+    {
+        nick = params[0].substr(0, pos3);
+        host = params[0].substr(pos3 + 1);
+        rcvr = serv->GetClient(nick);
+        if (rcvr != NULL && rcvr->get_username() != host)
+            rcvr = NULL;
+    }
+    else
+        rcvr = serv->GetClient(params[0]);
+        
     if (rcvr == NULL) //no user by the nick
     {
         serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(serv->GetClient(sender_fd)->get_nickname(),params[0]));
@@ -85,3 +111,17 @@ void privmsg::SendToClient()
 
 /*  reference for reply
 http://chi.cs.uchicago.edu/chirc/irc_examples.html */
+
+/* condition #1
+   PRIVMSG Wiz!jto@tolsun.oulu.fi :Hello !
+                                   ; Message to the user with nickname
+                                   Wiz who is connected from the host
+                                   tolsun.oulu.fi and has the username
+                                   "jto".*/
+
+/* condition #2
+   PRIVMSG kalt%millennium.stealth.net :Do you like cheese?
+                                   ; Message to a user on the local
+                                   server with username of "kalt", and
+                                   connected from the host
+                                   millennium.stealth.net.*/
