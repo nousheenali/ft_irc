@@ -134,7 +134,6 @@ int join(Server *server, int client_fd, msg_struct cmd_infos)
     if (invalidChannelIndex != -1)
     {
         server->SendReply(client_fd, ERR_NOSUCHCHANNEL(cl->get_nickname(), channelNames[invalidChannelIndex]));
-        // server->SendReply(client_fd, ": server_name  403 _nali  " + channelNames[invalidChannelIndex] + " :Bad channel name\n");
         return (FAILURE);
     }
 

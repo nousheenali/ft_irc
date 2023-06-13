@@ -96,7 +96,7 @@ void mode::CheckMode()
             s.clear();
         }
     }
-    // serv->SendReply(client_fd, RPL_CHANNELMODEIS(cl->get_msg_prefix(),chl->get_channel_name(), "mode changed"));
+    
     if (modeChanged)
     {
         std::string str = reply_mode + " " + reply_args;
@@ -106,7 +106,6 @@ void mode::CheckMode()
         {
             if (chl->isMember(it->second->get_nickname()))
                 serv->SendReply(it->first, RPL_MODE(client->get_msg_prefix(), chl->get_channel_name(), str));
-            // serv->SendReply(it->first, RPL_CHANNELMODEIS2(client->get_msg_prefix(), client->get_nickname(), chl->get_channel_name(), str));
         }
     }
 }
@@ -178,11 +177,11 @@ void mode::SelectOption(std::string str)
         }
         break;
 
-    case FOUR: /* -t */
+    case FOUR: /* +t */
         if (this->chl->get_topic_flag() == 0)
         {
             chl->set_topic_flag(1);
-            reply_mode += "-t";
+            reply_mode += "+t";
             modeChanged = true;
         }
         break;

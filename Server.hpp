@@ -57,6 +57,7 @@ private:
     int pfd_count;            // to store file descriptors to be polled
     std::map<int, Client *> client_array;
     std::map<std::string, Channel *> channel_array;
+    int client_count;
     // Command *cmd_cls;
 
 public:

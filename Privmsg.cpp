@@ -33,7 +33,7 @@ void privmsg::CheckConditions()
         serv->SendReply(sender_fd, ERR_NOTEXTTOSEND());
         return ;
     }
-    if (params[0][0] == '#' || params[0][0] == '&') // if msg to channel
+    if (params[0][0] == '#' || params[0][0] == '&'|| params[0][0] == '!' || params[0][0] == '+') // if msg to channel
         SendToChannel(); 
     else //if msg to user
         SendToClient();
@@ -73,7 +73,6 @@ void privmsg::SendToChannel()
 
 void privmsg::SendToClient()
 {
-    // int recipient_fd = -1;
     Client *sdr,*rcvr = NULL;
     std::string nick, username, ipaddr, host;
     size_t pos = params[0].find('!');

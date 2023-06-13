@@ -48,8 +48,8 @@ int topic(Server *server, int client_fd, msg_struct cmd_infos)
     // If 2 parameters are given, the client wants to change the topic
     if (param_splitted.size() >= 2)
     {
-        // Check for the operator privileges
-        if (!ch->isOperator(cl->get_nickname()))
+        // Check for the operator privileges only if channel mode +t, if -t no need to check operator privileges
+        if (ch->get_topic_flag() && !ch->isOperator(cl->get_nickname()))
         {
             server->SendReply(client_fd, ERR_CHANOPRIVSNEEDED(server->getServerIP(), cl->get_nickname()));
             return (FAILURE);
