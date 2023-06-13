@@ -30,24 +30,22 @@ std::vector<std::string> split(const std::string &s, char delimiter);
 
 std::vector<std::string>	ft_split(std::string str, char delim)
 {
-	std::vector<std::string> lst;
-	std::string ch;
-	int i = 0;
-	
-	while (str[i])
-	{
-		while (str[i] && (str[i] == ' ' || str[i] == delim)) //check other white spaces??
-			i++;
-		while (str[i] && str[i] != delim)
-		{
-			ch += str[i];
-			i++;
-		}
-		lst.push_back(ch);
-		ch.clear();
-		i++;
-	}
-	return (lst);
+	std::vector<std::string> vec;
+    std::string tmp = "\0";
+
+    for (size_t i = 0; i < str.length(); i++)
+    {
+        if (str[i] != delim)
+            tmp.push_back(str[i]);
+        else
+        {
+            vec.push_back(tmp);
+            tmp.clear();
+        }
+    }
+    if (tmp != "\0")
+        vec.push_back(tmp);
+    return vec;
 }
 
 int is_member(std::map<std::string, Channel *>::iterator it, std::vector<std::string> lst)
