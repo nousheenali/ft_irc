@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:27:06 by nali              #+#    #+#             */
-/*   Updated: 2023/06/12 11:12:39 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 14:05:28 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
     if (strlen(argv[2]) > 10 || strlen(argv[2]) < 5)
     {
-        std::cout << RED << "Server password must contain 10-15 characters." << RESET << std::endl; 
+        std::cout << RED << "Server password must contain 5-10 characters." << RESET << std::endl; 
         exit(1);
     }
  

@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/14 11:31:56 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 14:04:16 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,11 @@ void Server::fillDetails(Client *c, int client_fd, std::string cmd)
 	for (int i = 0; i < temp; i++)
 		cmd[i] = std::toupper(cmd[i]);
 
-	if (cmd.find("NICK ") != std::string::npos)
+	if (msg_info.cmd == "NICK")
 		nick(this, client_fd, msg_info);
-	else if (cmd.find("USER ") != std::string::npos)
+	else if (msg_info.cmd == "USER")
 		user(this, client_fd, msg_info);
-	else if (cmd.find("PASS ") != std::string::npos)
+	else if (msg_info.cmd == "PASS")
 	{
 		if (pass(this, client_fd, msg_info) == SUCCESS)
 			c->set_passFlag(true);
