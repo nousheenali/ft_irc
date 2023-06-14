@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:54:02 by nali              #+#    #+#             */
-/*   Updated: 2023/06/14 10:41:58 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/14 12:05:17 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ private:
     };
 };
 
-void removeUserFromChannels(Server *server, int fd);
+void removeUserFromChannels(Server *server, int fd, std::string str);
 
 
 #endif

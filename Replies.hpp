@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/14 10:31:39 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/14 12:57:07 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,9 @@
 
 //NOTICE
 #define RPL_NOTICE(sender, receiver, message)     (sender + " NOTICE " + receiver + " :" + message +"\r\n")
+
+//QUIT
+#define RPL_QUIT(uname, nname, msg)     		  (uname + " QUIT " + nname + " :" + msg +"\r\n")
 
 //PONG
 #define ERR_NOORIGIN(cmd)                           ("409 " + cmd + " :No origin specified\r\n")

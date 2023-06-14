@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/14 10:42:35 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/14 12:05:43 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,7 +275,7 @@ void Server::ReceiveMessage(int i)
     {
         std::cout << RED << " *** Connection Closed by Client on socket " << sender_fd << " *** \n"
                   << RESET;
-        removeUserFromChannels(this, pfds[i].fd);
+        removeUserFromChannels(this, pfds[i].fd, "");
         deleteClient(pfds[i].fd);
         pfds[i].fd = -1;                // make the socket fd negative so it is ignored in future
         return;
