@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/14 10:36:36 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/14 11:31:56 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,11 +128,11 @@ int Server::parseMessage(int fd, std::string msg)
 					c->has_all_info() = true;
 			}
 			if (c->has_all_info() == true && c->first_invite() == false)
-			{
+			{ma
 				this->SendReply(fd, RPL_WELCOME(this->GetServerName(), c->get_nickname()));
 				this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), this->GetServerName(), "1.1")); //--->get version and other details
 				this->SendReply(fd, RPL_CREATED(this->GetServerName(), c->get_nickname(), this->getDate())); //---->get date in realtime and print it
-				this->SendReply(fd, RPL_MYINFO(c->get_nickname(), this->GetServerName(), "1.1", c->get_nickname(), "channel_modes", "channel_modes_parameters"));
+				this->SendReply(fd, RPL_MYINFO(c->get_nickname(), this->GetServerName(), "1.1", c->get_nickname(), "", ""));
 				sendListOfCmds(this, fd);
 				printRcvMsg(fd, ": Welcome message sent...\n");
 

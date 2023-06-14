@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 10:49:56 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/11 11:01:25 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/14 10:53:37 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 		reason = cmd_infos.parameter.substr(cmd_infos.parameter.find(':'), cmd_infos.parameter.length());
 	else if (param.size() > 1)
 		reason = param[2];
-	reason = reason.empty() ? " :byeee!\n" : reason;
+	else
+		reason = " :byeee!";
 	
 	//check for multiple users to be kicked out
 	int flag = 0;
@@ -111,7 +112,8 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
         std::vector<struct Channel::Channel_Member>::iterator ite = it.begin();
         while(ite != it.end())
         {
-    		server->SendReply(ite->user->get_socket(), RPL_KICK(client->get_msg_prefix(), it_ch->second->get_channel_name(), kicked_lst[0], reason));
+			for (size_t i = 0; i < kicked_lst.size(); i++)
+    			server->SendReply(ite->user->get_socket(), RPL_KICK(client->get_msg_prefix(), it_ch->second->get_channel_name(), kicked_lst[i], reason));
     		ite++;
         }
 		for (size_t i = 0; i < kicked_lst.size(); i++)

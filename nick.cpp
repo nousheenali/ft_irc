@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:16:46 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/08 14:05:25 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:36:32 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ void nick(Server *server, int fd, msg_struct msg_info)
 
     if (c->isAuthDone() == false)
 	{
+		if (already_used(server, fd, nickname) == true)
+		{
+			server->SendReply(fd, ERR_NICKNAMEINUSE(nickname));
+			return ;
+		}
 		if (check_if_valid(nickname))
 			c->set_nickname(nickname);
 	}
