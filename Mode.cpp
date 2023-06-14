@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 11:32:56 by nali              #+#    #+#             */
-/*   Updated: 2023/06/13 11:28:39 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/14 16:11:59 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,6 +275,7 @@ void mode::SelectOption(std::string str)
         reply_mode += "+l";
         reply_args += (params[2] + " ");
         params.erase(params.begin() + 2); // deleting that argument
+        modeChanged = true;
         break;
     }
 }
