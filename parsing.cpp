@@ -128,7 +128,7 @@ int Server::parseMessage(int fd, std::string msg)
 					c->has_all_info() = true;
 			}
 			if (c->has_all_info() == true && c->first_invite() == false)
-			{ma
+			{
 				this->SendReply(fd, RPL_WELCOME(this->GetServerName(), c->get_nickname()));
 				this->SendReply(fd, RPL_YOURHOST(c->get_nickname(), this->GetServerName(), "1.1")); //--->get version and other details
 				this->SendReply(fd, RPL_CREATED(this->GetServerName(), c->get_nickname(), this->getDate())); //---->get date in realtime and print it
