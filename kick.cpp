@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 10:49:56 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/14 10:53:37 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 15:03:33 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include "Command.hpp"
 
 std::vector<std::string> split(const std::string &s, char delimiter);
+std::vector<std::string> convert_to_vector(std::string msg);
+std::string ParamsJoin(std::vector<std::string> vec);
 
 
 /* KICK command: is used used to request the forced removal of a user from a channel.
@@ -33,7 +35,7 @@ std::vector<std::string>	ft_split(std::string str, char delim)
 	std::vector<std::string> vec;
     std::string tmp = "\0";
 
-    for (size_t i = 0; i < str.length(); i++)
+    for (size_t i = 0; i < str.size(); i++)
     {
         if (str[i] != delim)
             tmp.push_back(str[i]);
@@ -62,8 +64,8 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 {
     Client *client					= server->GetClient(client_fd);
 	std::vector<std::string> param 	= ft_split(cmd_infos.parameter, ' ');//param[0]->channel & param[1]->user list & param[2]->reason
-    if (param.empty())
-    {
+  	if (param.empty())
+    {		
 		server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
 		return ;
 	}
@@ -75,10 +77,12 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
     std::string kicked_by = client->get_nickname();
     std::string reason = "";
     temp.push_back(kicked_by);
-	
-	// get reason
-	if (cmd_infos.parameter.find(':') != std::string::npos)
-		reason = cmd_infos.parameter.substr(cmd_infos.parameter.find(':'), cmd_infos.parameter.length());
+    
+	if (!cmd_infos.parameter.empty())
+	{
+		if (cmd_infos.parameter.find(':') != std::string::npos)
+			reason = cmd_infos.parameter.substr(cmd_infos.parameter.find(':'), cmd_infos.parameter.length());
+	}
 	else if (param.size() > 1)
 		reason = param[2];
 	else
@@ -86,7 +90,7 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 	
 	//check for multiple users to be kicked out
 	int flag = 0;
-	if (param.size() >= 1)
+	if (param.size() > 1)
 	{
     	flag = param[1].find(',') ? 1 : 0;
 		if (flag == 1)
@@ -94,6 +98,7 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 		else
 			kicked_lst.push_back(param[1]);
 	}
+
 	//error handling
     if ((param[0].find(':') != std::string::npos) || kicked_lst.empty())
 		server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
