@@ -6,7 +6,7 @@
 /*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:16:46 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/14 10:36:32 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 16:07:57 by sfathima         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ static bool check_if_valid(std::string nick)
     std::size_t found;
 	std::string str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]\\`_- ^{}|";
   
-    found = nick.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]\\`_- ^{}|");
 	bool isfound = str.find(nick[0]) != std::string::npos;
+    found = nick.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]\\`_- ^{}|");
 
+	if (nick.find(' ') != std::string::npos)
+		return (false);
     if (found != std::string::npos || !isfound)
         return (false);
     if (nick.size() > 9)
