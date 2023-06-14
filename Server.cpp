@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/12 11:08:03 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:42:35 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ Server::Server(int port, std::string pwd)
     this->server_ip = "127.0.0.1";
     this->server_name = "ft_irc";
     this->pfd_count = 0;
-    this->client_count = 0;
 
     time_t now = time(0); // getting current time and date
     this->creation_time = ctime(&now);
@@ -205,11 +204,7 @@ void Server::AcceptConnections()
     memset(&client_addr, 0, sizeof(client_addr));
     addr_len = sizeof(struct sockaddr_storage);
     clientfd = accept(this->listener, (struct sockaddr *)&client_addr, &addr_len);
-    if (client_count >= 1000)
-    {
-        std::cout << "*** No more connections accepted. ***\n";
-        return ;
-    }
+
     if (clientfd == -1)
         ThrowException("Accept Error: ");
     else
@@ -222,7 +217,6 @@ void Server::AcceptConnections()
         this->pfds.push_back(pfdStruct);
         this->pfd_count += 1;
         std::cout << YELLOW << " *** Server got connection from " << c->get_ip_addr() << " on socket " << c->get_socket() << " *** " << RESET << std::endl;
-        this->client_count++;
     }
 }
 

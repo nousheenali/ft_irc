@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 17:56:54 by nali              #+#    #+#             */
-/*   Updated: 2023/06/12 15:08:49 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:31:39 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,9 @@
 
 //PRIVMSG
 #define RPL_PRIVMSG(sender, receiver, message)     (sender + " PRIVMSG " + receiver + " :" + message +"\r\n")
+
+//NOTICE
+#define RPL_NOTICE(sender, receiver, message)     (sender + " NOTICE " + receiver + " :" + message +"\r\n")
 
 //PONG
 #define ERR_NOORIGIN(cmd)                           ("409 " + cmd + " :No origin specified\r\n")

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/12 15:11:26 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:36:36 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,13 +156,13 @@ int Server::execCommand(int client_fd, std::string cmd_line)
 	// Client *client = this->GetClient(client_fd);
 	int i = 0;
 
-	std::string validCmds[13] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG",
+	std::string validCmds[14] = {"NICK", "USER", "QUIT", "PASS", "PRIVMSG",
 								 "PONG", "JOIN", "MODE", "KICK", "PART",
-								 "INVITE", "TOPIC", "LIST" }; //---->keep adding commands
+								 "INVITE", "TOPIC", "LIST", "NOTICE" }; //---->keep adding commands
 
 	if (parseCommand(cmd_line, cmd_infos) == FAILURE)
 		return (0);
-	while (i < 13)
+	while (i < 14)
 	{
 		if (cmd_infos.cmd == validCmds[i])
 			break;
@@ -209,6 +209,9 @@ int Server::execCommand(int client_fd, std::string cmd_line)
 		break;
 	case 12:
 		list(this, client_fd, cmd_infos);
+		break;
+	case 13:
+		notice(this, client_fd, cmd_infos);
 		break;
 	default:
 		this->SendReply(client_fd, ERR_UNKNOWNCOMMAND(cmd_infos.cmd));
