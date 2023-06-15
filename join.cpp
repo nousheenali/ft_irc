@@ -3,6 +3,7 @@
 
 std::vector<std::string> convert_to_vector(std::string msg);
 std::vector<std::string> split(const std::string &s, char delimiter);
+std::vector<std::string> splitlower(const std::string &s, char delimiter);
 
 void printChannelAndMembers(Server *server)
 {
@@ -117,7 +118,7 @@ void joinChannel(Server *server, int client_fd, Channel *ch, const std::string &
 
 int join(Server *server, int client_fd, msg_struct cmd_infos)
 {
-    std::vector<std::string> param_splitted = split(cmd_infos.parameter, ' ');
+    std::vector<std::string> param_splitted = convert_to_vector(cmd_infos.parameter);
     Client *cl = server->GetClient(client_fd);
 
     if (param_splitted.size() > 2 || cmd_infos.parameter.empty() ||
@@ -127,7 +128,7 @@ int join(Server *server, int client_fd, msg_struct cmd_infos)
         return (FAILURE);
     }
 
-    std::vector<std::string> channelNames = split(param_splitted[0], ',');
+    std::vector<std::string> channelNames = splitlower(param_splitted[0], ',');
     std::vector<std::string> channelKeys = getChannelKeys(param_splitted);
 
     int invalidChannelIndex = validateChannelNames(channelNames);

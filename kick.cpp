@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 10:49:56 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/14 15:03:33 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/15 22:57:41 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int is_member(std::map<std::string, Channel *>::iterator it, std::vector<std::st
 void kick(Server *server, int client_fd, msg_struct cmd_infos)
 {
     Client *client					= server->GetClient(client_fd);
-	std::vector<std::string> param 	= ft_split(cmd_infos.parameter, ' ');//param[0]->channel & param[1]->user list & param[2]->reason
+	std::vector<std::string> param 	= convert_to_vector(cmd_infos.parameter);//param[0]->channel & param[1]->user list & param[2]->reason
   	if (param.empty())
     {		
 		server->SendReply(client_fd, ERR_NEEDMOREPARAMS(cmd_infos.cmd));
