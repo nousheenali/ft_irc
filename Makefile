@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nali <nali@student.42.fr>                  +#+  +:+       +#+         #
+#    By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 17:20:20 by nali              #+#    #+#              #
-#    Updated: 2023/06/14 10:33:33 by nali             ###   ########.fr        #
+#    Updated: 2023/06/15 12:23:03 by sfathima         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,18 +18,18 @@ SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp pass.cpp parsing.cpp\
 
 OBJS	= ${SRCS:.cpp=.o}
 
-CC		= c++
+CXX		= c++
 
-CFLAGS	=  -Werror -Wextra -Wall -std=c++98
+CXXFLAGS	=  -Werror -Wextra -Wall -std=c++98
 
 RM		= rm -f
 
 all:	${NAME}
 
-.c.o:	${CC} ${CFLAGS} -I -c $< -o ${<:.cpp=.o}
+.cpp.o:	${CXX} ${CXXFLAGS} -I -c $< -o ${<:.cpp=.o}
 
 ${NAME}:	${OBJS}
-		$(CC) ${CFLAGS} ${SRCS} -o $(NAME)
+		$(CXX) ${CXXFLAGS} ${OBJS} -o $(NAME)
 
 clean:		
 			${RM} ${OBJS}
