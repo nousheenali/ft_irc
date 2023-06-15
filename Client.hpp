@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:34:33 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 13:49:39 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/15 17:02:04 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <netdb.h>	   //addrinfo
 #include <arpa/inet.h> //inet_ntop
 #include <vector>	   //inet_ntop
+#include <deque>	
 
 #define FAILURE -1
 #define SUCCESS 0
@@ -41,12 +42,12 @@ private:
 	std::string _hostname;
 	std::string _servername;
 	std::vector<std::string> invitedChannels;
-
 	// And add this public method:
 
 public:
 	std::string nick;
 	std::vector<std::string> message;
+	std::deque<std::string> messageToBeSent;
 	// std::vector <std::vector<std::string> > message;
 
 public:
@@ -81,7 +82,6 @@ public:
 	void set_realname(std::string realname);
 	void set_passFlag(bool flag);
 	int is_valid() const;
-	void SendReply(int fd, std::string msg);
 };
 
 #endif

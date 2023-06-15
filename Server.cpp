@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:53:47 by nali              #+#    #+#             */
-/*   Updated: 2023/06/14 12:05:43 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/15 16:48:18 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,13 +164,15 @@ void Server::ConnectClients(void)
     pfdStruct.revents = 0; //setting to one to prevent conditional jump
     this->pfd_count += 1;
     this->pfds.push_back(pfdStruct);
+    std::string reply;
+    
     std::cout << GREEN << " *** Server running and waiting for connections *** " << RESET << std::endl;
     signal(SIGINT, SignalHandler);
     while(1)
     {
         if (CloseServer)
             break;
-        int val = poll(&this->pfds[0], this->pfd_count, 5000); // returns no.of elements in pollfds whose revents has been set to a nonzero value
+       int val = poll(&this->pfds[0], this->pfd_count, -1); // returns no.of elements in pollfds whose revents has been set to a nonzero value
         if (val < 0)
         {
             if (CloseServer)
@@ -181,13 +183,22 @@ void Server::ConnectClients(void)
         }
         for (int i = 0; i < this->pfd_count; i++) // going through each socket to check for incoming requests
         {
-            // std::cout << "res ->" << pfds[i].revents << ", i = " << i << "fd = " << pfds[i].fd <<"\n";
             if (pfds[i].revents & POLLIN) // checking revents if it is set to POLLIN
             {
                 if (pfds[i].fd == this->listener)
                     AcceptConnections();
                 else
                     ReceiveMessage(i);
+            }
+            if (pfds[i].revents & POLLOUT) // checking revents if it is set to POLLIN
+            {
+                Client *cl = this->GetClient(pfds[i].fd);
+                if (cl!= NULL && !cl->messageToBeSent.empty())
+                {
+                    reply = cl->messageToBeSent.front();
+                    send(pfds[i].fd, reply.c_str(), reply.length(), 0);
+                    cl->messageToBeSent.pop_front();
+                }
             }
         }
     }
@@ -210,7 +221,7 @@ void Server::AcceptConnections()
     else
     {
         pfdStruct.fd = clientfd;
-        pfdStruct.events = POLLIN;
+        pfdStruct.events = POLLIN | POLLOUT;
         pfdStruct.revents = 0;
         c = new Client(clientfd);
         client_array.insert(std::pair<int, Client *>(clientfd, c));
@@ -316,7 +327,9 @@ void Server::print_messages(int fd)
 
 void Server::SendReply(int client_fd, std::string msg)
 {
-    send(client_fd, msg.c_str(), msg.length(), 0);
+    Client *cl = this->GetClient(client_fd);
+    if (cl != NULL)
+      cl->messageToBeSent.push_back(msg);
 }
 
 void Server::close_fds()

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sfathima <sfathima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/14 14:04:16 by sfathima         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:36:10 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,16 +98,16 @@ void sendListOfCmds(Server *s, int fd)
 	Client *c = s->GetClient(fd);
 
 	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "Commands Available:"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* NICK"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* QUIT"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PASS"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PRIVMSG"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* JOIN"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* MODE"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* KICK"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PART"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* INVITE"));
-	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* TOPIC"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* NICK <nickname>"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* QUIT [<:reason>]"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PASS <password>"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PRIVMSG <user/channel> <msg>"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* JOIN <channel(s)> [<keys>]"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* MODE <channel(s)> [[+|- mode_char] parameters]"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* KICK <channel> <user> [<reason>]"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* PART <channel> [<message>]"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* INVITE <nick> <channel>"));
+	s->SendReply(fd, RPL_MYINFO2(c->get_nickname(), s->GetServerName(), "	* TOPIC <channel> [<topic>]"));
 }
 
 int Server::parseMessage(int fd, std::string msg)

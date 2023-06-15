@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
+/*   By: nali <nali@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 13:46:25 by nali              #+#    #+#             */
-/*   Updated: 2023/06/04 13:49:59 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/15 13:59:23 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,4 @@ void Client::addInvite(const std::string &channelName)
 bool Client::isInvitedTo(const std::string &channelName)
 {
     return std::find(invitedChannels.begin(), invitedChannels.end(), channelName) != invitedChannels.end();
-}
-
-void Client::SendReply(int fd, std::string msg)
-{
-    send(fd, msg.c_str(), msg.length(), 0);
 }
