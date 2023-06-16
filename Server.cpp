@@ -196,7 +196,8 @@ void Server::ConnectClients(void)
                 if (cl!= NULL && !cl->messageToBeSent.empty())
                 {
                     reply = cl->messageToBeSent.front();
-                    send(pfds[i].fd, reply.c_str(), reply.length(), 0);
+                    if (send(pfds[i].fd, reply.c_str(), reply.length(), 0) == -1) //0 - for default behavior of send()
+                        std::cout << "Unable to send data.\n";
                     cl->messageToBeSent.pop_front();
                 }
             }
@@ -279,7 +280,7 @@ void Server::ReceiveMessage(int i)
     Client *c;
 
     memset(&msg, 0, sizeof(msg));
-    nbytes = recv(this->pfds[i].fd, msg, sizeof(msg), 0);
+    nbytes = recv(this->pfds[i].fd, msg, sizeof(msg), 0); //0 - for default behavior of recv()
     sender_fd = pfds[i].fd;
     c = GetClient(sender_fd);
     if (nbytes <= 0)
@@ -444,7 +445,7 @@ optval       -  To access option values for setsockopt. The parameter should be 
 
 */
 
-/*  Why there are multiple entires in addrinfo struct?
+/*  Why there are multiple entries in addrinfo struct?
     the network host is multihomed, accessible over multiple protocols
     (e.g., both AF_INET and AF_INET6); or the same service is available
     from multiple socket types (eg: SOCK_STREAM address or SOCK_DGRAM address).
@@ -475,4 +476,25 @@ optval       -  To access option values for setsockopt. The parameter should be 
     https://dd.ircdocs.horse/refs/numerics/001.html
     https://www.rfc-editor.org/rfc/rfc2812
 
+*/
+
+/*
+    send() itself doesn't guarantee anything, send() only writes the data you want to send 
+    over the network to the socket's buffer. There it's segmented (placed in TCP segments) 
+    by the operating system, which manages the reliability of the transmission. If the 
+    underlying buffer is full, then you'll get a return value that's lower that the number 
+    of bytes you wanted to write. This usually indicates that the buffer is not being emptied
+    by the operating system fast enough, i.e. the rate at which you write data to the buffer
+    is higher than the rate at which the data is being sent to the network (or read by the 
+    other party).
+*/
+
+
+/*
+    If space is not available at the sending socket to hold the message to be transmitted, 
+    and the socket file descriptor does not have O_NONBLOCK set, send() shall block until 
+    space is available. If space is not available at the sending socket to hold the message 
+    to be transmitted, and the socket file descriptor does have O_NONBLOCK set, send() shall 
+    fail. The select() and poll() functions can be used to determine when it is possible to 
+    send more data.
 */

@@ -232,6 +232,8 @@ void mode::SelectOption(std::string str)
                 modeChanged = true;
             }
         }
+        else
+            serv->SendReply(client_fd, ERR_USERNOTINCHANNEL(client->get_nickname(), client->get_nickname(), params[0]));
         params.erase(params.begin() + 2); // deleting that argument
         break;
 
@@ -248,6 +250,8 @@ void mode::SelectOption(std::string str)
                 modeChanged = true;
             }
         }
+        else
+            serv->SendReply(client_fd, ERR_USERNOTINCHANNEL(client->get_nickname(), client->get_nickname(), params[0]));
         params.erase(params.begin() + 2); // deleting that argument
         break;
     case NINE: /* -l */

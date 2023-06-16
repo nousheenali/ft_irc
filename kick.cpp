@@ -78,15 +78,25 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
     std::string reason = "";
     temp.push_back(kicked_by);
     
-	if (!cmd_infos.parameter.empty())
+	if (param.size() > 2)
 	{
-		if (cmd_infos.parameter.find(':') != std::string::npos)
-			reason = cmd_infos.parameter.substr(cmd_infos.parameter.find(':'), cmd_infos.parameter.length());
-		if (param.size() > 1)
-			reason = param[2];
+		//if mutliple words are present in reason, we will need ':' at the beginning.
+		//  but if there are tabs in the message ':' is not added automatically
+		if (param.size() > 3 && param[2][0] != ':') 
+			reason = ":";
+		for (std::vector<std::string>::iterator it = param.begin() + 2; it != param.end(); it++)
+			reason += (*it + " ");
 	}
 	else
 		reason = " :byeee!";
+	// if (!cmd_infos.parameter.empty())
+	// {
+	// 	if (cmd_infos.parameter.find(':') != std::string::npos)
+	// 		reason = cmd_infos.parameter.substr(cmd_infos.parameter.find(':'), cmd_infos.parameter.length());
+	// 	else if (param.size() > 1)
+	// 		reason = param[2];
+	// }
+
 	//check for multiple users to be kicked out
 	int flag = 0;
 	if (param.size() > 1)

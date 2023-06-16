@@ -104,7 +104,7 @@ void privmsg::SendToClient()
         
     if (rcvr == NULL) //no user by the nick
     {
-        serv->SendReply(sender_fd, ERR_NOSUCHCHANNEL(serv->GetClient(sender_fd)->get_nickname(),params[0]));
+        serv->SendReply(sender_fd, ERR_NOSUCHUSER(serv->GetClient(sender_fd)->get_nickname(),params[0]));
         return ;
     }
     // std::cout << "user found....\n";

@@ -73,6 +73,8 @@
 
 //PRIVMSG
 #define RPL_PRIVMSG(sender, receiver, message)     (sender + " PRIVMSG " + receiver + " :" + message +"\r\n")
+#define ERR_NOSUCHUSER(nick, nick2)                ("403 " + nick + " " + nick2 + " :No such user\r\n")
+
 
 //NOTICE
 #define RPL_NOTICE(sender, receiver, message)     (sender + " NOTICE " + receiver + " :" + message +"\r\n")
