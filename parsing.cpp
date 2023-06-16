@@ -68,10 +68,6 @@ int parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 
 	for (size_t i = 0; i < cmd_infos.cmd.size(); i++)
 		cmd_infos.cmd[i] = std::toupper(cmd_infos.cmd[i]);
-
-	// std::cout << "Command : |" << RED << cmd_infos.cmd << "|" << RESET << std::endl;
-	// std::cout << "Prefix : " << BLUE << cmd_infos.prefix << RESET << std::endl;
-	// std::cout << "Message : " << GREEN << cmd_infos.parameter << RESET << std::endl;
 	return (SUCCESS);
 }
 

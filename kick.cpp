@@ -82,12 +82,11 @@ void kick(Server *server, int client_fd, msg_struct cmd_infos)
 	{
 		if (cmd_infos.parameter.find(':') != std::string::npos)
 			reason = cmd_infos.parameter.substr(cmd_infos.parameter.find(':'), cmd_infos.parameter.length());
+		if (param.size() > 1)
+			reason = param[2];
 	}
-	else if (param.size() > 1)
-		reason = param[2];
 	else
 		reason = " :byeee!";
-	
 	//check for multiple users to be kicked out
 	int flag = 0;
 	if (param.size() > 1)
