@@ -134,9 +134,8 @@ void Server::LoadAddrinfo(void)
     char port_str[15];
 
     memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+    hints.ai_family = AF_INET;     // IPv4
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
-    // hints.ai_flags = AI_PASSIVE; // fills my ip address
     sprintf(port_str, "%d", this->port); // convert port from int to char *
     if ((status = getaddrinfo(server_ip.c_str(), port_str, &hints, &this->servinfo)) != 0)
     {
