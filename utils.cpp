@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 22:00:24 by nali              #+#    #+#             */
-/*   Updated: 2023/06/15 23:53:25 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/16 07:54:35 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,28 @@
 //     return vec;
 // }
 
+
+bool is_inside(const std::string & str, char c)
+{
+    return str.find(c) != std::string::npos;
+}
+
 std::vector<std::string> convert_to_vector(std::string s)
 {
     std::vector<std::string> tokens;
     std::string token = "\0";
+    std::string str = " \t\n\r\f\v";
+    
     for (size_t i = 0; i < s.size(); i++)
     {
-        while ((s[i] == ' ' || s[i] == '\t') && i < s.size())
+        while (is_inside(str, s[i]) && i < s.size())
             i++;
-        while (s[i] != ' ' && s[i] !='\t' && i < s.size())
+        while (!is_inside(str, s[i]) && i < s.size())
         {
             token += s[i];
             i++;
         }
-        if ((s[i] == ' ' || s[i] =='\t') && i < s.size())
+        if (is_inside(str, s[i]) && i < s.size())
         {
             tokens.push_back(token);
             token.clear();

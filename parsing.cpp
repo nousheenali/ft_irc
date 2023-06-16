@@ -6,7 +6,7 @@
 /*   By: nali <nali@42abudhabi.ae>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 11:18:35 by sfathima          #+#    #+#             */
-/*   Updated: 2023/06/15 23:58:28 by nali             ###   ########.fr       */
+/*   Updated: 2023/06/16 08:16:28 by nali             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Command.hpp"
 // #include "Channel.hpp"
 
+std::string& lefttrim(std::string& s, const char* t = " \t\n\r\f\v");
 
 static void splitMsg(std::vector<std::string> &cmds, std::string msg)
 {
@@ -24,6 +25,7 @@ static void splitMsg(std::vector<std::string> &cmds, std::string msg)
 	while ((pos = msg.find("\n")) != static_cast<int>(std::string::npos))
 	{
 		substr = msg.substr(0, pos);
+		substr = lefttrim(substr); //removes white space in the beginning of the string
 		cmds.push_back(substr);
 		msg.erase(0, pos + 1);
 	}
@@ -33,12 +35,15 @@ int parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 {
 	if (cmd_line.empty() == true)
 		return (FAILURE);
+	const char* esc_chars = " \t\n\r\f\v";
 
 	std::string copy = cmd_line;
 	if (cmd_line[0] == ':') // if prefix is : delete until first space
 	{
-		if (cmd_line.find_first_of(' ') != std::string::npos)
-			copy.erase(0, copy.find_first_of(' ') + 1);
+		copy.erase(0, copy.find_first_not_of(esc_chars)); //remove till occurence of 1st white space
+		copy = lefttrim(copy); //remove all white spaces at beginning
+		// if (cmd_line.find_first_of(' ') != std::string::npos)
+		// 	copy.erase(0, copy.find_first_of(' ') + 1);
 	}
 
 	if (copy.find_first_of(' ') == std::string::npos) // incase of command without arguments
