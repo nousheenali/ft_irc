@@ -16,6 +16,7 @@
 // #include "Channel.hpp"
 
 std::string& lefttrim(std::string& s, const char* t = " \t\n\r\f\v");
+std::string& righttrim(std::string& s, const char* t = " \t\n\r\f\v");
 
 static void splitMsg(std::vector<std::string> &cmds, std::string msg)
 {
@@ -35,7 +36,7 @@ int parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 {
 	if (cmd_line.empty() == true)
 		return (FAILURE);
-	const char* esc_chars = " \t\n\r\f\v";
+	const char* esc_chars = " \t\f\v";
 
 	std::string copy = cmd_line;
 	if (cmd_line[0] == ':') // if prefix is : delete until first space
@@ -46,26 +47,31 @@ int parseCommand(std::string cmd_line, msg_struct &cmd_infos)
 		// 	copy.erase(0, copy.find_first_of(' ') + 1);
 	}
 
-	if (copy.find_first_of(' ') == std::string::npos) // incase of command without arguments
+	if (copy.find_first_of(esc_chars) == std::string::npos)// || copy.find_first_of('\t') == std::string::npos) // incase of command without arguments
 	{
 		cmd_infos.cmd.insert(0, copy, 0, std::string::npos);
 		if (cmd_infos.cmd.find('\r') != std::string::npos) // delete the \r\n
 			cmd_infos.cmd.erase(cmd_infos.cmd.find('\r'), 1);
 	}
 	else
-		cmd_infos.cmd.insert(0, copy, 0, copy.find_first_of(' ')); //---->put the command inside struct
+		cmd_infos.cmd.insert(0, copy, 0, copy.find_first_of(esc_chars)); //---->put the command inside struct
 
 	size_t prefix_length = cmd_line.find(cmd_infos.cmd, 0);
 	cmd_infos.prefix.assign(cmd_line, 0, prefix_length); //---->put prefix into struct
 	size_t msg_beginning = cmd_line.find(cmd_infos.cmd, 0) + cmd_infos.cmd.length() + 1;
 	if (msg_beginning < cmd_line.length())
 		cmd_infos.parameter = cmd_line.substr(msg_beginning, std::string::npos); //---->put pararmeter into struct
+	cmd_infos.parameter = lefttrim(cmd_infos.parameter);
+	cmd_infos.parameter = righttrim(cmd_infos.parameter);
 	if (cmd_infos.parameter.find("\r") != std::string::npos)
 		cmd_infos.parameter.erase(cmd_infos.parameter.find("\r"), 1); //---->remove \r\n
 
 	for (size_t i = 0; i < cmd_infos.cmd.size(); i++)
 		cmd_infos.cmd[i] = std::toupper(cmd_infos.cmd[i]);
 
+	// std::cout << "Command : |" << RED << cmd_infos.cmd << "|" << RESET << std::endl;
+	// std::cout << "Prefix : " << BLUE << cmd_infos.prefix << RESET << std::endl;
+	// std::cout << "Message : " << GREEN << cmd_infos.parameter << RESET << std::endl;
 	return (SUCCESS);
 }
 
