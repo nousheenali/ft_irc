@@ -82,44 +82,43 @@ Server::Server(Server const &other)
     *this = other;
 }
 
+void Server::freeMemory()
+{
+    freeaddrinfo(this->servinfo);
+    if (close(this->listener) == -1)
+        ThrowException("FD Close Error: ");
+}
+
+
 void Server::CreateSocket(void)
 {
-    struct addrinfo *p;
-    int optval = 1;
     LoadAddrinfo();
-    for (p = this->servinfo; p != NULL; p = p->ai_next)
+    if ((this->listener = socket(this->servinfo->ai_family, this->servinfo->ai_socktype, this->servinfo->ai_protocol)) == -1)
     {
-        if ((this->listener = socket(this->servinfo->ai_family, this->servinfo->ai_socktype, this->servinfo->ai_protocol)) == -1)
-        {
-            perror("Socket Error: ");
-            continue; // skip to next entry on addrinfo struct
-        }
-
-        // to make the port available for reuse ref:comment #1
-        if (setsockopt(this->listener, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
-        {
-            freeaddrinfo(this->servinfo);
-            close(this->listener);
-            ThrowException("SetSockOpt Error: ");
-        }
-
-        fcntl(this->listener, F_SETFL, O_NONBLOCK);
-        if (bind(this->listener, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
-        {
-            close(this->listener);
-            perror("Socket Bind Error: ");
-            continue; // skip to next entry on addrinfo struct
-        }
-
-        break; // break out of the loop if valid socket found
-    }
-
-    freeaddrinfo(this->servinfo);
-    if (p == NULL) // in case of any other error
-    {
-        close(this->listener);
+        freeaddrinfo(this->servinfo);
         ThrowException("Socket Error: ");
+    }  
+
+    // to make the port available for reuse ref:comment #1
+    int optval = 1;
+    if (setsockopt(this->listener, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
+    {
+        freeMemory();
+        ThrowException("SetSockOpt Error: ");
     }
+
+    if (fcntl(this->listener, F_SETFL, O_NONBLOCK)  < 0)
+    {
+        freeMemory();
+        ThrowException("fcntl Error: ");
+    }
+
+    if (bind(this->listener, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
+    {
+        freeMemory();
+        ThrowException("Socket Bind Error: ");
+    }
+    freeaddrinfo(this->servinfo);
 }
 
 std::map<std::string, Channel *> &Server::GetChannelList()
@@ -148,7 +147,7 @@ void Server::Listen(void)
     if (listen(this->listener, BACKLOG) == -1)
     {
         if (close(this->listener) == -1)
-            ThrowException("FD Close Error 2: ");
+            ThrowException("FD Close Error: ");
         ThrowException("Socket Listen Error: ");
     }
 }
@@ -246,7 +245,7 @@ std::string Server::getPassword()
 void Server::deleteClient(int fd)
 {
     if (close(fd) == -1)
-        ThrowException("FD Close Error 3: ");
+        ThrowException("FD Close Error: ");
     std::map<int, Client*>::iterator it = client_array.find(fd);
     if (it != client_array.end())
     {
@@ -340,7 +339,7 @@ void Server::close_fds()
     {
         if (pfds[i].fd > 0) // closed client connections are set to -1 so this check
             if (close(pfds[i].fd) == -1)
-                ThrowException("FD Close Error 4: ");
+                ThrowException("FD Close Error: ");
     }
 }
 

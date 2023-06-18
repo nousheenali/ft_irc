@@ -93,7 +93,8 @@ private:
     void close_fds();
     int  parseMessage(int fd, std::string msg);
     void fillDetails(Client *c, int client_fd, std::string cmd);
-    int execCommand(int const client_fd, std::string cmd_line);
+    int  execCommand(int const client_fd, std::string cmd_line);
+    void freeMemory();
 
     class AddrInfoError : public std::exception // custom exception
     {
