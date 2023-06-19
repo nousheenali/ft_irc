@@ -82,44 +82,43 @@ Server::Server(Server const &other)
     *this = other;
 }
 
+void Server::freeMemory()
+{
+    freeaddrinfo(this->servinfo);
+    if (close(this->listener) == -1)
+        ThrowException("FD Close Error: ");
+}
+
+
 void Server::CreateSocket(void)
 {
-    struct addrinfo *p;
-    int optval = 1;
     LoadAddrinfo();
-    for (p = this->servinfo; p != NULL; p = p->ai_next)
+    if ((this->listener = socket(this->servinfo->ai_family, this->servinfo->ai_socktype, this->servinfo->ai_protocol)) == -1)
     {
-        if ((this->listener = socket(this->servinfo->ai_family, this->servinfo->ai_socktype, this->servinfo->ai_protocol)) == -1)
-        {
-            perror("Socket Error: ");
-            continue; // skip to next entry on addrinfo struct
-        }
-
-        // to make the port available for reuse ref:comment #1
-        if (setsockopt(this->listener, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
-        {
-            freeaddrinfo(this->servinfo);
-            close(this->listener);
-            ThrowException("SetSockOpt Error: ");
-        }
-
-        fcntl(this->listener, F_SETFL, O_NONBLOCK);
-        if (bind(this->listener, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
-        {
-            close(this->listener);
-            perror("Socket Bind Error: ");
-            continue; // skip to next entry on addrinfo struct
-        }
-
-        break; // break out of the loop if valid socket found
-    }
-
-    freeaddrinfo(this->servinfo);
-    if (p == NULL) // in case of any other error
-    {
-        close(this->listener);
+        freeaddrinfo(this->servinfo);
         ThrowException("Socket Error: ");
+    }  
+
+    // to make the port available for reuse ref:comment #1
+    int optval = 1;
+    if (setsockopt(this->listener, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1)
+    {
+        freeMemory();
+        ThrowException("SetSockOpt Error: ");
     }
+
+    if (fcntl(this->listener, F_SETFL, O_NONBLOCK)  < 0)
+    {
+        freeMemory();
+        ThrowException("fcntl Error: ");
+    }
+
+    if (bind(this->listener, this->servinfo->ai_addr, this->servinfo->ai_addrlen) == -1)
+    {
+        freeMemory();
+        ThrowException("Socket Bind Error: ");
+    }
+    freeaddrinfo(this->servinfo);
 }
 
 std::map<std::string, Channel *> &Server::GetChannelList()
@@ -134,9 +133,8 @@ void Server::LoadAddrinfo(void)
     char port_str[15];
 
     memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+    hints.ai_family = AF_INET;     // IPv4
     hints.ai_socktype = SOCK_STREAM; // type is stream socket
-    // hints.ai_flags = AI_PASSIVE; // fills my ip address
     sprintf(port_str, "%d", this->port); // convert port from int to char *
     if ((status = getaddrinfo(server_ip.c_str(), port_str, &hints, &this->servinfo)) != 0)
     {
@@ -149,7 +147,7 @@ void Server::Listen(void)
     if (listen(this->listener, BACKLOG) == -1)
     {
         if (close(this->listener) == -1)
-            ThrowException("FD Close Error 2: ");
+            ThrowException("FD Close Error: ");
         ThrowException("Socket Listen Error: ");
     }
 }
@@ -196,7 +194,8 @@ void Server::ConnectClients(void)
                 if (cl!= NULL && !cl->messageToBeSent.empty())
                 {
                     reply = cl->messageToBeSent.front();
-                    send(pfds[i].fd, reply.c_str(), reply.length(), 0);
+                    if (send(pfds[i].fd, reply.c_str(), reply.length(), 0) == -1) //0 - for default behavior of send()
+                        std::cout << "Unable to send data.\n";
                     cl->messageToBeSent.pop_front();
                 }
             }
@@ -246,7 +245,7 @@ std::string Server::getPassword()
 void Server::deleteClient(int fd)
 {
     if (close(fd) == -1)
-        ThrowException("FD Close Error 3: ");
+        ThrowException("FD Close Error: ");
     std::map<int, Client*>::iterator it = client_array.find(fd);
     if (it != client_array.end())
     {
@@ -279,7 +278,7 @@ void Server::ReceiveMessage(int i)
     Client *c;
 
     memset(&msg, 0, sizeof(msg));
-    nbytes = recv(this->pfds[i].fd, msg, sizeof(msg), 0);
+    nbytes = recv(this->pfds[i].fd, msg, sizeof(msg), 0); //0 - for default behavior of recv()
     sender_fd = pfds[i].fd;
     c = GetClient(sender_fd);
     if (nbytes <= 0)
@@ -340,7 +339,7 @@ void Server::close_fds()
     {
         if (pfds[i].fd > 0) // closed client connections are set to -1 so this check
             if (close(pfds[i].fd) == -1)
-                ThrowException("FD Close Error 4: ");
+                ThrowException("FD Close Error: ");
     }
 }
 
@@ -444,7 +443,7 @@ optval       -  To access option values for setsockopt. The parameter should be 
 
 */
 
-/*  Why there are multiple entires in addrinfo struct?
+/*  Why there are multiple entries in addrinfo struct?
     the network host is multihomed, accessible over multiple protocols
     (e.g., both AF_INET and AF_INET6); or the same service is available
     from multiple socket types (eg: SOCK_STREAM address or SOCK_DGRAM address).
@@ -475,4 +474,25 @@ optval       -  To access option values for setsockopt. The parameter should be 
     https://dd.ircdocs.horse/refs/numerics/001.html
     https://www.rfc-editor.org/rfc/rfc2812
 
+*/
+
+/*
+    send() itself doesn't guarantee anything, send() only writes the data you want to send 
+    over the network to the socket's buffer. There it's segmented (placed in TCP segments) 
+    by the operating system, which manages the reliability of the transmission. If the 
+    underlying buffer is full, then you'll get a return value that's lower that the number 
+    of bytes you wanted to write. This usually indicates that the buffer is not being emptied
+    by the operating system fast enough, i.e. the rate at which you write data to the buffer
+    is higher than the rate at which the data is being sent to the network (or read by the 
+    other party).
+*/
+
+
+/*
+    If space is not available at the sending socket to hold the message to be transmitted, 
+    and the socket file descriptor does not have O_NONBLOCK set, send() shall block until 
+    space is available. If space is not available at the sending socket to hold the message 
+    to be transmitted, and the socket file descriptor does have O_NONBLOCK set, send() shall 
+    fail. The select() and poll() functions can be used to determine when it is possible to 
+    send more data.
 */
